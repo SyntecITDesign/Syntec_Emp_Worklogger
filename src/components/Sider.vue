@@ -1,7 +1,7 @@
 <script setup>
-import ContentVue from "../components/Content.vue";
+import AddWorklogFormVue from "../components/AddWorklogForm.vue";
 import { h, ref } from "vue";
-import { NIcon, NSpace, NLayout, NLayoutSider, NMenu } from "naive-ui";
+import { NIcon, NSpace, NLayout, NLayoutSider, NMenu, NDivider, NCard } from "naive-ui";
 import {
   Add as addIcon,
   Analytics as analyticsIcon,
@@ -39,6 +39,12 @@ const menuOptions = [
   },
 ];
 
+const Options = ref([
+  "aaa",
+  "ccc",
+  "eee",
+])
+
 const renderMenuLabel = (option) => {
   if ("href" in option) {
     return h("a", { href: option.href, target: "_blank" }, [option.label]);
@@ -55,34 +61,27 @@ const renderMenuIcon = (option) => {
 const expandIcon = () => {
   return h(NIcon, null, { default: () => h(caretDownOutline) });
 };
+
+const handleClose = (index) => {
+  Options.value[index] = "test"
+  console.log(Options.value[index]);
+};
 </script>
 
 <template>
   <n-space vertical>
     <n-layout has-sider>
-      <n-layout-sider
-        bordered
-        collapse-mode="width"
-        :collapsed-width="64"
-        :width="240"
-        :collapsed="collapsed"
-        show-trigger
-        @collapse="collapsed = true"
-        @expand="collapsed = false"
-        style="height: calc(100vh - 66px)"
-      >
-        <n-menu
-          :collapsed="collapsed"
-          :collapsed-width="64"
-          :collapsed-icon-size="22"
-          :options="menuOptions"
-          :render-label="renderMenuLabel"
-          :render-icon="renderMenuIcon"
-          :expand-icon="expandIcon"
-        />
+      <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="collapsed"
+        show-trigger @collapse="collapsed = true" @expand="collapsed = false" style="height: calc(100vh - 66px)">
+        <n-menu :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22" :options="menuOptions"
+          :render-label="renderMenuLabel" :render-icon="renderMenuIcon" :expand-icon="expandIcon" />
       </n-layout-sider>
       <n-layout class="NLayout">
-        <ContentVue />
+        <AddWorklogFormVue />
+        <n-divider />
+        <n-card v-for="(item, index) in Options" :key=item title="卡片" closable @close="handleClose(index)">
+          {{ item }}
+        </n-card>
       </n-layout>
     </n-layout>
   </n-space>
