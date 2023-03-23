@@ -1,10 +1,11 @@
 <script setup>
-import AddWorklogFormVue from "../components/AddWorklogForm.vue";
 import { h, ref } from "vue";
-import { NIcon, NSpace, NLayout, NLayoutSider, NMenu, NDivider, NCard } from "naive-ui";
+import { RouterLink, RouterView } from "vue-router";
+import { NIcon, NSpace, NLayout, NLayoutSider, NMenu, } from "naive-ui";
 import {
   Add as addIcon,
   Analytics as analyticsIcon,
+  HomeOutline as homeIcon,
   CaretDownOutline as caretDownOutline,
 } from "@vicons/ionicons5";
 
@@ -12,9 +13,36 @@ const collapsed = ref(true);
 
 const menuOptions = [
   {
-    label: "新增工作日誌",
-    key: "addWorkLog",
-    href: "https://en.wikipedia.org/wiki/Hear_the_Wind_Sing",
+    label: () => h(
+      RouterLink,
+      {
+        to: {
+          name: "home",
+          params: {
+            lang: "zh-CN"
+          }
+        }
+      },
+      { default: () => "首頁" }
+    ),
+    key: "go-back-home",
+    icon: renderIcon(homeIcon)
+  },
+  {
+    label: () => h(
+      RouterLink,
+      {
+        to: {
+          name: "addWorklogForm",
+          params: {
+            lang: "zh-CN"
+          }
+        }
+      },
+      { default: () => "新增工作日誌" }
+    ),
+    key: "go-AddWorkForm",
+    icon: renderIcon(addIcon)
   },
   {
     label: "分析看板",
@@ -36,36 +64,19 @@ const menuOptions = [
         href: "https://en.wikipedia.org/wiki/Hear_the_Wind_Sing",
       },
     ],
+    icon: renderIcon(analyticsIcon)
   },
 ];
 
-const Options = ref([
-  "aaa",
-  "ccc",
-  "eee",
-])
+function renderIcon(icon) {
+  return () => h(NIcon, null, { default: () => h(icon) });
+}
 
-const renderMenuLabel = (option) => {
-  if ("href" in option) {
-    return h("a", { href: option.href, target: "_blank" }, [option.label]);
-  }
-  return option.label;
-};
-const renderMenuIcon = (option) => {
-  if (option.key === "addWorkLog")
-    return h(NIcon, null, { default: () => h(addIcon) });
-  if (option.key === "dashboard")
-    return h(NIcon, null, { default: () => h(analyticsIcon) });
-  return null;
-};
 const expandIcon = () => {
   return h(NIcon, null, { default: () => h(caretDownOutline) });
 };
 
-const handleClose = (index) => {
-  Options.value[index] = "test"
-  console.log(Options.value[index]);
-};
+
 </script>
 
 <template>
@@ -74,14 +85,10 @@ const handleClose = (index) => {
       <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="collapsed"
         show-trigger @collapse="collapsed = true" @expand="collapsed = false" style="height: calc(100vh - 66px)">
         <n-menu :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22" :options="menuOptions"
-          :render-label="renderMenuLabel" :render-icon="renderMenuIcon" :expand-icon="expandIcon" />
+          :render-label="renderMenuLabel" :expand-icon="expandIcon" />
       </n-layout-sider>
       <n-layout class="NLayout">
-        <AddWorklogFormVue />
-        <n-divider />
-        <n-card v-for="(item, index) in Options" :key=item title="卡片" closable @close="handleClose(index)">
-          {{ item }}
-        </n-card>
+        <RouterView />
       </n-layout>
     </n-layout>
   </n-space>

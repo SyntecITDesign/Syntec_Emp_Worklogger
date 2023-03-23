@@ -12,6 +12,8 @@ import {
   NGi,
   NInputNumber,
   NDynamicTags,
+  NDivider,
+  NCard,
 } from "naive-ui";
 
 import { ref } from "vue";
@@ -19,7 +21,7 @@ import { storeToRefs } from 'pinia';
 import { useFormStore } from "../stores/formStore.js";
 const formStore = useFormStore();
 const { formRef, size, model } = storeToRefs(formStore);
-const { filterOptions, issueOptions, rules, handleValidateButtonClick } = formStore;
+const { filterOptions, issueOptions, rules, Options, handleClose, handleValidateButtonClick } = formStore;
 
 </script>
 <template>
@@ -72,6 +74,10 @@ const { filterOptions, issueOptions, rules, handleValidateButtonClick } = formSt
       </n-gi>
     </n-grid>
   </n-form>
+  <n-divider />
+  <n-card v-for="(item, index) in Options" :key=item title="卡片" closable @close="handleClose(index)">
+    {{ item }}
+  </n-card>
 </template>
 
 <style scoped></style>

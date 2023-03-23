@@ -65,7 +65,7 @@ export const useFormStore = defineStore('formStore', () => {
             message: "spendHourValue",
         },
         spendMinuteValue: {
-           type: "number",
+            type: "number",
             required: true,
             trigger: ["blur", "change"],
             message: "spendMinuteValue",
@@ -81,12 +81,24 @@ export const useFormStore = defineStore('formStore', () => {
         e.preventDefault();
         formRef.value?.validate((errors) => {
             if (!errors) {
-            console.log("ok");
+                console.log("ok");
             } else {
-            console.log(errors);
-            console.log("no");
+                console.log(errors);
+                console.log("no");
             }
         });
     };
-    return { formRef, size, model, filterOptions, issueOptions, rules, handleValidateButtonClick}
+
+
+    const Options = ref([
+        "aaa",
+        "ccc",
+        "eee",
+    ]);
+
+    const handleClose = (index) => {
+        Options.value[index] = "test"
+        console.log(Options.value[index]);
+    };
+    return { formRef, size, model, filterOptions, issueOptions, rules, Options, handleValidateButtonClick, handleClose }
 })
