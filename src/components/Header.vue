@@ -40,6 +40,7 @@ const themeOverrides = {
 };
 const logOut = () => {
   isLogIn.value = false;
+  localStorage.clear();
 };
 </script>
 

@@ -7,7 +7,6 @@ import {
   NInput,
   NSelect,
   NDatePicker,
-  NSwitch,
   NSpace,
   NGi,
   NInputNumber,
@@ -16,12 +15,11 @@ import {
   NCard,
 } from "naive-ui";
 
-import { ref } from "vue";
 import { storeToRefs } from 'pinia';
 import { useFormStore } from "../stores/formStore.js";
 const formStore = useFormStore();
-const { formRef, size, model } = storeToRefs(formStore);
-const { filterOptions, issueOptions, rules, Options, handleClose, handleValidateButtonClick } = formStore;
+const { formRef, size, model, issueOptions } = storeToRefs(formStore);
+const { filterOptions, rules, Options, handleClose, handleValidateButtonClick } = formStore;
 
 </script>
 <template>
@@ -33,7 +31,7 @@ const { filterOptions, issueOptions, rules, Options, handleClose, handleValidate
       </n-form-item-gi>
 
       <n-form-item-gi :span="12" label="議題" path="selectIssueValue">
-        <n-select v-model:value="model.selectIssueValue" placeholder="請選擇議題" :options="issueOptions" />
+        <n-select v-model:value="model.selectIssueValue" placeholder="請選擇議題" :options="issueOptions" :loading="true" />
       </n-form-item-gi>
 
       <n-form-item-gi :span="12" label="開始日期" path="startDateValue">
@@ -49,11 +47,6 @@ const { filterOptions, issueOptions, rules, Options, handleClose, handleValidate
       <n-form-item-gi :span="4" label="花費分鐘" path="spendMinuteValue">
         <n-input-number v-model:value="model.spendMinuteValue" placeholder="請輸入分鐘數" :min="0" />
       </n-form-item-gi>
-
-      <n-form-item-gi :span="12" label="非一般議題" path="switchToGeneralValue">
-        <n-switch v-model:value="model.switchToGeneralValue" />
-      </n-form-item-gi>
-
       <n-form-item-gi :span="12" label="標籤" path="tags">
         <n-dynamic-tags v-model:value="model.tags" />
       </n-form-item-gi>

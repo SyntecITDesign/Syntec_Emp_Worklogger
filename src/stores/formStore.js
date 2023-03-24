@@ -10,23 +10,22 @@ export const useFormStore = defineStore('formStore', () => {
         selectFilterValue: null,
         selectIssueValue: null,
         startDateValue: null,
-        switchToGeneralValue: false,
         spendDayValue: null,
         spendHourValue: null,
         spendMinuteValue: null,
         tags: ["需求討論"],
     });
-    const filterOptions = ["groode", "veli good", "emazing", "lidiculous"].map(
+
+    const issueOptions = ref(["issue1", "issue2", "issue3", "issue4"].map(
         (v) => ({
             label: v,
             value: v,
         })
-    );
-
-    const issueOptions = ["issue1", "issue2", "issue3", "issue4"].map(
+    ));
+    const filterOptions = [["負責的議題", "byAssignee"], ["報告的議題", "byReporter"], ["監看的議題", "byWatcher"], ["指定議題", "byIssueKey"], ["非議題工時", "nonIssue"]].map(
         (v) => ({
-            label: v,
-            value: v,
+            label: v[0],
+            value: v[1],
         })
     );
 
@@ -85,6 +84,7 @@ export const useFormStore = defineStore('formStore', () => {
             } else {
                 console.log(errors);
                 console.log("no");
+                console.log(model);
             }
         });
     };

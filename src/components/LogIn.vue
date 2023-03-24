@@ -1,7 +1,7 @@
 <script setup>
 import { defineComponent, ref } from "vue";
 import { storeToRefs } from "pinia";
-import { NSpace, NInput, NButton, NForm, NFormItem } from "naive-ui";
+import { NSpace, NInput, NButton, NForm, NFormItem, createDiscreteApi } from "naive-ui";
 import { GlassesOutline } from "@vicons/ionicons5";
 import { useSiderStore } from "../stores/siderStore.js";
 import axios from "axios";
@@ -11,11 +11,12 @@ import { onBeforeMount } from "vue";
 const siderStore = useSiderStore();
 const { isLogIn } = storeToRefs(siderStore);
 const formRef = ref(null);
-const apiUrl = "https://localhost:44303/SyntecIT/api/v1";
+const apiUrl = "https://www.syntecclub.com:9392/SyntecIT/api/v1";
 const model = ref({
   Username: null,
   Password: null,
 });
+const { dialog } = createDiscreteApi(["登入失敗！"]);
 
 const rules = {
   Username: [
@@ -51,46 +52,45 @@ const jiraLogin = async () => {
       apiUrl + "/Open/JIRA_Related/Worklogger/JiraLogIn",
       model.value
     );
-    console.log(res.data);
-    localStorage.setItem(
-      "token",
-      encode(model.value.Username + ":" + model.value.Password)
-    );
-    localStorage.setItem("loginTime", new Date().getTime());
-    isLogIn.value = true;
+    console.log(res.data.content);
+
+    if (Object.prototype.hasOwnProperty.call(res.data.content, 'errorMessages')) {
+      model.value.Username = '';
+      model.value.Password = '';
+      handleDialogTriggerClick();
+    } else {
+      localStorage.setItem(
+        "token",
+        encode(model.value.Username + ":" + model.value.Password)
+      );
+      localStorage.setItem("loginTime", new Date().getTime());
+      isLogIn.value = true;
+    }
+
   } catch (err) {
     console.log(err);
   }
 };
+
+const handleDialogTriggerClick = () => {
+  dialog.info({ title: "Dialog" });
+}
+
 onBeforeMount(() => {
   localStorage.clear();
 });
 </script>
 
 <template>
-  <n-space vertical class="NSpace">
+  <n-space vertical class="NSpace" @keyup.enter="handleValidateButtonClick" @blur="handleValidateButtonClick">
     登入頁面
     <n-form ref="formRef" :model="model" :rules="rules">
       <n-form-item path="Username" label="JIRA登入帳號">
-        <n-input
-          class="NInput"
-          type="text"
-          size="large"
-          v-model:value="model.Username"
-          @keydown.enter.prevent
-          placeholder="帳號"
-        />
+        <n-input class="NInput" type="text" size="large" v-model:value="model.Username" placeholder="帳號" />
       </n-form-item>
       <n-form-item path="Password" label="JIRA登入密碼">
-        <n-input
-          class="NInput"
-          type="password"
-          size="large"
-          show-password-on="mousedown"
-          v-model:value="model.Password"
-          @keydown.enter.prevent
-          placeholder="密碼"
-        />
+        <n-input class="NInput" type="password" size="large" show-password-on="mousedown" v-model:value="model.Password"
+          placeholder="密碼" />
       </n-form-item>
     </n-form>
 
@@ -109,6 +109,7 @@ onBeforeMount(() => {
   align-items: center;
   font-size: 50px;
 }
+
 .NInput {
   width: 600px;
   font-size: 30px;
