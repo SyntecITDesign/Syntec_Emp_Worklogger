@@ -6,7 +6,7 @@
       </template>
       <template #extra>
         <n-space>
-          <n-button class="NButton">登出</n-button>
+          <n-button class="NButton" @click="logOut">登出</n-button>
         </n-space>
       </template>
     </n-page-header>
@@ -28,30 +28,19 @@ import {
   NConfigProvider,
 } from "naive-ui";
 
+import { storeToRefs } from "pinia";
 import { defineComponent } from "vue";
-
+import { useSiderStore } from "../stores/siderStore.js";
+const siderStore = useSiderStore();
+const { isLogIn } = storeToRefs(siderStore);
 const themeOverrides = {
   Avatar: {
     heightMedium: "64px",
   },
 };
-const handleBack = () => {
-  console.log("[onBack]");
+const logOut = () => {
+  isLogIn.value = false;
 };
-const options = [
-  {
-    label: "催更",
-    key: "1",
-  },
-  {
-    label: "催更",
-    key: "2",
-  },
-  {
-    label: "催更",
-    key: "3",
-  },
-];
 </script>
 
 <style scoped>
