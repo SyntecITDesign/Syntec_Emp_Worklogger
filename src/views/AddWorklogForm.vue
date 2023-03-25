@@ -14,12 +14,13 @@ import {
   NDivider,
   NCard,
 } from "naive-ui";
-
+import { onBeforeUpdate } from 'vue'
 import { storeToRefs } from 'pinia';
 import { useFormStore } from "../stores/formStore.js";
 const formStore = useFormStore();
-const { formRef, size, model, issueOptions } = storeToRefs(formStore);
+const { formRef, size, model, spendValue, issueOptions, IsIssueOptionsChange, spendValueStatus } = storeToRefs(formStore);
 const { filterOptions, rules, Options, handleClose, handleValidateButtonClick } = formStore;
+
 
 </script>
 <template>
@@ -27,25 +28,29 @@ const { filterOptions, rules, Options, handleClose, handleValidateButtonClick } 
   <n-form ref="formRef" :model="model" :rules="rules" :size="size" label-placement="top">
     <n-grid :cols="24" :x-gap="24">
       <n-form-item-gi :span="12" label="議題篩選" path="selectFilterValue">
-        <n-select filterable tag v-model:value="model.selectFilterValue" placeholder="請選擇篩選條件" :options="filterOptions" />
+        <n-select filterable tag v-model:value="model.selectFilterValue" placeholder="請選擇議題類別或輸入議題編號(ex:ICT-999)"
+          :options="filterOptions" />
       </n-form-item-gi>
 
       <n-form-item-gi :span="12" label="議題" path="selectIssueValue">
-        <n-select v-model:value="model.selectIssueValue" placeholder="請選擇議題" :options="issueOptions" :loading="true" />
+        <n-select v-model:value="model.selectIssueValue" placeholder="請選擇議題" :options="issueOptions"
+          :loading="IsIssueOptionsChange" :disabled="IsIssueOptionsChange" />
       </n-form-item-gi>
 
       <n-form-item-gi :span="12" label="開始日期" path="startDateValue">
         <n-date-picker v-model:value="model.startDateValue" type="date" placeholder="請選擇日期" />
       </n-form-item-gi>
 
-      <n-form-item-gi :span="4" label="花費天數" path="spendDayValue">
-        <n-input-number v-model:value="model.spendDayValue" placeholder="請輸入天數" :min="0" />
-      </n-form-item-gi>
-      <n-form-item-gi :span="4" label="花費時數" path="spendHourValue">
-        <n-input-number v-model:value="model.spendHourValue" placeholder="請輸入時數" :min="0" />
-      </n-form-item-gi>
-      <n-form-item-gi :span="4" label="花費分鐘" path="spendMinuteValue">
-        <n-input-number v-model:value="model.spendMinuteValue" placeholder="請輸入分鐘數" :min="0" />
+      <n-form-item-gi :span="12" label="花費時間" path="spendValue">
+        <n-input-number v-model:value="spendValue.spendDayValue" placeholder="請輸入天數" :status="spendValueStatus.status"
+          :min="0" />
+        <span class="NIputNumberLabel">日</span>
+        <n-input-number v-model:value="spendValue.spendHourValue" placeholder="請輸入時數" :status="spendValueStatus.status"
+          :min="0" />
+        <span class="NIputNumberLabel">時</span>
+        <n-input-number v-model:value="spendValue.spendMinuteValue" placeholder="請輸入分鐘數" :status="spendValueStatus.status"
+          :min="0" />
+        <span class="NIputNumberLabel">分</span>
       </n-form-item-gi>
       <n-form-item-gi :span="12" label="標籤" path="tags">
         <n-dynamic-tags v-model:value="model.tags" />
@@ -73,4 +78,8 @@ const { filterOptions, rules, Options, handleClose, handleValidateButtonClick } 
   </n-card>
 </template>
 
-<style scoped></style>
+<style scoped>
+.NIputNumberLabel {
+  margin: 0 1%;
+}
+</style>
