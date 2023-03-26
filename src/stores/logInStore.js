@@ -18,6 +18,7 @@ export const useLogInStore = defineStore('logInStore', () => {
         Username: null,
         Password: null,
     });
+    const isChecking=ref(false);
 
     const rules = {
         Username: [
@@ -51,6 +52,7 @@ export const useLogInStore = defineStore('logInStore', () => {
 
     const jiraLogin = async () => {
         try {
+            isChecking.value = true;
             const res = await axios.post(
                 apiUrl + "/Open/JIRA_Related/Worklogger/JiraLogIn",
                 model.value
@@ -71,6 +73,7 @@ export const useLogInStore = defineStore('logInStore', () => {
                 isLogIn.value = true;
                 dialog.info({ title: "登入成功" });
             }
+            isChecking.value = false;
 
         } catch (err) {
             console.log(err);
@@ -78,5 +81,5 @@ export const useLogInStore = defineStore('logInStore', () => {
     };
 
 
-    return { formRef, model, rules, handleValidateButtonClick }
+    return { formRef, model, rules, isChecking, handleValidateButtonClick }
 })

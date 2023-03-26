@@ -1,9 +1,11 @@
-import { ref, watchEffect, computed } from 'vue'
+import { ref, watchEffect, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { useApiStore } from "../stores/apiStore.js";
 import axios from "axios";
+import { createDiscreteApi } from "naive-ui";
 
 export const useFormStore = defineStore('formStore', () => {
+    const { dialog } = createDiscreteApi(["dialog"]);
     const apiStore = useApiStore();
     const { apiUrl } = apiStore;
     const formRef = ref(null);
@@ -14,15 +16,15 @@ export const useFormStore = defineStore('formStore', () => {
         descriptionValue: null,
         selectFilterValue: null,
         selectIssueValue: null,
+        tagValue: null,
         startDateValue: null,
         spendValue: computed(() => (spendValue.value.spendDayValue * 24 * 60 * 60 + spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
-        tags: ["需求討論"],
     });
-
+    const models = ref([]);
     const spendValue = ref({
-        spendDayValue: null,
-        spendHourValue: null,
-        spendMinuteValue: null,
+        spendDayValue: 0,
+        spendHourValue: 0,
+        spendMinuteValue: 0,
     });
 
     const JQL = ref({
@@ -30,6 +32,12 @@ export const useFormStore = defineStore('formStore', () => {
     });
 
     const issueOptions = ref([].map(
+        (v) => ({
+            label: v,
+            value: v,
+        })
+    ));
+    const tagOptions = ref(["tag1","tag2","tag3"].map(
         (v) => ({
             label: v,
             value: v,
@@ -59,7 +67,7 @@ export const useFormStore = defineStore('formStore', () => {
             message: "",
         },
         startDateValue: {
-            type: "number",
+            type: "date",
             required: true,
             trigger: ["blur", "change"],
             message: "",
@@ -73,8 +81,7 @@ export const useFormStore = defineStore('formStore', () => {
             trigger: ["blur", "change"],
             message: "總工作時間至少大於0",
         },
-        tags: {
-            type: "array",
+        tagValue: {
             required: true,
             trigger: ["blur", "change"],
             message: "",
@@ -91,9 +98,15 @@ export const useFormStore = defineStore('formStore', () => {
                 apiUrl + "/Open/JIRA_Related/Worklogger/GetJiraIssues",
                 JQL.value
             );
-            res.data.content.map((v) => ({ label: v, value: v, })).forEach(element => {
-                issueOptions.value.push(element);
-            });
+
+            if(res.data.content === null){
+                dialog.info({ title: "查無相關議題" });
+            }else{
+                res.data.content.map((v) => ({ label: v, value: v, })).forEach(element => {
+                    issueOptions.value.push(element);
+                });
+            }
+            
 
             console.log(issueOptions.value);
             IsIssueOptionsChange.value = false;
@@ -103,38 +116,78 @@ export const useFormStore = defineStore('formStore', () => {
         }
     };
 
+    const addJiraWorklog = () => {
+        try {
+            //IsIssueOptionsChange.value = true;
+            models.value.forEach( async (v) => {
+                const res = await axios.post(
+                    apiUrl + "/Open/JIRA_Related/Worklogger/AddWorklog",
+                    v[1]
+                );
+    
+                // if(res.data.content === null){
+                //     dialog.info({ title: "查無相關議題" });
+                // }else{
+                //     res.data.content.map((v) => ({ label: v, value: v, })).forEach(element => {
+                //         issueOptions.value.push(element);
+                //     });
+                // }
+                
+    
+                console.log(res.data);
+                //IsIssueOptionsChange.value = false;
+            })
+            
 
-    const handleValidateButtonClick = (e) => {
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+
+
+
+    const handleValidateButtonClick = (e) => {        
         e.preventDefault();
         formRef.value?.validate((errors) => {
             if (!errors) {
+                const modelForJiraAddWorkLogApi = {
+                    issueID: model.value.selectIssueValue.split(" ")[0],
+                    started: model.value.startDateValue+"T00:00:00.000+0000",
+                    comment: model.value.selectIssueValue === "nonIssue"? "[分類：非議題工時":"[分類：一般議題"+"] [標籤："+model.value.tagValue +"] [工作內容："+ model.value.descriptionValue+"]",                    
+                    timeSpentSeconds: model.value.spendValue,
+                    "BasicAuth":localStorage.getItem("token"),
+                }
+                const modelForJiraWorkLogRecord = {
+                    descriptionValue: model.value.descriptionValue,
+                    selectFilterValue:model.value.selectIssueValue === "nonIssue"? "非議題工時":"一般議題",
+                    selectIssueValue: model.value.selectIssueValue,
+                    tagValue: model.value.tagValue,
+                    startDateValue: model.value.startDateValue,
+                    spendDayValue:spendValue.value.spendDayValue,
+                    spendHourValue:spendValue.value.spendHourValue,
+                    spendMinuteValue:spendValue.value.spendMinuteValue,
+                };
+                models.value.push([modelForJiraWorkLogRecord,modelForJiraAddWorkLogApi]);
+                console.log(models.value);
                 console.log("ok");
+
             } else {
                 console.log(errors);
                 console.log("no");
-                console.log(model);
             }
         });
     };
 
-
-    const Options = ref([
-        "aaa",
-        "ccc",
-        "eee",
-    ]);
-
     const handleClose = (index) => {
-        Options.value[index] = "test"
-        console.log(Options.value[index]);
+        //console.log(models.value[index]);
+        models.value.splice(index, 1);
+        console.log(models.value);
     };
 
 
-
-
-
-    watchEffect(() => {
-        switch (model.value.selectFilterValue) {
+    watch(() => model.value.selectFilterValue,(newValue, oldValue) => {
+        switch (newValue) {
             case "nonIssue":
                 JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND summary ~ 非議題*";
                 getJiraIssues();
@@ -154,11 +207,15 @@ export const useFormStore = defineStore('formStore', () => {
             case null:
                 break;
             default:
-                JQL.value.JQL = "key = " + model.value.selectFilterValue;
+                JQL.value.JQL = "key = " + newValue;
                 //console.log(JQL.value);
                 getJiraIssues();
                 break;
         }
+    },{deep: true,});
+
+
+    watchEffect(() => {        
         if ((model.value.spendValue <= 0) && (spendValueStatus.value.init)) {
             spendValueStatus.value.status = "error";
             spendValue.value.spendDayValue = 0;
@@ -169,11 +226,7 @@ export const useFormStore = defineStore('formStore', () => {
             spendValueStatus.value.status = "success";
             spendValueStatus.value.init = true;
         }
-
     });
 
-
-
-
-    return { formRef, size, model, spendValueStatus, spendValue, filterOptions, issueOptions, rules, Options, IsIssueOptionsChange, handleValidateButtonClick, handleClose }
+    return { formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, IsIssueOptionsChange, handleValidateButtonClick, handleClose,addJiraWorklog }
 })
