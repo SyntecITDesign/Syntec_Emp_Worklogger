@@ -28,6 +28,7 @@ const {
   issueOptions,
   tagOptions,
   IsIssueOptionsChange,
+  IsTagOptionsChange,
   spendValueStatus,
 } = storeToRefs(formStore);
 const {
@@ -107,6 +108,8 @@ const {
           v-model:value="model.tagValue"
           placeholder="請選擇工作類型"
           :options="tagOptions"
+          :loading="IsTagOptionsChange"
+          :disabled="IsTagOptionsChange"
         />
       </n-form-item-gi>
 
@@ -133,7 +136,7 @@ const {
   <n-grid x-gap="12" :cols="3">
     <n-gi v-for="(item, index) in models" :key="index">
       <n-card
-        :title="item[0].selectIssueValue"
+        :title="item[0].issueID"
         closable
         @close="handleClose(index)"
         :segmented="{
@@ -143,18 +146,18 @@ const {
       >
         <template #header-extra>
           <n-tag type="success">
-            {{ item[0].selectFilterValue }}
+            {{ item[0].type }}
           </n-tag>
           <n-tag type="info">
-            {{ item[0].tagValue }}
+            {{ item[0].tags }}
           </n-tag>
         </template>
-        {{ item[0].descriptionValue }}
+        {{ item[0].comment }}
         <template #footer>
-          開始日期：{{ item[0].startDateValue }}<br />
-          花費時間：{{ item[0].spendDayValue }}天{{
-            item[0].spendHourValue
-          }}小時{{ item[0].spendMinuteValue }}分鐘
+          開始日期：{{ item[0].started }}<br />
+          花費時間：{{ item[0].spendDay }}天{{ item[0].spendHour }}小時{{
+            item[0].spendMinute
+          }}分鐘
         </template>
       </n-card>
     </n-gi>
