@@ -189,7 +189,7 @@ export const useFormStore = defineStore('formStore', () => {
     watch(() => model.value.selectFilterValue,(newValue, oldValue) => {
         switch (newValue) {
             case "nonIssue":
-                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND summary ~ 非議題*";
+                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND summary ~ 非議題";
                 getJiraIssues();
                 break;
             case "byAssignee":
