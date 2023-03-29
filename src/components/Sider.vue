@@ -22,7 +22,7 @@ const { menuOptions, renderIcon, expandIcon } = siderStore;
         show-trigger
         @collapse="collapsed = true"
         @expand="collapsed = false"
-        style="height: calc(100vh - 66px)"
+        style="height: calc(100vh - 4.125rem)"
       >
         <n-menu
           :collapsed="collapsed"

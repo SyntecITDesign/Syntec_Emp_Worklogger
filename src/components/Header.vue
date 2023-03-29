@@ -35,7 +35,7 @@ const siderStore = useSiderStore();
 const { isLogIn } = storeToRefs(siderStore);
 const themeOverrides = {
   Avatar: {
-    heightMedium: "64px",
+    heightMedium: "4rem",
   },
 };
 const logOut = () => {
@@ -46,6 +46,6 @@ const logOut = () => {
 
 <style scoped>
 .NButton {
-  margin-right: 20px;
+  margin-right: 1.25rem;
 }
 </style>
