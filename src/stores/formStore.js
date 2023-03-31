@@ -13,6 +13,19 @@ export const useFormStore = defineStore('formStore', () => {
     const IsTagOptionsChange = ref(false);    
     const spendValueStatus = ref({ init: false, status: "error" });
     const size = ref("medium");
+    const modelInit = {
+        descriptionValue: null,
+        selectFilterValue: null,
+        selectIssueValue: null,
+        tagValue: null,
+        startDateValue: null,
+        spendValue: computed(() => (spendValue.value.spendDayValue * 24 * 60 * 60 + spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
+    }
+    const spendValueInit = {
+        spendDayValue: 0,
+        spendHourValue: 0,
+        spendMinuteValue: 0,
+    }
     const model = ref({
         descriptionValue: null,
         selectFilterValue: null,
@@ -180,7 +193,10 @@ export const useFormStore = defineStore('formStore', () => {
                 console.log(resUpsertJiraWorkLogRelatedIssue.data);
             });
             
-            //models.value = 
+            model.value = modelInit;
+            models.value = [];
+            spendValue.value = spendValueInit;
+            spendValueStatus.value.init = false;
         } catch (err) {
             console.log(err);
         }

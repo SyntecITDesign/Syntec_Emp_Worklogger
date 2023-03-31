@@ -6,7 +6,9 @@
       </template>
       <template #extra>
         <n-space>
-          <n-button class="NButton" @click="logOut">登出</n-button>
+          <n-button class="NButton" @click="logOut" v-if="isLogIn"
+            >登出</n-button
+          >
         </n-space>
       </template>
     </n-page-header>
