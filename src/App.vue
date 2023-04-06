@@ -14,7 +14,7 @@ const { isLogIn } = storeToRefs(siderStore);
 
 onBeforeMount(() => {
   localStorage.getItem("token") === null ||
-    new Date().getTime() - localStorage.getItem("loginTime") > 600000 * 5
+  new Date().getTime() - localStorage.getItem("loginTime") > 600000 * 5
     ? (isLogIn.value = false)
     : (isLogIn.value = true);
 });

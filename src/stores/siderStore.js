@@ -12,6 +12,7 @@ import {
 export const useSiderStore = defineStore('siderStore', () => {
       const collapsed = ref(true);
       const isLogIn = ref(false);
+      const empID = ref("");
       const menuOptions = [
         {
           label: () =>
@@ -78,5 +79,5 @@ export const useSiderStore = defineStore('siderStore', () => {
       const expandIcon = () => {
         return h(NIcon, null, { default: () => h(caretDownOutline) });
       };
-    return { collapsed, menuOptions, isLogIn, renderIcon, expandIcon, }
+    return { collapsed, menuOptions, isLogIn, empID, renderIcon, expandIcon, }
 })

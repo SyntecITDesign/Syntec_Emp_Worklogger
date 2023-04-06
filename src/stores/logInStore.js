@@ -10,7 +10,7 @@ import { encode } from "js-base64";
 export const useLogInStore = defineStore('logInStore', () => {
     const { dialog } = createDiscreteApi(["dialog"]);
     const siderStore = useSiderStore();
-    const { isLogIn } = storeToRefs(siderStore);
+    const { isLogIn,empID } = storeToRefs(siderStore);
     const apiStore = useApiStore();
     const { apiUrl } = apiStore;
     const formRef = ref(null);
@@ -71,6 +71,7 @@ export const useLogInStore = defineStore('logInStore', () => {
                 localStorage.setItem("loginTime", new Date().getTime());
                 localStorage.setItem("empID", model.value.Username);
                 isLogIn.value = true;
+                empID.value = model.value.Username;
                 dialog.info({ title: "登入成功" });
             }
             isChecking.value = false;

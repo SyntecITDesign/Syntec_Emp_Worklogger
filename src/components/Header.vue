@@ -5,10 +5,10 @@
         <n-avatar src="https://www.syntecclub.com/images/common/Icon@2.png" />
       </template>
       <template #extra>
-        <n-space>
-          <n-button class="NButton" @click="logOut" v-if="isLogIn"
-            >登出</n-button
-          >
+        <n-space v-if="isLogIn">
+          <div>Hi, {{ empID }}</div>
+
+          <n-button class="NButton" @click="logOut">登出</n-button>
         </n-space>
       </template>
     </n-page-header>
@@ -34,7 +34,7 @@ import { storeToRefs } from "pinia";
 import { defineComponent } from "vue";
 import { useSiderStore } from "../stores/siderStore.js";
 const siderStore = useSiderStore();
-const { isLogIn } = storeToRefs(siderStore);
+const { isLogIn, empID } = storeToRefs(siderStore);
 const themeOverrides = {
   Avatar: {
     heightMedium: "4rem",
