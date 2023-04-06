@@ -252,19 +252,19 @@ export const useFormStore = defineStore('formStore', () => {
     watch(() => model.value.selectFilterValue,(newValue) => {
         switch (newValue) {
             case "nonIssue":
-                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND summary ~ 非議題";
+                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND summary ~ 非議題 AND status != Closed";
                 getJiraIssues();
                 break;
             case "byAssignee":
-                JQL.value.JQL = "assignee = " + localStorage.getItem("empID");
+                JQL.value.JQL = "assignee = " + localStorage.getItem("empID") + " AND status != Closed";
                 getJiraIssues();
                 break;
             case "byReporter":
-                JQL.value.JQL = "reporter = " + localStorage.getItem("empID");
+                JQL.value.JQL = "reporter = " + localStorage.getItem("empID") + " AND status != Closed";
                 getJiraIssues();
                 break;
             case "byWatcher":
-                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND summary !~ 非議題";
+                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND summary !~ 非議題 AND status != Closed";
                 getJiraIssues();
                 break;
             case null:
