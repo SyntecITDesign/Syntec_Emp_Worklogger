@@ -1,7 +1,6 @@
 <template>
   <n-config-provider
-    :theme-overrides="themeOverrides"
-    @mousemove="checkLogInTime"
+    :theme-overrides="themeOverrides"  @mousemove="checkLogInTime"
   >
     <HeaderVue />
     <SiderVue />
