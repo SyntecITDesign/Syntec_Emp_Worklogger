@@ -10,6 +10,7 @@ export const useFormStore = defineStore('formStore', () => {
     const { apiUrl } = apiStore;
     const formRef = ref(null);
     const IsIssueOptionsChange = ref(false);
+    const IsAddingJiraWorklog = ref(false);
     const IsTagOptionsChange = ref(false);    
     const spendValueStatus = ref({ init: false, status: "error" });
     const size = ref("medium");
@@ -161,7 +162,8 @@ export const useFormStore = defineStore('formStore', () => {
     };
 
     const addJiraWorklog = () => {
-        try {            
+        try {
+            IsAddingJiraWorklog.value = true
             models.value.forEach( async (v) => {
                 //新增Jira Worklog
                 const resAddWorklog = await axios.post(
@@ -192,11 +194,12 @@ export const useFormStore = defineStore('formStore', () => {
                 );
                 console.log(resUpsertJiraWorkLogRelatedIssue.data);
             });
-            
+            dialog.info({ title: "新增完成" });
             model.value = modelInit;
             models.value = [];
             spendValue.value = spendValueInit;
             spendValueStatus.value.init = false;
+            IsAddingJiraWorklog.value = false;
         } catch (err) {
             console.log(err);
         }
@@ -294,5 +297,5 @@ export const useFormStore = defineStore('formStore', () => {
         }
     });
 
-    return { formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, IsIssueOptionsChange, IsTagOptionsChange, handleValidateButtonClick, handleClose,addJiraWorklog}
+    return { formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, IsIssueOptionsChange, IsAddingJiraWorklog, IsTagOptionsChange, handleValidateButtonClick, handleClose,addJiraWorklog}
 })

@@ -29,6 +29,7 @@ const {
   tagOptions,
   IsIssueOptionsChange,
   IsTagOptionsChange,
+  IsAddingJiraWorklog,
   spendValueStatus,
 } = storeToRefs(formStore);
 const {
@@ -126,8 +127,15 @@ const {
       </n-form-item-gi>
 
       <n-gi :span="24">
-        <div style="display: flex; justify-content: flex-end">
-          <n-button round @click="handleValidateButtonClick"> 新增 </n-button>
+        <div style="display: flex; justify-content: center">
+          <n-button
+            round
+            @click="handleValidateButtonClick"
+            :loading="IsAddingJiraWorklog"
+            :disabled="IsAddingJiraWorklog"
+          >
+            新增
+          </n-button>
         </div>
       </n-gi>
     </n-grid>
@@ -162,8 +170,19 @@ const {
       </n-card>
     </n-gi>
     <n-gi :span="24">
-      <div style="display: flex; justify-content: center; margin: 5%">
-        <n-button round type="info" @click="addJiraWorklog"> 送出 </n-button>
+      <div
+        v-if="models.length > 0"
+        style="display: flex; justify-content: flex-end; margin: 5%"
+      >
+        <n-button
+          round
+          type="info"
+          @click="addJiraWorklog"
+          :loading="IsAddingJiraWorklog"
+          :disabled="IsAddingJiraWorklog"
+        >
+          送出
+        </n-button>
       </div>
     </n-gi>
   </n-grid>

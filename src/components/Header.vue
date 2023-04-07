@@ -31,7 +31,6 @@ import {
 } from "naive-ui";
 
 import { storeToRefs } from "pinia";
-import { defineComponent } from "vue";
 import { useSiderStore } from "../stores/siderStore.js";
 const siderStore = useSiderStore();
 const { isLogIn, empID } = storeToRefs(siderStore);

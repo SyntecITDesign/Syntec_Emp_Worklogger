@@ -48,8 +48,13 @@ export const useLogInStore = defineStore('logInStore', () => {
         });
     };
 
-
-
+    const checkLogInTime = () => {
+        if((isLogIn.value)&&(localStorage.getItem("token") === null || new Date().getTime() - localStorage.getItem("loginTime") > 600000 * 5)){
+            isLogIn.value = false;
+            dialog.info({ title: "逾時請重新登入" });
+        }
+    };
+    
     const jiraLogin = async () => {
         try {
             isChecking.value = true;
@@ -73,6 +78,7 @@ export const useLogInStore = defineStore('logInStore', () => {
                 isLogIn.value = true;
                 empID.value = model.value.Username;
                 dialog.info({ title: "登入成功" });
+                getEmpInfo();
             }
             isChecking.value = false;
 
@@ -81,6 +87,20 @@ export const useLogInStore = defineStore('logInStore', () => {
         }
     };
 
+    const getEmpInfo = async () => {
+        try {
+            const res = await axios.post(
+                apiUrl + "/Open/JIRA_Related/Worklogger/GetEmpInfo",
+                {empID:localStorage.getItem("empID")}
+            );
+            console.log(res.data.content[0]);
+            localStorage.setItem("deptNo", res.data.content[0].DeptNo);
+            localStorage.setItem("superDeptName", res.data.content[0].SuperDeptName);
+            localStorage.setItem("title", res.data.content[0].Title);
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
-    return { formRef, model, rules, isChecking, handleValidateButtonClick }
+    return { formRef, model, rules, isChecking, handleValidateButtonClick, checkLogInTime}
 })
