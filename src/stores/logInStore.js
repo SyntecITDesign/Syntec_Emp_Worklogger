@@ -10,16 +10,16 @@ import { encode } from "js-base64";
 export const useLogInStore = defineStore('logInStore', () => {
     const { dialog } = createDiscreteApi(["dialog"]);
     const siderStore = useSiderStore();
-    const { isLogIn,empID } = storeToRefs(siderStore);
+    const { isLogIn,empID,isManager } = storeToRefs(siderStore);
     const apiStore = useApiStore();
     const { apiUrl } = apiStore;
     const formRef = ref(null);
+    const qualifiedTitleList = ["計時員"];
     const model = ref({
         Username: null,
         Password: null,
     });
     const isChecking=ref(false);
-
     const rules = {
         Username: [
             {
@@ -75,9 +75,7 @@ export const useLogInStore = defineStore('logInStore', () => {
                 );
                 localStorage.setItem("loginTime", new Date().getTime());
                 localStorage.setItem("empID", model.value.Username);
-                isLogIn.value = true;
                 empID.value = model.value.Username;
-                dialog.info({ title: "登入成功" });
                 getEmpInfo();
             }
             isChecking.value = false;
@@ -97,10 +95,15 @@ export const useLogInStore = defineStore('logInStore', () => {
             localStorage.setItem("deptNo", res.data.content[0].DeptNo);
             localStorage.setItem("superDeptName", res.data.content[0].SuperDeptName);
             localStorage.setItem("title", res.data.content[0].Title);
+            localStorage.setItem("BjDept", res.data.content[0].BjDept);
+            isManager.value = qualifiedTitleList.includes(localStorage.getItem("title"));
+            isLogIn.value = true;
+            console.log(isManager.value);
+            dialog.info({ title: "登入成功" });
         } catch (err) {
             console.log(err);
         }
     };
 
-    return { formRef, model, rules, isChecking, handleValidateButtonClick, checkLogInTime}
+    return { formRef, model, rules, isChecking, isManager, handleValidateButtonClick, checkLogInTime}
 })

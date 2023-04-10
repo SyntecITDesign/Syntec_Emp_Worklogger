@@ -1,5 +1,10 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import AddWorklogFormView from '../views/AddWorklogForm.vue'
+import WorklogDetailsView from '../views/WorklogDetails.vue'
+import WorkloadStatisticsView from '../views/WorkloadStatistics.vue'
+import IssueSummaryView from '../views/IssueSummary.vue'
+import HRInvestmentsView from '../views/HRInvestments.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -12,7 +17,27 @@ const router = createRouter({
     {
       path: '/addWorklogForm',
       name: 'addWorklogForm',
-      component: () => import('../views/AddWorklogForm.vue')
+      component: AddWorklogFormView
+    },
+    {
+      path: '/worklogDetails',
+      name: 'worklogDetails',
+      component: WorklogDetailsView
+    },
+    {
+      path: '/workloadStatistics',
+      name: 'workloadStatistics',
+      component: WorkloadStatisticsView
+    },
+    {
+      path: '/HRInvestments',
+      name: 'HRInvestments',
+      component: HRInvestmentsView
+    },
+    {
+      path: '/issueSummary',
+      name: 'issueSummary',
+      component: IssueSummaryView
     }
   ]
 })

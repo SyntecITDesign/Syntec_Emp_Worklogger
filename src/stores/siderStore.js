@@ -1,6 +1,6 @@
-import { h, ref } from 'vue'
+import { h, ref, computed } from 'vue'
 import { RouterLink} from "vue-router";
-import { defineStore } from 'pinia'
+import { defineStore,storeToRefs } from 'pinia'
 import { NIcon } from "naive-ui";
 import {
     Add as addIcon,
@@ -9,11 +9,14 @@ import {
     CaretDownOutline as caretDownOutline,
   } from "@vicons/ionicons5";
 
+
 export const useSiderStore = defineStore('siderStore', () => {
-      const collapsed = ref(true);
-      const isLogIn = ref(false);
+    const collapsed = ref(true);
+    
+    const isManager = ref(false);
+    const isLogIn = ref(false);
       const empID = ref("");
-      const menuOptions = [
+      const menuOptions = computed(() => [
         {
           label: () =>
             h(
@@ -51,26 +54,76 @@ export const useSiderStore = defineStore('siderStore', () => {
         {
           label: "分析看板",
           key: "dashboard",
-          children: [
+          show:isManager.value,
+          children: [            
             {
-              label: "DashboardA",
-              key: "dashboardA",
-              href: "https://en.wikipedia.org/wiki/Hear_the_Wind_Sing",
+              label: () =>
+                h(
+                  RouterLink,
+                  {
+                    to: {
+                      name: "worklogDetails",
+                      params: {
+                        lang: "zh-CN",
+                      },
+                    },
+                  },
+                  { default: () => "Worklog Details" }
+                ),
+              key: "go-WorklogDetails",
             },
             {
-              label: "DashboardB",
-              key: "dashboardB",
-              href: "https://en.wikipedia.org/wiki/Hear_the_Wind_Sing",
+              label: () =>
+                h(
+                  RouterLink,
+                  {
+                    to: {
+                      name: "workloadStatistics",
+                      params: {
+                        lang: "zh-CN",
+                      },
+                    },
+                  },
+                  { default: () => "Workload Statistics" }
+                ),
+              key: "go-WorkloadStatistics",
             },
             {
-              label: "DashboardC",
-              key: "dashboardC",
-              href: "https://en.wikipedia.org/wiki/Hear_the_Wind_Sing",
+              label: () =>
+                h(
+                  RouterLink,
+                  {
+                    to: {
+                      name: "issueSummary",
+                      params: {
+                        lang: "zh-CN",
+                      },
+                    },
+                  },
+                  { default: () => "Issue Summary" }
+                ),
+              key: "go-IssueSummary",
+            },
+            {
+              label: () =>
+                h(
+                  RouterLink,
+                  {
+                    to: {
+                      name: "HRInvestments",
+                      params: {
+                        lang: "zh-CN",
+                      },
+                    },
+                  },
+                  { default: () => "HR Investments" }
+                ),
+              key: "go-HRInvestments",
             },
           ],
           icon: renderIcon(analyticsIcon),
         },
-      ];
+      ]);
       
       function renderIcon(icon) {
         return () => h(NIcon, null, { default: () => h(icon) });
@@ -79,5 +132,5 @@ export const useSiderStore = defineStore('siderStore', () => {
       const expandIcon = () => {
         return h(NIcon, null, { default: () => h(caretDownOutline) });
       };
-    return { collapsed, menuOptions, isLogIn, empID, renderIcon, expandIcon, }
+    return { collapsed, menuOptions, isLogIn, isManager, empID, renderIcon, expandIcon, }
 })

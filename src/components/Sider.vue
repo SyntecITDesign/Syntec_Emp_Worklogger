@@ -23,6 +23,7 @@ const { menuOptions, renderIcon, expandIcon } = siderStore;
         @collapse="collapsed = true"
         @expand="collapsed = false"
         style="height: calc(100vh - 4.125rem)"
+        v-if="isLogIn"
       >
         <n-menu
           :collapsed="collapsed"
