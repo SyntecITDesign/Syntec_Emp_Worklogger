@@ -1,6 +1,7 @@
 <template>
   <n-config-provider
-    :theme-overrides="themeOverrides"  @mousemove="checkLogInTime"
+    :theme-overrides="themeOverrides"
+    @mousemove="checkLogInTime"
   >
     <HeaderVue />
     <SiderVue />
@@ -19,7 +20,6 @@ import { useLogInStore } from "./stores/logInStore.js";
 const logInStore = useLogInStore();
 const { checkLogInTime } = logInStore;
 const siderStore = useSiderStore();
-const { isLogIn } = storeToRefs(siderStore);
 const themeOverrides = {
   Menu: {
     itemColorActive: "#01006b26",
