@@ -2,12 +2,14 @@
   <n-config-provider :theme-overrides="themeOverrides">
     <n-page-header>
       <template #avatar>
-        <n-avatar src="https://www.syntecclub.com/images/common/Icon@2.png" />
+        <div class="headerTitle">
+          <n-avatar src="https://www.syntecclub.com/images/common/Icon@2.png" />
+          Worklogger
+        </div>
       </template>
       <template #extra>
         <n-space v-if="isLogIn">
           <div>Hi, {{ empID }}</div>
-
           <n-button class="NButton" @click="logOut">登出</n-button>
         </n-space>
       </template>
@@ -48,5 +50,13 @@ const logOut = () => {
 <style scoped>
 .NButton {
   margin-right: 1.25rem;
+}
+.headerTitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #01006b;
 }
 </style>
