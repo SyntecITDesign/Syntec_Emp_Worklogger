@@ -14,6 +14,7 @@ export const useLogInStore = defineStore('logInStore', () => {
     const apiStore = useApiStore();
     const { apiUrl } = apiStore;
     const formRef = ref(null);
+    const devList = ["10101707","10190441","10101435"];
     const qualifiedTitleList = ["總經理","經理","總監","副理","部門主管","處長","課長"];
     const model = ref({
         Username: null,
@@ -98,7 +99,7 @@ export const useLogInStore = defineStore('logInStore', () => {
             localStorage.setItem("BjDept", res.data.content[0].BjDept);
             localStorage.setItem("dept50", res.data.content[0].Dept50);
             //isManager.value = qualifiedTitleList.includes(localStorage.getItem("title"));
-            isManager.value = (localStorage.getItem("empID") === "10190441")||(qualifiedTitleList.includes(res.data.content[0].Title));
+            isManager.value = (devList.includes(localStorage.getItem("empID")))||(qualifiedTitleList.includes(res.data.content[0].Title));
             isLogIn.value = true;
             console.log(isManager.value);
             dialog.info({ title: "登入成功" });
