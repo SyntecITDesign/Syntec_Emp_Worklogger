@@ -39,9 +39,9 @@ export const useSiderStore = defineStore('siderStore', () => {
         }
       ];
       
-      
-      
-      
+
+
+
       const menuOptions = computed(() => [
         {
           label: () =>
@@ -150,13 +150,25 @@ export const useSiderStore = defineStore('siderStore', () => {
           icon: renderIcon(analyticsIcon),
         },
       ]);
+
+
+      const renderMenuLabel = (option) => {
+        if ("href" in option) {
+          return h(
+            "a",
+            { href: option.href, target: "_blank" },
+            option.label
+          );
+        }
+        return option.label;
+      };
       
-      function renderIcon(icon) {
+      const renderIcon = (icon) => {
         return () => h(NIcon, null, { default: () => h(icon) });
-      }
+      };
       
       const expandIcon = () => {
         return h(NIcon, null, { default: () => h(caretDownOutline) });
       };
-    return { collapsed, menuOptions, isLogIn, isManager, empID, renderIcon, expandIcon, }
+    return { collapsed, menuOptions, isLogIn, isManager, empID, renderIcon, expandIcon, renderMenuLabel, mmenuOptions}
 })
