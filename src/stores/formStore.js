@@ -20,7 +20,7 @@ export const useFormStore = defineStore('formStore', () => {
         selectIssueValue: null,
         tagValue: null,
         startDateValue: null,
-        spendValue: computed(() => (spendValue.value.spendDayValue * 24 * 60 * 60 + spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
+        spendValue: computed(() => (spendValue.value.spendDayValue * 8 * 60 * 60 + spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
     }
     const spendValueInit = {
         spendDayValue: 0,
@@ -215,7 +215,7 @@ export const useFormStore = defineStore('formStore', () => {
                 const modelForJiraAddWorkLogApi = {
                     issueID: model.value.selectIssueValue.split(" ")[0],
                     started: model.value.startDateValue+"T00:00:00.000+0000",
-                    comment: model.value.selectIssueValue === "nonIssue"? "[分類：非議題":"[分類：一般議題"+"] [標籤："+model.value.tagValue +"] [工作內容："+ model.value.descriptionValue+"]",                    
+                    comment: model.value.selectFilterValue === "nonIssue"? "[分類：非議題":"[分類：一般議題"+"] [標籤："+model.value.tagValue +"] [工作內容："+ model.value.descriptionValue+"]",                    
                     timeSpentSeconds: model.value.spendValue,
                     BasicAuth:localStorage.getItem("token"),
                 }
@@ -226,7 +226,7 @@ export const useFormStore = defineStore('formStore', () => {
                     timeSpentSeconds: model.value.spendValue,
                     created: "",
                     started: model.value.startDateValue,
-                    type:model.value.selectIssueValue === "nonIssue"? "非議題":"一般議題",
+                    type:model.value.selectFilterValue === "nonIssue"? "非議題":"一般議題",
                     tags: model.value.tagValue,
                     comment: model.value.descriptionValue,
                     spendDay:spendValue.value.spendDayValue,
@@ -273,7 +273,7 @@ export const useFormStore = defineStore('formStore', () => {
             case null:
                 break;
             default:
-                JQL.value.JQL = "key = " + newValue;
+                JQL.value.JQL = "key = " + newValue+" AND summary !~ 非議題 AND status != Closed";
                 //console.log(JQL.value);
                 getJiraIssues();
                 break;

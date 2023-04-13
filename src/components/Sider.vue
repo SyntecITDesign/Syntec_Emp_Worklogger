@@ -6,8 +6,8 @@ import { NSpace, NLayout, NLayoutSider, NMenu } from "naive-ui";
 import { onBeforeMount } from "vue";
 import { useSiderStore } from "../stores/siderStore.js";
 const siderStore = useSiderStore();
-const { collapsed, isLogIn } = storeToRefs(siderStore);
-const { menuOptions, renderIcon, expandIcon } = siderStore;
+const { collapsed, isLogIn, menuOptions } = storeToRefs(siderStore);
+const { renderIcon, expandIcon } = siderStore;
 </script>
 
 <template>

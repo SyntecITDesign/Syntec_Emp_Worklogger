@@ -16,6 +16,8 @@ export const useSiderStore = defineStore('siderStore', () => {
     const isManager = ref(false);
     const isLogIn = ref(false);
       const empID = ref("");
+      
+      
       const menuOptions = computed(() => [
         {
           label: () =>
@@ -124,13 +126,15 @@ export const useSiderStore = defineStore('siderStore', () => {
           icon: renderIcon(analyticsIcon),
         },
       ]);
-      
-      function renderIcon(icon) {
+
+
+     
+      const renderIcon = (icon) => {
         return () => h(NIcon, null, { default: () => h(icon) });
-      }
+      };
       
       const expandIcon = () => {
         return h(NIcon, null, { default: () => h(caretDownOutline) });
       };
-    return { collapsed, menuOptions, isLogIn, isManager, empID, renderIcon, expandIcon, }
+    return { collapsed, menuOptions, isLogIn, isManager, empID, renderIcon, expandIcon}
 })
