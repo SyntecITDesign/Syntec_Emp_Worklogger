@@ -108,5 +108,5 @@ export const useLogInStore = defineStore('logInStore', () => {
         }
     };
 
-    return { formRef, model, rules, isChecking, isManager, handleValidateButtonClick, checkLogInTime}
+    return { formRef, model, rules, isChecking, isManager, handleValidateButtonClick, checkLogInTime, qualifiedTitleList}
 })

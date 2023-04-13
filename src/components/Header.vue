@@ -4,7 +4,9 @@
       <template #avatar>
         <div class="headerTitle">
           <n-avatar src="https://www.syntecclub.com/images/common/Icon@2.png" />
-          Worklogger
+          <transition name="headerTitle"
+            ><div v-if="!collapsed">Worklogger</div></transition
+          >
         </div>
       </template>
       <template #extra>
@@ -35,7 +37,7 @@ import {
 import { storeToRefs } from "pinia";
 import { useSiderStore } from "../stores/siderStore.js";
 const siderStore = useSiderStore();
-const { isLogIn, empID } = storeToRefs(siderStore);
+const { isLogIn, empID, collapsed } = storeToRefs(siderStore);
 const themeOverrides = {
   Avatar: {
     heightMedium: "4rem",
@@ -58,5 +60,16 @@ const logOut = () => {
   font-size: 1.75rem;
   font-weight: 900;
   color: #01006b;
+}
+
+.headerTitle-enter-active,
+.headerTitle-leave-active {
+  transition: all 0.3s ease-in-out;
+}
+
+.headerTitle-enter-from,
+.headerTitle-leave-to {
+  transform: translateX(0px);
+  opacity: 0;
 }
 </style>
