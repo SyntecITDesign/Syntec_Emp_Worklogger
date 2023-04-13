@@ -7,7 +7,7 @@ import { onBeforeMount } from "vue";
 import { useSiderStore } from "../stores/siderStore.js";
 const siderStore = useSiderStore();
 const { collapsed, isLogIn, menuOptions } = storeToRefs(siderStore);
-const { renderIcon, expandIcon, renderMenuLabel } = siderStore;
+const { renderIcon, expandIcon } = siderStore;
 </script>
 
 <template>

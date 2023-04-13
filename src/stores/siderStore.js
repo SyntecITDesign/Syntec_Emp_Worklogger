@@ -17,31 +17,7 @@ export const useSiderStore = defineStore('siderStore', () => {
     const isLogIn = ref(false);
       const empID = ref("");
       
-      const mmenuOptions = [
-        {
-          label: "且听风吟",
-          key: "hear-the-wind-sing",
-          href: "https://baike.baidu.com/item/%E4%B8%94%E5%90%AC%E9%A3%8E%E5%90%9F/3199"
-        },        
-        {
-          label: "舞，舞，舞",
-          key: "dance-dance-dance",
-          children: [
-            {
-              label: "叙事者",
-              key: "narrator"
-            },
-            {
-              label: "羊男",
-              key: "sheep-man"
-            }                          
-          ]
-        }
-      ];
       
-
-
-
       const menuOptions = computed(() => [
         {
           label: () =>
@@ -152,17 +128,7 @@ export const useSiderStore = defineStore('siderStore', () => {
       ]);
 
 
-      const renderMenuLabel = (option) => {
-        if ("href" in option) {
-          return h(
-            "a",
-            { href: option.href, target: "_blank" },
-            option.label
-          );
-        }
-        return option.label;
-      };
-      
+     
       const renderIcon = (icon) => {
         return () => h(NIcon, null, { default: () => h(icon) });
       };
@@ -170,5 +136,5 @@ export const useSiderStore = defineStore('siderStore', () => {
       const expandIcon = () => {
         return h(NIcon, null, { default: () => h(caretDownOutline) });
       };
-    return { collapsed, menuOptions, isLogIn, isManager, empID, renderIcon, expandIcon, renderMenuLabel, mmenuOptions}
+    return { collapsed, menuOptions, isLogIn, isManager, empID, renderIcon, expandIcon}
 })
