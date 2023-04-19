@@ -83,13 +83,6 @@ const {
 
       <n-form-item-gi :span="12" label="花費時間" path="spendValue">
         <n-input-number
-          v-model:value="spendValue.spendDayValue"
-          placeholder="請輸入天數"
-          :status="spendValueStatus.status"
-          :min="0"
-        />
-        <span class="NIputNumberLabel">日</span>
-        <n-input-number
           v-model:value="spendValue.spendHourValue"
           placeholder="請輸入時數"
           :status="spendValueStatus.status"
