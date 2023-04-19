@@ -5,9 +5,12 @@ import LogInVue from "../components/LogIn.vue";
 import { NSpace, NLayout, NLayoutSider, NMenu } from "naive-ui";
 import { onBeforeMount } from "vue";
 import { useSiderStore } from "../stores/siderStore.js";
+import { useLogInStore } from "../stores/logInStore.js";
 const siderStore = useSiderStore();
-const { collapsed, isLogIn, menuOptions } = storeToRefs(siderStore);
+const { collapsed, menuOptions } = storeToRefs(siderStore);
 const { renderIcon, expandIcon } = siderStore;
+const logInStore = useLogInStore();
+const { access } = storeToRefs(logInStore);
 </script>
 
 <template>
@@ -23,7 +26,7 @@ const { renderIcon, expandIcon } = siderStore;
         @collapse="collapsed = true"
         @expand="collapsed = false"
         style="height: calc(100vh - 4.125rem)"
-        v-if="isLogIn"
+        v-if="access.isLogIn"
       >
         <n-menu
           :collapsed="collapsed"
@@ -34,7 +37,7 @@ const { renderIcon, expandIcon } = siderStore;
         />
       </n-layout-sider>
       <n-layout class="NLayout">
-        <LogInVue v-if="!isLogIn" />
+        <LogInVue v-if="!access.isLogIn" />
         <RouterView v-else />
       </n-layout>
     </n-layout>

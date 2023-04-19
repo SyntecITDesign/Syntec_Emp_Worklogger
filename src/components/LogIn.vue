@@ -6,10 +6,17 @@ import { onBeforeMount } from "vue";
 import { useLogInStore } from "../stores/logInStore.js";
 
 const logInStore = useLogInStore();
-const { formRef, model, isChecking } = storeToRefs(logInStore);
+const { formRef, model, access } = storeToRefs(logInStore);
 const { rules, handleValidateButtonClick } = logInStore;
 
 onBeforeMount(() => {
+  access.value = {
+    isLogIn: false,
+    isViewer: false,
+    isViewersManager: false,
+    basicAuth: null,
+    isChecking: false,
+  };
   localStorage.clear();
 });
 </script>
@@ -50,8 +57,8 @@ onBeforeMount(() => {
     <n-button
       size="large"
       @click="handleValidateButtonClick"
-      :loading="isChecking"
-      :disabled="isChecking"
+      :loading="access.isChecking"
+      :disabled="access.isChecking"
       >登入</n-button
     >
   </n-space>
