@@ -1,6 +1,7 @@
 import { ref, watchEffect, computed, watch } from 'vue'
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 import { useApiStore } from "../stores/apiStore.js";
+import { useLogInStore } from "../stores/logInStore.js";
 import axios from "axios";
 import { createDiscreteApi } from "naive-ui";
 
@@ -8,6 +9,10 @@ export const useFormStore = defineStore('formStore', () => {
     const { dialog } = createDiscreteApi(["dialog"]);
     const apiStore = useApiStore();
     const { apiUrl } = apiStore;
+    const logInStore = useLogInStore();
+    const { access } = storeToRefs(logInStore);
+
+    
     const formRef = ref(null);
     const IsIssueOptionsChange = ref(false);
     const IsAddingJiraWorklog = ref(false);
@@ -44,7 +49,7 @@ export const useFormStore = defineStore('formStore', () => {
 
     const JQL = ref({
         JQL: "",
-        BasicAuth:localStorage.getItem("token"),
+        BasicAuth:access.value.basicAuth,
     });
 
     const issueOptions = ref([].map(
@@ -189,7 +194,7 @@ export const useFormStore = defineStore('formStore', () => {
                     apiUrl + "/Open/JIRA_Related/Worklogger/UpsertJiraWorkLogRelatedIssue",
                     {
                         issueID:v[0].issueID,
-                        BasicAuth:localStorage.getItem("token"),
+                        BasicAuth:access.value.basicAuth,
                     }
                 );
                 console.log(resUpsertJiraWorkLogRelatedIssue.data);
@@ -217,7 +222,7 @@ export const useFormStore = defineStore('formStore', () => {
                     started: model.value.startDateValue+"T00:00:00.000+0000",
                     comment: model.value.selectFilterValue === "nonIssue"? "[分類：非議題":"[分類：一般議題"+"] [標籤："+model.value.tagValue +"] [工作內容："+ model.value.descriptionValue+"]",                    
                     timeSpentSeconds: model.value.spendValue,
-                    BasicAuth:localStorage.getItem("token"),
+                    BasicAuth:access.value.basicAuth,
                 }
                 const modelForJiraWorkLogRecord = {
                     issueID: model.value.selectIssueValue.split(" ")[0],
@@ -232,7 +237,7 @@ export const useFormStore = defineStore('formStore', () => {
                     spendDay:spendValue.value.spendDayValue,
                     spendHour:spendValue.value.spendHourValue,
                     spendMinute:spendValue.value.spendMinuteValue,
-                    BasicAuth:localStorage.getItem("token"),
+                    BasicAuth:access.value.basicAuth,
                 };
                 models.value.push([modelForJiraWorkLogRecord,modelForJiraAddWorkLogApi]);
                 console.log(models.value);
@@ -297,5 +302,5 @@ export const useFormStore = defineStore('formStore', () => {
         }
     });
 
-    return { formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, IsIssueOptionsChange, IsAddingJiraWorklog, IsTagOptionsChange, handleValidateButtonClick, handleClose,addJiraWorklog}
+    return { formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, IsIssueOptionsChange, IsAddingJiraWorklog, IsTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog}
 })

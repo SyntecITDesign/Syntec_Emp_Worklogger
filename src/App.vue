@@ -11,15 +11,12 @@
 <script setup>
 import SiderVue from "./components/Sider.vue";
 import HeaderVue from "./components/Header.vue";
-import { storeToRefs } from "pinia";
 import { onBeforeMount } from "vue";
 import { NConfigProvider } from "naive-ui";
-import { useSiderStore } from "./stores/siderStore.js";
 import { useLogInStore } from "./stores/logInStore.js";
 
 const logInStore = useLogInStore();
 const { checkLogInTime } = logInStore;
-const siderStore = useSiderStore();
 const themeOverrides = {
   Menu: {
     itemColorActive: "#01006b26",

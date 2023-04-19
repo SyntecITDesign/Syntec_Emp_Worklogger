@@ -4,12 +4,14 @@
       <template #avatar>
         <div class="headerTitle">
           <n-avatar src="https://www.syntecclub.com/images/common/Icon@2.png" />
-          Worklogger
+          <transition name="headerTitle"
+            ><div v-if="!collapsed">Worklogger</div></transition
+          >
         </div>
       </template>
       <template #extra>
-        <n-space v-if="isLogIn">
-          <div>Hi, {{ empID }}</div>
+        <n-space v-if="access.isLogIn">
+          <div>{{ welcomeText }}</div>
           <n-button class="NButton" @click="logOut">登出</n-button>
         </n-space>
       </template>
@@ -33,16 +35,23 @@ import {
 } from "naive-ui";
 
 import { storeToRefs } from "pinia";
+import { ref } from "vue";
+import axios from "axios";
 import { useSiderStore } from "../stores/siderStore.js";
+import { useLogInStore } from "../stores/logInStore.js";
 const siderStore = useSiderStore();
-const { isLogIn, empID } = storeToRefs(siderStore);
+const { collapsed } = storeToRefs(siderStore);
+const logInStore = useLogInStore();
+const { access } = storeToRefs(logInStore);
 const themeOverrides = {
   Avatar: {
     heightMedium: "4rem",
   },
 };
+const welcomeText = ref("Hi," + localStorage.getItem("empID"));
 const logOut = () => {
-  isLogIn.value = false;
+  access.value.basicAuth = null;
+  access.value.isLogIn = false;
   localStorage.clear();
 };
 </script>
@@ -58,5 +67,16 @@ const logOut = () => {
   font-size: 1.75rem;
   font-weight: 900;
   color: #01006b;
+}
+
+.headerTitle-enter-active,
+.headerTitle-leave-active {
+  transition: all 0.3s ease-in-out;
+}
+
+.headerTitle-enter-from,
+.headerTitle-leave-to {
+  transform: translateX(0px);
+  opacity: 0;
 }
 </style>
