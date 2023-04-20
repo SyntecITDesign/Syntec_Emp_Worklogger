@@ -14,8 +14,7 @@ import {
 } from "naive-ui";
 
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
-import axios from "axios";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useSiderStore } from "../stores/siderStore.js";
 import { useLogInStore } from "../stores/logInStore.js";
 const siderStore = useSiderStore();
