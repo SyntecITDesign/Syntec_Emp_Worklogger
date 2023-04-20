@@ -85,7 +85,7 @@ const welcomeText = ref("");
                 
                 localStorage.setItem("loginTime", new Date().getTime());
                 localStorage.setItem("empID", model.value.Username);
-                welcomeText.value = "Hello," + model.value.Username;
+                welcomeText.value = "Hi," + model.value.Username;
                 getJiraWorkLoggerAccess("checkViewer",{
                     Viewers:"%"+localStorage.getItem("empID")+"%",                    
                 });
