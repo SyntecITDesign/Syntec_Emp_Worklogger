@@ -25,10 +25,9 @@ export const useFormStore = defineStore('formStore', () => {
         selectIssueValue: null,
         tagValue: null,
         startDateValue: null,
-        spendValue: computed(() => (spendValue.value.spendDayValue * 8 * 60 * 60 + spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
+        spendValue: computed(() => (spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
     }
     const spendValueInit = {
-        spendDayValue: 0,
         spendHourValue: 0,
         spendMinuteValue: 0,
     }
@@ -38,13 +37,13 @@ export const useFormStore = defineStore('formStore', () => {
         selectIssueValue: null,
         tagValue: null,
         startDateValue: null,
-        spendValue: computed(() => (spendValue.value.spendDayValue * 24 * 60 * 60 + spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
+        spendValue: computed(() => (spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
     });
     const models = ref([]);
     const spendValue = ref({
-        spendDayValue: 0,
         spendHourValue: 0,
         spendMinuteValue: 0,
+        sumSpendSecond: 0,
     });
 
     const JQL = ref({
@@ -97,10 +96,10 @@ export const useFormStore = defineStore('formStore', () => {
             type: "number",
             required: true,
             validator(value) {
-                return model.value.spendValue > 0;
+                return (model.value.spendValue > 0 ) && ((model.value.spendValue+spendValue.value.sumSpendSecond) < 24*60*60);
             },
             trigger: ["blur", "change"],
-            message: "總工作時間至少大於0",
+            message: "總工作時間至少大於0 且 當日報工總時數不得超過24小時",
         },
         tagValue: {
             required: true,
@@ -210,7 +209,23 @@ export const useFormStore = defineStore('formStore', () => {
         }
     };
 
+    const getSumSpentSeconds = async () => {
+        try {            
+            const res = await axios.post(
+                apiUrl + "/Open/JIRA_Related/Worklogger/GetSumSpentSeconds",
+                {
+                    empID:localStorage.getItem("empID"),
+                    started:model.value.startDateValue+" 08:00:00",
+                }
+            );
+            res.data.content !== null ? spendValue.value.sumSpendSecond = res.data.content[0].sumSpentSeconds: spendValue.value.sumSpendSecond = 0;
+            console.log(spendValue.value.sumSpendSecond);
 
+
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
 
     const handleValidateButtonClick = (e) => {        
@@ -260,7 +275,7 @@ export const useFormStore = defineStore('formStore', () => {
     watch(() => model.value.selectFilterValue,(newValue) => {
         switch (newValue) {
             case "nonIssue":
-                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND summary ~ 非議題 AND status != Closed";
+                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type = 非議題 AND status != Closed";
                 getJiraIssues();
                 break;
             case "byAssignee":
@@ -272,13 +287,13 @@ export const useFormStore = defineStore('formStore', () => {
                 getJiraIssues();
                 break;
             case "byWatcher":
-                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND summary !~ 非議題 AND status != Closed";
+                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND status != Closed";
                 getJiraIssues();
                 break;
             case null:
                 break;
             default:
-                JQL.value.JQL = "key = " + newValue+" AND summary !~ 非議題 AND status != Closed";
+                JQL.value.JQL = "key = " + newValue+" status != Closed";
                 //console.log(JQL.value);
                 getJiraIssues();
                 break;
@@ -287,6 +302,11 @@ export const useFormStore = defineStore('formStore', () => {
 
     watch(() => model.value.selectIssueValue,(newValue) => {
         if(newValue!== null) getProjectTags();
+    },{deep: true,});
+
+    watch(() => model.value.startDateValue,(newValue) => {
+        //console.log(newValue);        
+        if(newValue!== null) getSumSpentSeconds();
     },{deep: true,});
 
     watchEffect(() => {        
