@@ -19,18 +19,7 @@ export const useFormStore = defineStore('formStore', () => {
     const IsTagOptionsChange = ref(false);    
     const spendValueStatus = ref({ init: false, status: "error" });
     const size = ref("medium");
-    const modelInit = {
-        descriptionValue: null,
-        selectFilterValue: null,
-        selectIssueValue: null,
-        tagValue: null,
-        startDateValue: null,
-        spendValue: computed(() => (spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
-    }
-    const spendValueInit = {
-        spendHourValue: 0,
-        spendMinuteValue: 0,
-    }
+    
     const model = ref({
         descriptionValue: null,
         selectFilterValue: null,
@@ -96,7 +85,7 @@ export const useFormStore = defineStore('formStore', () => {
             type: "number",
             required: true,
             validator(value) {
-                return (model.value.spendValue > 0 ) && ((model.value.spendValue+spendValue.value.sumSpendSecond) < 24*60*60);
+                return (model.value.spendValue > 0 ) && ((model.value.spendValue + spendValue.value.sumSpendSecond) <= 24*60*60);
             },
             trigger: ["blur", "change"],
             message: "總工作時間至少大於0 且 當日報工總時數不得超過24小時",
@@ -199,11 +188,9 @@ export const useFormStore = defineStore('formStore', () => {
                 console.log(resUpsertJiraWorkLogRelatedIssue.data);
             });
             dialog.info({ title: "新增完成" });
-            model.value = modelInit;
-            models.value = [];
-            spendValue.value = spendValueInit;
-            spendValueStatus.value.init = false;
+            initData();
             IsAddingJiraWorklog.value = false;
+            models.value = [];
         } catch (err) {
             console.log(err);
         }
@@ -219,8 +206,13 @@ export const useFormStore = defineStore('formStore', () => {
                 }
             );
             res.data.content !== null ? spendValue.value.sumSpendSecond = res.data.content[0].sumSpentSeconds: spendValue.value.sumSpendSecond = 0;
-            console.log(spendValue.value.sumSpendSecond);
 
+            models.value.forEach(function(item, index, array){
+                if(item[0].started === model.value.startDateValue){
+                    spendValue.value.sumSpendSecond += item[0].timeSpentSeconds;
+                }
+            });
+            console.log(spendValue.value.sumSpendSecond);
 
         } catch (err) {
             console.log(err);
@@ -235,7 +227,7 @@ export const useFormStore = defineStore('formStore', () => {
                 const modelForJiraAddWorkLogApi = {
                     issueID: model.value.selectIssueValue.split(" ")[0],
                     started: model.value.startDateValue+"T00:00:00.000+0000",
-                    comment: model.value.selectFilterValue === "nonIssue"? "[分類：非議題":"[分類：一般議題"+"] [標籤："+model.value.tagValue +"] [工作內容："+ model.value.descriptionValue+"]",                    
+                    comment: (model.value.selectFilterValue === "nonIssue"? "[分類：非議題":"[分類：一般議題")+"] [標籤："+model.value.tagValue +"] [工作內容："+ model.value.descriptionValue+"]",                    
                     timeSpentSeconds: model.value.spendValue,
                     BasicAuth:access.value.basicAuth,
                 }
@@ -249,21 +241,35 @@ export const useFormStore = defineStore('formStore', () => {
                     type:model.value.selectFilterValue === "nonIssue"? "非議題":"一般議題",
                     tags: model.value.tagValue,
                     comment: model.value.descriptionValue,
-                    spendDay:spendValue.value.spendDayValue,
                     spendHour:spendValue.value.spendHourValue,
                     spendMinute:spendValue.value.spendMinuteValue,
                     BasicAuth:access.value.basicAuth,
                 };
                 models.value.push([modelForJiraWorkLogRecord,modelForJiraAddWorkLogApi]);
-                console.log(models.value);
+                               
+                initData();
+                console.log(models.value);                
+                console.log(spendValue.value);                
+                console.log(model.value);
                 console.log("ok");
-
             } else {
                 console.log(errors);
                 console.log("no");
             }
         });
     };
+
+    const initData = () =>{
+            model.value.descriptionValue=null,
+            model.value.selectFilterValue=null,
+            model.value.selectIssueValue=null,
+            model.value.tagValue=null,
+            model.value.startDateValue=null,
+            spendValue.value.spendHourValue = 0,
+            spendValue.value.spendMinuteValue = 0,
+            spendValue.value.sumSpendSecond = 0,
+            spendValueStatus.value.init = false;
+    }
 
     const handleClose = (index) => {
         //console.log(models.value[index]);
@@ -279,21 +285,21 @@ export const useFormStore = defineStore('formStore', () => {
                 getJiraIssues();
                 break;
             case "byAssignee":
-                JQL.value.JQL = "assignee = " + localStorage.getItem("empID") + " AND status != Closed";
+                JQL.value.JQL = "assignee = " + localStorage.getItem("empID") + " AND type != 非議題 AND status != Closed";
                 getJiraIssues();
                 break;
             case "byReporter":
-                JQL.value.JQL = "reporter = " + localStorage.getItem("empID") + " AND status != Closed";
+                JQL.value.JQL = "reporter = " + localStorage.getItem("empID") + " AND type != 非議題 AND status != Closed";
                 getJiraIssues();
                 break;
             case "byWatcher":
-                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND status != Closed";
+                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type != 非議題 AND status != Closed";
                 getJiraIssues();
                 break;
             case null:
                 break;
             default:
-                JQL.value.JQL = "key = " + newValue+" status != Closed";
+                JQL.value.JQL = "key = " + newValue+" AND status != Closed";
                 //console.log(JQL.value);
                 getJiraIssues();
                 break;
@@ -320,6 +326,7 @@ export const useFormStore = defineStore('formStore', () => {
             spendValueStatus.value.status = "success";
             spendValueStatus.value.init = true;
         }
+        console.log(model.value.spendValue/(60*60),spendValue.value.sumSpendSecond/(60*60));
     });
 
     return { formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, IsIssueOptionsChange, IsAddingJiraWorklog, IsTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog}
