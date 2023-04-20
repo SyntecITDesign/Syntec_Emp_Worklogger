@@ -1,24 +1,3 @@
-<template>
-  <n-config-provider :theme-overrides="themeOverrides">
-    <n-page-header>
-      <template #avatar>
-        <div class="headerTitle">
-          <n-avatar src="https://www.syntecclub.com/images/common/Icon@2.png" />
-          <transition name="headerTitle"
-            ><div v-if="!collapsed">Worklogger</div></transition
-          >
-        </div>
-      </template>
-      <template #extra>
-        <n-space v-if="access.isLogIn">
-          <div>{{ welcomeText }}</div>
-          <n-button class="NButton" @click="logOut">登出</n-button>
-        </n-space>
-      </template>
-    </n-page-header>
-  </n-config-provider>
-</template>
-
 <script setup>
 import {
   NPageHeader,
@@ -42,19 +21,39 @@ import { useLogInStore } from "../stores/logInStore.js";
 const siderStore = useSiderStore();
 const { collapsed } = storeToRefs(siderStore);
 const logInStore = useLogInStore();
-const { access } = storeToRefs(logInStore);
+const { access, welcomeText } = storeToRefs(logInStore);
 const themeOverrides = {
   Avatar: {
     heightMedium: "4rem",
   },
 };
-const welcomeText = ref("Hi," + localStorage.getItem("empID"));
 const logOut = () => {
   access.value.basicAuth = null;
   access.value.isLogIn = false;
   localStorage.clear();
 };
 </script>
+
+<template>
+  <n-config-provider :theme-overrides="themeOverrides">
+    <n-page-header>
+      <template #avatar>
+        <div class="headerTitle">
+          <n-avatar src="https://www.syntecclub.com/images/common/Icon@2.png" />
+          <transition name="headerTitle"
+            ><div v-if="!collapsed">Worklogger</div></transition
+          >
+        </div>
+      </template>
+      <template #extra>
+        <n-space v-if="access.isLogIn">
+          <div>{{ welcomeText }}</div>
+          <n-button class="NButton" @click="logOut">登出</n-button>
+        </n-space>
+      </template>
+    </n-page-header>
+  </n-config-provider>
+</template>
 
 <style scoped>
 .NButton {

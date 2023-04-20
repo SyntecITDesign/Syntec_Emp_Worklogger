@@ -25,6 +25,7 @@ export const useLogInStore = defineStore('logInStore', () => {
         isChecking:false,
     });
     const viewersManageInfo = ref([]);
+const welcomeText = ref("");    
     const rules = {
         Username: [
             {
@@ -84,7 +85,7 @@ export const useLogInStore = defineStore('logInStore', () => {
                 
                 localStorage.setItem("loginTime", new Date().getTime());
                 localStorage.setItem("empID", model.value.Username);
-                
+                welcomeText.value = "Hello," + model.value.Username;
                 getJiraWorkLoggerAccess("checkViewer",{
                     Viewers:"%"+localStorage.getItem("empID")+"%",                    
                 });
@@ -161,5 +162,5 @@ export const useLogInStore = defineStore('logInStore', () => {
         }
     };
 
-    return { access,formRef, model, rules, viewersManageInfo, handleValidateButtonClick, checkLogInTime, getJiraWorkLoggerAccess, getEmpInfo}
+    return { welcomeText, access,formRef, model, rules, viewersManageInfo, handleValidateButtonClick, checkLogInTime, getJiraWorkLoggerAccess, getEmpInfo}
 })
