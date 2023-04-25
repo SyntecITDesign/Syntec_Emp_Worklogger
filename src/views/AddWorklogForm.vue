@@ -27,9 +27,9 @@ const {
   spendValue,
   issueOptions,
   tagOptions,
-  IsIssueOptionsChange,
-  IsTagOptionsChange,
-  IsAddingJiraWorklog,
+  isIssueOptionsChange,
+  isTagOptionsChange,
+  isAddingJiraWorklog,
   spendValueStatus,
 } = storeToRefs(formStore);
 const {
@@ -57,8 +57,8 @@ const {
           v-model:value="model.selectFilterValue"
           placeholder="請選擇議題類別或輸入議題編號(ex:ICT-999)"
           :options="filterOptions"
-          :loading="IsIssueOptionsChange"
-          :disabled="IsIssueOptionsChange"
+          :loading="isIssueOptionsChange"
+          :disabled="isIssueOptionsChange"
         />
       </n-form-item-gi>
 
@@ -67,8 +67,8 @@ const {
           v-model:value="model.selectIssueValue"
           placeholder="請選擇議題"
           :options="issueOptions"
-          :loading="IsIssueOptionsChange"
-          :disabled="IsIssueOptionsChange"
+          :loading="isIssueOptionsChange"
+          :disabled="isIssueOptionsChange"
         />
       </n-form-item-gi>
 
@@ -102,8 +102,8 @@ const {
           v-model:value="model.tagValue"
           placeholder="請選擇工作類型"
           :options="tagOptions"
-          :loading="IsTagOptionsChange"
-          :disabled="IsTagOptionsChange"
+          :loading="isTagOptionsChange"
+          :disabled="isTagOptionsChange"
         />
       </n-form-item-gi>
 
@@ -124,8 +124,8 @@ const {
           <n-button
             round
             @click="handleValidateButtonClick"
-            :loading="IsAddingJiraWorklog"
-            :disabled="IsAddingJiraWorklog"
+            :loading="isAddingJiraWorklog"
+            :disabled="isAddingJiraWorklog"
           >
             新增
           </n-button>
@@ -171,8 +171,8 @@ const {
           round
           type="info"
           @click="addJiraWorklog"
-          :loading="IsAddingJiraWorklog"
-          :disabled="IsAddingJiraWorklog"
+          :loading="isAddingJiraWorklog"
+          :disabled="isAddingJiraWorklog"
         >
           送出
         </n-button>

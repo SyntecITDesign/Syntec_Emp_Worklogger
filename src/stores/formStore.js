@@ -14,9 +14,9 @@ export const useFormStore = defineStore('formStore', () => {
 
     
     const formRef = ref(null);
-    const IsIssueOptionsChange = ref(false);
-    const IsAddingJiraWorklog = ref(false);
-    const IsTagOptionsChange = ref(false);    
+    const isIssueOptionsChange = ref(false);
+    const isAddingJiraWorklog = ref(false);
+    const isTagOptionsChange = ref(false);    
     const spendValueStatus = ref({ init: false, status: "error" });
     const size = ref("medium");
     
@@ -101,7 +101,7 @@ export const useFormStore = defineStore('formStore', () => {
 
     const getJiraIssues = async () => {
         try {
-            IsIssueOptionsChange.value = true;
+            isIssueOptionsChange.value = true;
             issueOptions.value = [].map((v) => ({ label: v, value: v, }));
             model.value.selectIssueValue = null;            
             const res = await axios.post(
@@ -119,7 +119,7 @@ export const useFormStore = defineStore('formStore', () => {
             
 
             console.log(issueOptions.value);
-            IsIssueOptionsChange.value = false;
+            isIssueOptionsChange.value = false;
 
         } catch (err) {
             console.log(err);
@@ -128,7 +128,7 @@ export const useFormStore = defineStore('formStore', () => {
 
     const getProjectTags = async () => {
         try {
-            IsTagOptionsChange.value = true;
+            isTagOptionsChange.value = true;
             tagOptions.value = [].map((v) => ({ label: v, value: v, }));
             model.value.tagValue = null;
             const res = await axios.post(
@@ -147,50 +147,63 @@ export const useFormStore = defineStore('formStore', () => {
                 });
             }
             console.log(tagOptions.value);
-            IsTagOptionsChange.value = false;
+            isTagOptionsChange.value = false;
 
         } catch (err) {
             console.log(err);
         }
     };
 
-    const addJiraWorklog = () => {
+    const addJiraWorklog = async () => {
         try {
-            IsAddingJiraWorklog.value = true
-            models.value.forEach( async (v) => {
+            isAddingJiraWorklog.value = true;
+            let isSuccess = true;
+            for (var i = 0;i<models.value.length;i++) {
+                const v = models.value[i];
                 //新增Jira Worklog
                 const resAddWorklog = await axios.post(
                     apiUrl + "/Open/JIRA_Related/Worklogger/AddWorklog",
                     v[1]
                 );
                 console.log(resAddWorklog.data);
-                //紀錄Jira回傳的worklog ID
-                v[0].workLogID = resAddWorklog.data.content.id;
-                v[0].created = resAddWorklog.data.content.created.split("+")[0];
-                v[0].started = resAddWorklog.data.content.started.split("+")[0];
-                //console.log(v[0]);
-                
-                //新增報工紀錄到DB同步看板資料
-                const resInsertWorkLogs = await axios.post(
-                    apiUrl + "/Open/JIRA_Related/Worklogger/InsertWorkLogs",
-                    v[0]
-                );
-                console.log(resInsertWorkLogs.data);
-                
-                //新增或更新報工紀錄的相關議題欄位到DB同步看板資料
-                const resUpsertJiraWorkLogRelatedIssue = await axios.post(
-                    apiUrl + "/Open/JIRA_Related/Worklogger/UpsertJiraWorkLogRelatedIssue",
-                    {
-                        issueID:v[0].issueID,
-                        BasicAuth:access.value.basicAuth,
-                    }
-                );
-                console.log(resUpsertJiraWorkLogRelatedIssue.data);
-            });
-            dialog.info({ title: "新增完成" });
-            initData();
-            IsAddingJiraWorklog.value = false;
-            models.value = [];
+                if (Object.prototype.hasOwnProperty.call(resAddWorklog.data.content, 'errorMessages')) {
+                    isSuccess = false;
+                    break;
+                }else{
+                    //紀錄Jira回傳的worklog ID
+                    v[0].workLogID = resAddWorklog.data.content.id;
+                    v[0].created = resAddWorklog.data.content.created.split("+")[0];
+                    v[0].started = resAddWorklog.data.content.started.split("+")[0];
+                    //console.log(v[0]);
+                    
+                    //新增報工紀錄到DB同步看板資料
+                    const resInsertWorkLogs = await axios.post(
+                        apiUrl + "/Open/JIRA_Related/Worklogger/InsertWorkLogs",
+                        v[0]
+                    );
+                    console.log(resInsertWorkLogs.data);
+                    
+                    //新增或更新報工紀錄的相關議題欄位到DB同步看板資料
+                    const resUpsertJiraWorkLogRelatedIssue = await axios.post(
+                        apiUrl + "/Open/JIRA_Related/Worklogger/UpsertJiraWorkLogRelatedIssue",
+                        {
+                            issueID:v[0].issueID,
+                            BasicAuth:access.value.basicAuth,
+                        }
+                    );
+                    console.log(resUpsertJiraWorkLogRelatedIssue.data);
+                }
+            };
+
+            if(isSuccess){
+                dialog.info({ title: "新增完成" });
+                initData();
+                models.value = [];
+            }else{
+                dialog.error({ title: "新增失敗" });
+            }
+            isAddingJiraWorklog.value = false;
+            
         } catch (err) {
             console.log(err);
         }
@@ -207,7 +220,7 @@ export const useFormStore = defineStore('formStore', () => {
             );
             res.data.content !== null ? spendValue.value.sumSpendSecond = res.data.content[0].sumSpentSeconds: spendValue.value.sumSpendSecond = 0;
 
-            models.value.forEach(function(item, index, array){
+            models.value.forEach((item, index, array)=>{
                 if(item[0].started === model.value.startDateValue){
                     spendValue.value.sumSpendSecond += item[0].timeSpentSeconds;
                 }
@@ -246,7 +259,7 @@ export const useFormStore = defineStore('formStore', () => {
                     BasicAuth:access.value.basicAuth,
                 };
                 models.value.push([modelForJiraWorkLogRecord,modelForJiraAddWorkLogApi]);
-                               
+
                 initData();
                 console.log(models.value);                
                 console.log(spendValue.value);                
@@ -329,5 +342,5 @@ export const useFormStore = defineStore('formStore', () => {
         console.log(model.value.spendValue/(60*60),spendValue.value.sumSpendSecond/(60*60));
     });
 
-    return { formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, IsIssueOptionsChange, IsAddingJiraWorklog, IsTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog}
+    return { formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog}
 })

@@ -10,6 +10,9 @@ const { formRef, model, access } = storeToRefs(logInStore);
 const { rules, handleValidateButtonClick } = logInStore;
 
 onBeforeMount(() => {
+  if (window.location.href.split("#")[1].length > 1) {
+    window.location.assign("/");
+  }
   access.value = {
     isLogIn: false,
     isViewer: false,
@@ -18,6 +21,7 @@ onBeforeMount(() => {
     isChecking: false,
   };
   localStorage.clear();
+  console.log(import.meta.env.VITE_BACKEND_HOST);
 });
 </script>
 

@@ -5,6 +5,7 @@ import WorklogDetailsView from '../views/WorklogDetails.vue'
 import WorkloadStatisticsView from '../views/WorkloadStatistics.vue'
 import IssueSummaryView from '../views/IssueSummary.vue'
 import HRInvestmentsView from '../views/HRInvestments.vue'
+import IssueExecutionView from '../views/IssueExecution.vue'
 import DashboardAccessManagementView from '../views/DashboardAccessManagement.vue'
 
 const router = createRouter({
@@ -39,6 +40,11 @@ const router = createRouter({
       path: '/issueSummary',
       name: 'issueSummary',
       component: IssueSummaryView
+    },
+    {
+      path: '/issueExecution',
+      name: 'issueExecution',
+      component: IssueExecutionView
     },
     {
       path: '/dashboardAccessManagement',
