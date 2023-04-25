@@ -26,7 +26,8 @@ export const useLogInStore = defineStore('logInStore', () => {
     });
     const viewerManagedInfo = ref([]);
     const projectKeyManagedSet = ref(new Set());
-
+    const viewersTags = ref([]);
+    const newViewers = ref([]);
     const welcomeText = ref("");    
     const rules = {
         Username: [
@@ -153,20 +154,17 @@ export const useLogInStore = defineStore('logInStore', () => {
         }
     };
 
-    const getEmpInfo = (empIDs) => {
+    const getEmpInfo = async (query) => {
         try {
-            let empNames = [];
-            empIDs.forEach(async (item) => {
-                const res = await axios.post(
-                    apiUrl + "/Open/JIRA_Related/Worklogger/GetEmpInfo",
-                    {empID:item}
-                );
-                //console.log([item,res.data.content[0].EmpName]);
-                empNames.push(item+" "+res.data.content[0].EmpName);
-            });
-            console.log(empNames);
-
-            return empNames
+            const res = await axios.post(
+                apiUrl + "/Open/JIRA_Related/Worklogger/GetEmpInfo",
+                { empID:query }
+            );
+            viewersTags.value = res.data.content.map((item)=>{return item.EmpID+"_"+item.EmpName;}).map(
+            (v) => ({
+                label: v,
+                value: v,
+            }));
         } catch (err) {
             console.log(err);
         }
@@ -174,7 +172,12 @@ export const useLogInStore = defineStore('logInStore', () => {
 
     watch(() =>  viewerManagedInfo.value,(newValue) => {
         console.log("watch",newValue);
+        newViewers.value = newValue.map((item)=>({
+            projectKey: item[0],
+            Viewers: item[1].map((i)=>{return i.split("_")[0]}).join(','),
+        }));
+        console.log("newViewers",newViewers.value);
     },{deep: true,});
 
-    return { welcomeText, access,formRef, model, rules, viewerManagedInfo, projectKeyManagedSet, handleValidateButtonClick, checkLogInTime, getJiraWorkLoggerAccess, getEmpInfo}
+    return { newViewers, viewersTags, welcomeText, access,formRef, model, rules, viewerManagedInfo, projectKeyManagedSet, handleValidateButtonClick, checkLogInTime, getJiraWorkLoggerAccess, getEmpInfo}
 })
