@@ -120,6 +120,22 @@ export const useSiderStore = defineStore('siderStore', () => {
               ),
             key: "go-HRInvestments",
           },
+          {
+            label: () =>
+              h(
+                RouterLink,
+                {
+                  to: {
+                    name: "issueExecution",
+                    params: {
+                      lang: "zh-CN",
+                    },
+                  },
+                },
+                { default: () => "Issue Execution" }
+              ),
+            key: "go-issueExecution",
+          },
         ],
         icon: renderIcon(analyticsIcon),
       },

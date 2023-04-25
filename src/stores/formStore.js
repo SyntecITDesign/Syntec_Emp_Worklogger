@@ -156,7 +156,8 @@ export const useFormStore = defineStore('formStore', () => {
 
     const addJiraWorklog = () => {
         try {
-            IsAddingJiraWorklog.value = true
+            IsAddingJiraWorklog.value = true;
+            let isSuccess = true;
             models.value.forEach( async (v) => {
                 //新增Jira Worklog
                 const resAddWorklog = await axios.post(
@@ -164,33 +165,41 @@ export const useFormStore = defineStore('formStore', () => {
                     v[1]
                 );
                 console.log(resAddWorklog.data);
-                //紀錄Jira回傳的worklog ID
-                v[0].workLogID = resAddWorklog.data.content.id;
-                v[0].created = resAddWorklog.data.content.created.split("+")[0];
-                v[0].started = resAddWorklog.data.content.started.split("+")[0];
-                //console.log(v[0]);
-                
-                //新增報工紀錄到DB同步看板資料
-                const resInsertWorkLogs = await axios.post(
-                    apiUrl + "/Open/JIRA_Related/Worklogger/InsertWorkLogs",
-                    v[0]
-                );
-                console.log(resInsertWorkLogs.data);
-                
-                //新增或更新報工紀錄的相關議題欄位到DB同步看板資料
-                const resUpsertJiraWorkLogRelatedIssue = await axios.post(
-                    apiUrl + "/Open/JIRA_Related/Worklogger/UpsertJiraWorkLogRelatedIssue",
-                    {
-                        issueID:v[0].issueID,
-                        BasicAuth:access.value.basicAuth,
-                    }
-                );
-                console.log(resUpsertJiraWorkLogRelatedIssue.data);
+                if (Object.prototype.hasOwnProperty.call(res.data.content, 'errorMessages')) {
+                    isSuccess = false;
+                    dialog.error({ title: "新增失敗" });
+                }else{
+                    //紀錄Jira回傳的worklog ID
+                    v[0].workLogID = resAddWorklog.data.content.id;
+                    v[0].created = resAddWorklog.data.content.created.split("+")[0];
+                    v[0].started = resAddWorklog.data.content.started.split("+")[0];
+                    //console.log(v[0]);
+                    
+                    //新增報工紀錄到DB同步看板資料
+                    const resInsertWorkLogs = await axios.post(
+                        apiUrl + "/Open/JIRA_Related/Worklogger/InsertWorkLogs",
+                        v[0]
+                    );
+                    console.log(resInsertWorkLogs.data);
+                    
+                    //新增或更新報工紀錄的相關議題欄位到DB同步看板資料
+                    const resUpsertJiraWorkLogRelatedIssue = await axios.post(
+                        apiUrl + "/Open/JIRA_Related/Worklogger/UpsertJiraWorkLogRelatedIssue",
+                        {
+                            issueID:v[0].issueID,
+                            BasicAuth:access.value.basicAuth,
+                        }
+                    );
+                    console.log(resUpsertJiraWorkLogRelatedIssue.data);
+                }
             });
-            dialog.info({ title: "新增完成" });
-            initData();
+            if(isSuccess){
+                dialog.info({ title: "新增完成" });
+                initData();
+                models.value = [];
+            }
             IsAddingJiraWorklog.value = false;
-            models.value = [];
+            
         } catch (err) {
             console.log(err);
         }
@@ -246,7 +255,7 @@ export const useFormStore = defineStore('formStore', () => {
                     BasicAuth:access.value.basicAuth,
                 };
                 models.value.push([modelForJiraWorkLogRecord,modelForJiraAddWorkLogApi]);
-                               
+
                 initData();
                 console.log(models.value);                
                 console.log(spendValue.value);                

@@ -5,10 +5,11 @@ export const useAccessStore = defineStore('accessStore', () => {
   
   
   
+  const viewersTags = ref([]);
 
 
 
 
 
-  return {  }
+  return { viewersTags }
 })

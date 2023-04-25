@@ -4,31 +4,34 @@ import {
   NGrid,
   NSpace,
   NGi,
-  NDynamicTags,
   NDivider,
   NCard,
-  NInput,
+  NTag,
+  NSelect,
 } from "naive-ui";
 import { useLogInStore } from "../stores/logInStore.js";
-import { onMounted, ref } from "vue";
+import { h, onMounted, ref, onBeforeMount } from "vue";
 import { storeToRefs } from "pinia";
 const logInStore = useLogInStore();
 const { getJiraWorkLoggerAccess } = logInStore;
 const { getEmpInfo } = logInStore;
-const { viewersManageInfo } = storeToRefs(logInStore);
-
-onMounted(() => {
-  getJiraWorkLoggerAccess("getViewersManagementInfo", {
-    Managers: "%" + localStorage.getItem("empID") + "%",
-  });
-
-  console.log(viewersManageInfo.value);
-});
+const { viewerManagedInfo } = storeToRefs(logInStore);
 </script>
 
 <template>
-  權限設置(未完成)
-  <!-- <n-space vertical>
-    <n-input type="text" v-model:value="viewersManageInfo" />
-  </n-space> -->
+  <h1>權限設置</h1>
+  <n-space vertical>
+    <div v-for="info in Array.from(viewerManagedInfo)" :key="info">
+      <h2>{{ info[0] }}</h2>
+      <n-select
+        v-model:value="info[1]"
+        multiple
+        :options="info[2]"
+        filterable
+      />
+    </div>
+  </n-space>
+  <div style="display: flex; justify-content: center; margin: 5%">
+    <n-button round type="info"> 儲存 </n-button>
+  </div>
 </template>

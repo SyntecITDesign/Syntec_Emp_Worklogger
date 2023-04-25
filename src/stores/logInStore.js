@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref,watch } from 'vue'
 import { defineStore, storeToRefs } from 'pinia';
 import { createDiscreteApi } from "naive-ui";
 
@@ -12,7 +12,7 @@ export const useLogInStore = defineStore('logInStore', () => {
     const apiStore = useApiStore();
     const { apiUrl } = apiStore;
     const formRef = ref(null);
-    const devList = ["10101707","1019044","10101435"];
+    const devList = ["10101707","10190441","10101435"];
     const model = ref({
         Username: null,
         Password: null,
@@ -24,8 +24,10 @@ export const useLogInStore = defineStore('logInStore', () => {
         basicAuth:null,
         isChecking:false,
     });
-    const viewersManageInfo = ref([]);
-const welcomeText = ref("");    
+    const viewerManagedInfo = ref([]);
+    const projectKeyManagedSet = ref(new Set());
+
+    const welcomeText = ref("");    
     const rules = {
         Username: [
             {
@@ -82,18 +84,17 @@ const welcomeText = ref("");
                 dialog.error({ title: "登入失敗" });
             } else {
                 access.value.basicAuth = encode(model.value.Username + ":" + model.value.Password);
-                
                 localStorage.setItem("loginTime", new Date().getTime());
                 localStorage.setItem("empID", model.value.Username);
                 welcomeText.value = "Hi," + model.value.Username;
-                getJiraWorkLoggerAccess("checkViewer",{
-                    Viewers:"%"+localStorage.getItem("empID")+"%",                    
-                });
-                getJiraWorkLoggerAccess("checkManager",{
-                    Managers:"%"+localStorage.getItem("empID")+"%",                    
-                });
                 access.value.isLogIn = true;
                 dialog.info({ title: "登入成功" });
+                getJiraWorkLoggerAccess("checkViewer",{
+                    Viewers:model.value.Username,                    
+                });
+                getJiraWorkLoggerAccess("checkManager",{
+                    Managers:"%"+model.value.Username+"%",                    
+                });
             }
             access.value.isChecking = false;
 
@@ -108,14 +109,14 @@ const welcomeText = ref("");
                 apiUrl + "/Open/JIRA_Related/Worklogger/GetJiraWorkLoggerAccess",
                 data
             );
-            console.log(res.data);
+            //console.log(res.data);
             if(usage === "checkViewer"){
                 access.value.isViewer = (devList.includes(localStorage.getItem("empID")))||(res.data.code === 0);
                 if(res.data.code === 0){
                     let superDeptViewSet = new Set();
                     let projectKeyViewSet = new Set();
                     res.data.content.forEach((item) => {
-                        //console.log(item);
+                        //console.log("checkViewer",item);
                         superDeptViewSet.add(item.SuperDeptName);
                         projectKeyViewSet.add(item.ProjectKey);
                     });
@@ -127,17 +128,24 @@ const welcomeText = ref("");
             }
             if(usage === "checkManager"){
                 access.value.isViewersManager = (devList.includes(localStorage.getItem("empID")))||(res.data.code === 0);
-            }
-            if(usage === "getViewersManagementInfo"){
-                viewersManageInfo.value = [];
+                
                 if(res.data.code === 0){
                     res.data.content.forEach((item) => {
-                        viewersManageInfo.value.push({
-                            projectKey:item.ProjectKey,
-                            Viewers:getEmpInfo(item.Viewers.split(',')),
-                        });
+                        //console.log(item);
+                        projectKeyManagedSet.value.add(item.ProjectKey);
                     });
-                    console.log(viewersManageInfo.value);
+                    // viewerManagedInfo.value = res.data.content;
+                    
+                    //console.log("checkManager",Array.from(projectKeyManagedSet.value));
+                    Array.from(projectKeyManagedSet.value).forEach((projectKeyManagedSetItem)=>{
+                        const viewerTags = res.data.content.map((item)=>{
+                            if (item.ProjectKey === projectKeyManagedSetItem) {
+                            return item.EmpID+"_"+item.EmpName;
+                            }
+                        }).filter((el)=>{return el !== undefined});
+                        viewerManagedInfo.value.push([projectKeyManagedSetItem,viewerTags]);
+                    });
+                    //console.log(viewerManagedInfo.value);
                 }
             }
         } catch (err) {
@@ -147,20 +155,26 @@ const welcomeText = ref("");
 
     const getEmpInfo = (empIDs) => {
         try {
-            const empNames = [];
+            let empNames = [];
             empIDs.forEach(async (item) => {
                 const res = await axios.post(
                     apiUrl + "/Open/JIRA_Related/Worklogger/GetEmpInfo",
                     {empID:item}
                 );
-                console.log(res.data.content[0].EmpName);
-                empNames.push(item+" "+res.data.content[0].EmpName)
+                //console.log([item,res.data.content[0].EmpName]);
+                empNames.push(item+" "+res.data.content[0].EmpName);
             });
+            console.log(empNames);
+
             return empNames
         } catch (err) {
             console.log(err);
         }
     };
 
-    return { welcomeText, access,formRef, model, rules, viewersManageInfo, handleValidateButtonClick, checkLogInTime, getJiraWorkLoggerAccess, getEmpInfo}
+    watch(() =>  viewerManagedInfo.value,(newValue) => {
+        console.log("watch",newValue);
+    },{deep: true,});
+
+    return { welcomeText, access,formRef, model, rules, viewerManagedInfo, projectKeyManagedSet, handleValidateButtonClick, checkLogInTime, getJiraWorkLoggerAccess, getEmpInfo}
 })

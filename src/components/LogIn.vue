@@ -18,6 +18,7 @@ onBeforeMount(() => {
     isChecking: false,
   };
   localStorage.clear();
+  console.log(import.meta.env.VITE_BACKEND_HOST);
 });
 </script>
 
