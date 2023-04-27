@@ -26,6 +26,7 @@ export const useFormStore = defineStore('formStore', () => {
         selectIssueValue: null,
         tagValue: null,
         startDateValue: null,
+        startTimeValue: null,
         spendValue: computed(() => (spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
     });
     const models = ref([]);
@@ -74,12 +75,14 @@ export const useFormStore = defineStore('formStore', () => {
             required: true,
             trigger: ["blur", "change"],
             message: "",
-        },
-        startDateValue: {
-            type: "date",
+        },        
+        startDateTimeValue: {
             required: true,
+            validator(value) {
+                return (model.value.startDateValue !== null ) && (model.value.startTimeValue !== null );
+            },
             trigger: ["blur", "change"],
-            message: "",
+            message: "請選擇日期及時間",
         },
         spendValue: {
             type: "number",
@@ -215,13 +218,13 @@ export const useFormStore = defineStore('formStore', () => {
                 apiUrl + "/Open/JIRA_Related/Worklogger/GetSumSpentSeconds",
                 {
                     empID:localStorage.getItem("empID"),
-                    started:model.value.startDateValue+" 08:00:00",
+                    started:model.value.startDateValue,
                 }
             );
             res.data.content !== null ? spendValue.value.sumSpendSecond = res.data.content[0].sumSpentSeconds: spendValue.value.sumSpendSecond = 0;
 
             models.value.forEach((item, index, array)=>{
-                if(item[0].started === model.value.startDateValue){
+                if(item[0].started.split(" ")[0] === model.value.startDateValue){
                     spendValue.value.sumSpendSecond += item[0].timeSpentSeconds;
                 }
             });
@@ -239,7 +242,7 @@ export const useFormStore = defineStore('formStore', () => {
             if (!errors) {
                 const modelForJiraAddWorkLogApi = {
                     issueID: model.value.selectIssueValue.split(" ")[0],
-                    started: model.value.startDateValue+"T00:00:00.000+0000",
+                    started: model.value.startDateValue+"T"+model.value.startTimeValue+".000+0800",
                     comment: (model.value.selectFilterValue === "nonIssue"? "[分類：非議題":"[分類：一般議題")+"] [標籤："+model.value.tagValue +"] [工作內容："+ model.value.descriptionValue+"]",                    
                     timeSpentSeconds: model.value.spendValue,
                     BasicAuth:access.value.basicAuth,
@@ -250,7 +253,7 @@ export const useFormStore = defineStore('formStore', () => {
                     workLogID: "",
                     timeSpentSeconds: model.value.spendValue,
                     created: "",
-                    started: model.value.startDateValue,
+                    started: model.value.startDateValue+" "+model.value.startTimeValue,
                     type:model.value.selectFilterValue === "nonIssue"? "非議題":"一般議題",
                     tags: model.value.tagValue,
                     comment: model.value.descriptionValue,
@@ -278,6 +281,7 @@ export const useFormStore = defineStore('formStore', () => {
             model.value.selectIssueValue=null,
             model.value.tagValue=null,
             model.value.startDateValue=null,
+            model.value.startTimeValue=null,
             spendValue.value.spendHourValue = 0,
             spendValue.value.spendMinuteValue = 0,
             spendValue.value.sumSpendSecond = 0,
@@ -323,9 +327,9 @@ export const useFormStore = defineStore('formStore', () => {
         if(newValue!== null) getProjectTags();
     },{deep: true,});
 
-    watch(() => model.value.startDateValue,(newValue) => {
-        //console.log(newValue);        
-        if(newValue!== null) getSumSpentSeconds();
+    watch(() => [model.value.startDateValue,model.value.startTimeValue],([newDateValue,newTimeValue]) => {
+        console.log(newDateValue,newTimeValue);        
+        if((newDateValue!== null) || (newTimeValue!== null)) getSumSpentSeconds();
     },{deep: true,});
 
     watchEffect(() => {        
