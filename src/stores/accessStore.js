@@ -17,16 +17,16 @@ export const useAccessStore = defineStore('accessStore', () => {
   
   const handleSearch = (query) => {
     if (!query.length) {
-      viewersTags.value = [];
+      viewersTags.value = [{label:"請輸入工號查詢",value:"empty"}];
       return;
     }
-    if (query.length < 6) {
-      viewersTags.value = [];
+    if ((query.length < 6) && !isNaN(query)) {
+      viewersTags.value = [{label:"請輸入工號查詢",value:"empty"}];
       return;
     }
     isEmpListLoading.value = true;
     window.setTimeout(() => {
-      getEmpInfo(query+"%");
+      getEmpInfo("%"+query+"%");
       isEmpListLoading.value = false;
     }, 1e3);
   };
