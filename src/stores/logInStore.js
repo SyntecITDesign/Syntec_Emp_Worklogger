@@ -26,7 +26,7 @@ export const useLogInStore = defineStore('logInStore', () => {
     });
     const viewerManagedInfo = ref([]);
     const projectKeyManagedSet = ref(new Set());
-    const viewersTags = ref([]);
+    const viewersTags = ref([{label:"請輸入工號查詢",value:"empty"}]);
     const newViewers = ref([]);
     const welcomeText = ref("");    
     const rules = {

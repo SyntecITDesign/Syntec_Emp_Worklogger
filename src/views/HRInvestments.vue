@@ -1,7 +1,12 @@
 <script setup>
-import { NSelect } from "naive-ui";
+import { NSpin, NSpace, NSelect } from "naive-ui";
+import { storeToRefs } from "pinia";
 import axios from "axios";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, onBeforeMount, watch } from "vue";
+import { useDashboardStroe } from "../stores/dashboardStroe.js";
+const dashboardStroe = useDashboardStroe();
+const { CheckIssueUpdateTime } = dashboardStroe;
+const { isUpdateLatestIssueInfo } = storeToRefs(dashboardStroe);
 const HRInvestmentsSrc = ref(null);
 const selectedSuperDeptName = ref(null);
 const superDeptNameOptions = ref(
@@ -13,7 +18,9 @@ const superDeptNameOptions = ref(
       value: v,
     }))
 );
-
+onBeforeMount(() => {
+  CheckIssueUpdateTime();
+});
 watch(
   () => selectedSuperDeptName.value,
   (newValue) => {
@@ -37,10 +44,13 @@ watch(
       size="large"
     />
   </h1>
+  <n-space vertical class="HRInvestments">
+    <n-spin :show="isUpdateLatestIssueInfo">
+      <iframe :src="HRInvestmentsSrc" v-if="HRInvestmentsSrc !== null"></iframe>
 
-  <div class="HRInvestments">
-    <iframe :src="HRInvestmentsSrc" v-if="HRInvestmentsSrc !== null"></iframe>
-  </div>
+      <template #description> 議題資訊更新中 </template>
+    </n-spin>
+  </n-space>
 </template>
 <style scoped>
 .HRInvestments {

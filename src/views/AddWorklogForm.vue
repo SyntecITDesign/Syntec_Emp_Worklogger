@@ -7,6 +7,7 @@ import {
   NInput,
   NSelect,
   NDatePicker,
+  NTimePicker,
   NSpace,
   NGi,
   NInputNumber,
@@ -72,15 +73,22 @@ const {
         />
       </n-form-item-gi>
 
-      <n-form-item-gi :span="12" label="開始日期" path="startDateValue">
+      <n-form-item-gi :span="12" label="開始日期時間" path="startDateTimeValue">
         <n-date-picker
           v-model:formatted-value="model.startDateValue"
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="請選擇日期"
         />
-      </n-form-item-gi>
 
+        <n-time-picker
+          v-model:formatted-value="model.startTimeValue"
+          type="time"
+          time-zone="Asia/Taipei"
+          value-format="H:m:s"
+          placeholder="請選擇時間"
+        />
+      </n-form-item-gi>
       <n-form-item-gi :span="12" label="花費時間" path="spendValue">
         <n-input-number
           v-model:value="spendValue.spendHourValue"

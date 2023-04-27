@@ -1,7 +1,12 @@
 <script setup>
-import { NSelect } from "naive-ui";
+import { NSpin, NSpace, NSelect } from "naive-ui";
+import { storeToRefs } from "pinia";
 import axios from "axios";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, onBeforeMount, watch } from "vue";
+import { useDashboardStroe } from "../stores/dashboardStroe.js";
+const dashboardStroe = useDashboardStroe();
+const { CheckIssueUpdateTime } = dashboardStroe;
+const { isUpdateLatestIssueInfo } = storeToRefs(dashboardStroe);
 const issueExecutionSrc = ref(null);
 const selectedSuperDeptName = ref(null);
 const superDeptNameOptions = ref(
@@ -13,7 +18,9 @@ const superDeptNameOptions = ref(
       value: v,
     }))
 );
-
+onBeforeMount(() => {
+  CheckIssueUpdateTime();
+});
 watch(
   () => selectedSuperDeptName.value,
   (newValue) => {
@@ -37,9 +44,15 @@ watch(
       size="large"
     />
   </h1>
-  <div class="issueExecution">
-    <iframe :src="issueExecutionSrc" v-if="issueExecutionSrc !== null"></iframe>
-  </div>
+  <n-space vertical class="issueExecution">
+    <n-spin :show="isUpdateLatestIssueInfo">
+      <iframe
+        :src="issueExecutionSrc"
+        v-if="issueExecutionSrc !== null"
+      ></iframe>
+      <template #description> 議題資訊更新中 </template>
+    </n-spin>
+  </n-space>
 </template>
 <style scoped>
 .issueExecution {

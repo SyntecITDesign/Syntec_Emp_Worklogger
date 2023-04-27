@@ -1,7 +1,17 @@
 <script setup>
+import { NSpin, NSpace } from "naive-ui";
+import { storeToRefs } from "pinia";
 import axios from "axios";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, onBeforeMount } from "vue";
+import { useDashboardStroe } from "../stores/dashboardStroe.js";
+const dashboardStroe = useDashboardStroe();
+const { CheckIssueUpdateTime } = dashboardStroe;
+const { isUpdateLatestIssueInfo } = storeToRefs(dashboardStroe);
 const issueSummarySrc = ref("");
+
+onBeforeMount(() => {
+  CheckIssueUpdateTime();
+});
 
 onMounted(() => {
   issueSummarySrc.value =
@@ -15,9 +25,12 @@ onMounted(() => {
 
 <template>
   <h1>Issue Summary</h1>
-  <div class="issueSummary">
-    <iframe :src="issueSummarySrc"></iframe>
-  </div>
+  <n-space vertical class="issueSummary">
+    <n-spin :show="isUpdateLatestIssueInfo">
+      <iframe :src="issueSummarySrc"></iframe>
+      <template #description> 議題資訊更新中 </template>
+    </n-spin>
+  </n-space>
 </template>
 <style scoped>
 .issueSummary {
