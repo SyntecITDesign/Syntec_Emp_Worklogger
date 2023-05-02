@@ -65,6 +65,7 @@ const {
 
       <n-form-item-gi :span="12" label="議題" path="selectIssueValue">
         <n-select
+          filterable
           v-model:value="model.selectIssueValue"
           placeholder="請選擇議題"
           :options="issueOptions"

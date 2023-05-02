@@ -120,6 +120,9 @@ export const useFormStore = defineStore('formStore', () => {
                 });
             }
             
+            if(issueOptions.value.length === 1){
+                model.value.selectIssueValue = issueOptions.value[0].value;
+            }
 
             console.log(issueOptions.value);
             isIssueOptionsChange.value = false;
