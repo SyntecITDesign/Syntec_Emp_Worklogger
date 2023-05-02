@@ -108,7 +108,7 @@ export const useLogInStore = defineStore('logInStore', () => {
             );
             console.log("checkManagers",resManagers.data);
             
-            access.value.isViewersManager = (devList.indexOf(data)>-1)||(resManagers.data.code === 0);
+            access.value.isViewersManager = (devList.find(devItem=>devItem===data) !== undefined)||(resManagers.data.code === 0);
             access.value.isViewer = access.value.isViewersManager;
             console.log(resManagers.data);
             
@@ -122,7 +122,7 @@ export const useLogInStore = defineStore('logInStore', () => {
                 Array.from(projectKeyManagedSet.value).forEach((projectKeyManagedSetItem)=>{
                     const viewerTags = resManagers.data.content.map((item)=>{
                         //console.log(item);
-                        if ((item.ProjectKey === projectKeyManagedSetItem) && (item.Managers.indexOf(item.EmpID)===-1) && (item.Viewers.indexOf(item.EmpID)>-1)) {
+                        if ((item.ProjectKey === projectKeyManagedSetItem) && (item.Managers.split(",").find(managerItem=>managerItem===item.EmpID) === undefined) && (item.Viewers.split(",").find(viewerItem=>viewerItem===item.EmpID) !== undefined)) {
                             return item.EmpID+"_"+item.EmpName;
                         }
                     }).filter((el)=>{return el !== undefined});
@@ -138,7 +138,7 @@ export const useLogInStore = defineStore('logInStore', () => {
             console.log("checkViewer",resViewer.data);
         
             if(!access.value.isViewer){
-                access.value.isViewer = (devList.indexOf(data)>-1)||(resViewer.data.code === 0);
+                access.value.isViewer = (devList.find(devItem=>devItem===data) !== undefined)||(resViewer.data.code === 0);
             }
             console.log("access.value.isViewer",access.value.isViewer);
             if(resViewer.data.code === 0){
