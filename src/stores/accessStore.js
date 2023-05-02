@@ -3,9 +3,11 @@ import { ref } from "vue";
 import { useLogInStore } from "../stores/logInStore.js";
 import axios from "axios";
 import { useApiStore } from "../stores/apiStore.js";
+import { createDiscreteApi } from "naive-ui";
 
 
 export const useAccessStore = defineStore('accessStore', () => {
+  const { dialog } = createDiscreteApi(["dialog"]);
   const logInStore = useLogInStore();
   const { getEmpInfo } = logInStore;
   const { viewersTags, newViewers} = storeToRefs(logInStore);
@@ -43,6 +45,8 @@ export const useAccessStore = defineStore('accessStore', () => {
         console.log(resUpdateJiraWorkLoggerAccess.data);
       });
       isViewersSaving.value = false;
+      dialog.info({ title: "完成" });
+
     } catch (err) {
       console.log(err);
     }

@@ -12,7 +12,7 @@ export const useLogInStore = defineStore('logInStore', () => {
     const apiStore = useApiStore();
     const { apiUrl } = apiStore;
     const formRef = ref(null);
-    const devList = ["10101707","10190441","10101435"];
+    const devList = ["10101707","1019044","10101435"];
     const model = ref({
         Username: null,
         Password: null,
@@ -90,12 +90,14 @@ export const useLogInStore = defineStore('logInStore', () => {
                 welcomeText.value = "Hi," + model.value.Username;
                 access.value.isLogIn = true;
                 dialog.info({ title: "登入成功" });
-                getJiraWorkLoggerAccess("checkViewer",{
-                    Viewers:model.value.Username,                    
-                });
-                getJiraWorkLoggerAccess("checkManager",{
-                    Managers:"%"+model.value.Username+"%",                    
-                });
+                // getJiraWorkLoggerAccess("checkManager",{
+                //     Managers:"%"+model.value.Username+"%",                    
+                // });
+                
+                // getJiraWorkLoggerAccess("checkViewer",{
+                //     Viewers:model.value.Username,
+                // });
+                getJiraWorkLoggerAccess(model.value.Username);
             }
             access.value.isChecking = false;
 
@@ -104,51 +106,63 @@ export const useLogInStore = defineStore('logInStore', () => {
         }
     };
 
-    const getJiraWorkLoggerAccess = async (usage,data) => {
+    const getJiraWorkLoggerAccess = async (data) => {
         try {
-            const res = await axios.post(
+            const resManagers = await axios.post(
                 apiUrl + "/Open/JIRA_Related/Worklogger/GetJiraWorkLoggerAccess",
-                data
+                {Managers:"%"+data+"%",}
             );
-            //console.log(res.data);
-            if(usage === "checkViewer"){
-                access.value.isViewer = (devList.includes(localStorage.getItem("empID")))||(res.data.code === 0);
-                if(res.data.code === 0){
-                    let superDeptViewSet = new Set();
-                    let projectKeyViewSet = new Set();
-                    res.data.content.forEach((item) => {
-                        //console.log("checkViewer",item);
-                        superDeptViewSet.add(item.SuperDeptName);
-                        projectKeyViewSet.add(item.ProjectKey);
-                    });
-                    localStorage.setItem("superDeptsView",Array.from(superDeptViewSet).join('\',\''));
-                    localStorage.setItem("projectKeysView",Array.from(projectKeyViewSet).join('\',\''));
-
-                    //console.log(localStorage.getItem("superDeptsView"),localStorage.getItem("projectKeysView"));
-                }
-            }
-            if(usage === "checkManager"){
-                access.value.isViewersManager = (devList.includes(localStorage.getItem("empID")))||(res.data.code === 0);
+            console.log("checkManagers",resManagers.data);
+            
+            access.value.isViewersManager = (devList.includes(localStorage.getItem("empID")))||(resManagers.data.code === 0);
+            access.value.isViewer = access.value.isViewersManager;
+            console.log(resManagers.data);
+            
+            if(resManagers.data.code === 0){
+                resManagers.data.content.forEach((item) => {
+                    console.log(item);
+                    projectKeyManagedSet.value.add(item.ProjectKey);
+                });
+                // viewerManagedInfo.value = res.data.content;
                 
-                if(res.data.code === 0){
-                    res.data.content.forEach((item) => {
+                //console.log("checkManager",Array.from(projectKeyManagedSet.value));
+                Array.from(projectKeyManagedSet.value).forEach((projectKeyManagedSetItem)=>{
+                    const viewerTags = resManagers.data.content.map((item)=>{
                         //console.log(item);
-                        projectKeyManagedSet.value.add(item.ProjectKey);
-                    });
-                    // viewerManagedInfo.value = res.data.content;
-                    
-                    //console.log("checkManager",Array.from(projectKeyManagedSet.value));
-                    Array.from(projectKeyManagedSet.value).forEach((projectKeyManagedSetItem)=>{
-                        const viewerTags = res.data.content.map((item)=>{
-                            if (item.ProjectKey === projectKeyManagedSetItem) {
+                        if ((item.ProjectKey === projectKeyManagedSetItem) && (!item.Managers.includes(item.EmpID)) && (item.Viewers.includes(item.EmpID))) {
                             return item.EmpID+"_"+item.EmpName;
-                            }
-                        }).filter((el)=>{return el !== undefined});
-                        viewerManagedInfo.value.push([projectKeyManagedSetItem,viewerTags]);
-                    });
-                    //console.log(viewerManagedInfo.value);
-                }
+                        }
+                    }).filter((el)=>{return el !== undefined});
+                    viewerManagedInfo.value.push([projectKeyManagedSetItem,viewerTags]);
+                });
+                //console.log(viewerManagedInfo.value);
             }
+        
+            const resViewer = await axios.post(
+                apiUrl + "/Open/JIRA_Related/Worklogger/GetJiraWorkLoggerAccess",
+                {Viewers:data,}
+            );
+            console.log("checkViewer",resViewer.data);
+        
+            if(!access.value.isViewer){
+                access.value.isViewer = (devList.includes(localStorage.getItem("empID")))||(resViewer.data.code === 0);
+            }
+            console.log("access.value.isViewer",access.value.isViewer);
+            if(resViewer.data.code === 0){
+                let superDeptViewSet = new Set();
+                let projectKeyViewSet = new Set();
+                resViewer.data.content.forEach((item) => {
+                    //console.log("checkViewer",item);
+                    superDeptViewSet.add(item.SuperDeptName);
+                    projectKeyViewSet.add(item.ProjectKey);
+                });
+                localStorage.setItem("superDeptsView",Array.from(superDeptViewSet).join('\',\''));
+                localStorage.setItem("projectKeysView",Array.from(projectKeyViewSet).join('\',\''));
+
+                //console.log(localStorage.getItem("superDeptsView"),localStorage.getItem("projectKeysView"));
+            }
+            
+
         } catch (err) {
             console.log(err);
         }
