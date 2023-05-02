@@ -12,7 +12,7 @@ export const useLogInStore = defineStore('logInStore', () => {
     const apiStore = useApiStore();
     const { apiUrl } = apiStore;
     const formRef = ref(null);
-    const devList = ["10101707","1019044","10101435"];
+    const devList = ["10101707","10190441","10101435"];
     const model = ref({
         Username: null,
         Password: null,
