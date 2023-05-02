@@ -122,7 +122,7 @@ export const useLogInStore = defineStore('logInStore', () => {
                 Array.from(projectKeyManagedSet.value).forEach((projectKeyManagedSetItem)=>{
                     const viewerTags = resManagers.data.content.map((item)=>{
                         console.log(item);
-                        if ((item.ProjectKey === projectKeyManagedSetItem) && (item.Managers.split(",").find(managerItem=>managerItem===item.EmpID) === undefined) && (item.Viewers.split(",").find(viewerItem=>viewerItem===item.EmpID) !== undefined)) {
+                        if ((item.ProjectKey === projectKeyManagedSetItem)) {
                             return item.EmpID+"_"+item.EmpName;
                         }
                     }).filter((el)=>{return el !== undefined});
