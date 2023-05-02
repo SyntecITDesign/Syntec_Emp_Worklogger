@@ -121,7 +121,7 @@ export const useLogInStore = defineStore('logInStore', () => {
                 //console.log("checkManager",Array.from(projectKeyManagedSet.value));
                 Array.from(projectKeyManagedSet.value).forEach((projectKeyManagedSetItem)=>{
                     const viewerTags = resManagers.data.content.map((item)=>{
-                        //console.log(item);
+                        console.log(item);
                         if ((item.ProjectKey === projectKeyManagedSetItem) && (item.Managers.split(",").find(managerItem=>managerItem===item.EmpID) === undefined) && (item.Viewers.split(",").find(viewerItem=>viewerItem===item.EmpID) !== undefined)) {
                             return item.EmpID+"_"+item.EmpName;
                         }
