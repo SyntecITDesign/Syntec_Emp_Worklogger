@@ -90,7 +90,13 @@ export const useLogInStore = defineStore('logInStore', () => {
                 welcomeText.value = "Hi," + model.value.Username;
                 access.value.isLogIn = true;
                 dialog.info({ title: "登入成功" });
-
+                // getJiraWorkLoggerAccess("checkManager",{
+                //     Managers:"%"+model.value.Username+"%",                    
+                // });
+                
+                // getJiraWorkLoggerAccess("checkViewer",{
+                //     Viewers:model.value.Username,
+                // });
                 getJiraWorkLoggerAccess(model.value.Username);
             }
             access.value.isChecking = false;
@@ -108,21 +114,22 @@ export const useLogInStore = defineStore('logInStore', () => {
             );
             console.log("checkManagers",resManagers.data);
             
-            access.value.isViewersManager = (devList.find(devItem=>devItem===data) !== undefined)||(resManagers.data.code === 0);
+            access.value.isViewersManager = (devList.includes(localStorage.getItem("empID")))||(resManagers.data.code === 0);
             access.value.isViewer = access.value.isViewersManager;
             console.log(resManagers.data);
             
             if(resManagers.data.code === 0){
                 resManagers.data.content.forEach((item) => {
-                    //console.log(item);
+                    console.log(item);
                     projectKeyManagedSet.value.add(item.ProjectKey);
                 });
+                // viewerManagedInfo.value = res.data.content;
                 
                 //console.log("checkManager",Array.from(projectKeyManagedSet.value));
                 Array.from(projectKeyManagedSet.value).forEach((projectKeyManagedSetItem)=>{
                     const viewerTags = resManagers.data.content.map((item)=>{
-                        console.log(item);
-                        if ((item.ProjectKey === projectKeyManagedSetItem)) {
+                        //console.log(item);
+                        if ((item.ProjectKey === projectKeyManagedSetItem) && (!item.Managers.includes(item.EmpID)) && (item.Viewers.includes(item.EmpID))) {
                             return item.EmpID+"_"+item.EmpName;
                         }
                     }).filter((el)=>{return el !== undefined});
@@ -138,7 +145,7 @@ export const useLogInStore = defineStore('logInStore', () => {
             console.log("checkViewer",resViewer.data);
         
             if(!access.value.isViewer){
-                access.value.isViewer = (devList.find(devItem=>devItem===data) !== undefined)||(resViewer.data.code === 0);
+                access.value.isViewer = (devList.includes(localStorage.getItem("empID")))||(resViewer.data.code === 0);
             }
             console.log("access.value.isViewer",access.value.isViewer);
             if(resViewer.data.code === 0){
