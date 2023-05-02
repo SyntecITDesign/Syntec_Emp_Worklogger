@@ -114,7 +114,7 @@ export const useLogInStore = defineStore('logInStore', () => {
             );
             console.log("checkManagers",resManagers.data);
             
-            access.value.isViewersManager = (devList.indexOf(localStorage.getItem("empID"))>-1)||(resManagers.data.code === 0);
+            access.value.isViewersManager = (devList.indexOf(data)>-1)||(resManagers.data.code === 0);
             access.value.isViewer = access.value.isViewersManager;
             console.log(resManagers.data);
             
@@ -145,7 +145,7 @@ export const useLogInStore = defineStore('logInStore', () => {
             console.log("checkViewer",resViewer.data);
         
             if(!access.value.isViewer){
-                access.value.isViewer = (devList.indexOf(localStorage.getItem("empID"))>-1)||(resViewer.data.code === 0);
+                access.value.isViewer = (devList.indexOf(data)>-1)||(resViewer.data.code === 0);
             }
             console.log("access.value.isViewer",access.value.isViewer);
             if(resViewer.data.code === 0){
