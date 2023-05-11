@@ -1,21 +1,23 @@
 import { defineStore, storeToRefs } from 'pinia'
-import { ref } from "vue";
+import { ref,onBeforeMount,h } from "vue";
 import { useLogInStore } from "../stores/logInStore.js";
 import axios from "axios";
 import { useApiStore } from "../stores/apiStore.js";
-import { createDiscreteApi } from "naive-ui";
+import { createDiscreteApi, NSelect } from "naive-ui";
+import { useFormStore } from "../stores/formStore.js";
 
 
 export const useAccessStore = defineStore('accessStore', () => {
   const { dialog } = createDiscreteApi(["dialog"]);
   const logInStore = useLogInStore();
   const { getEmpInfo } = logInStore;
-  const { viewersTags, newViewers} = storeToRefs(logInStore);
+  const { viewersTags, newViewers, viewerManagedInfo} = storeToRefs(logInStore);
   const apiStore = useApiStore();
   const { apiUrl } = apiStore;
+  const formStore = useFormStore();
+  const { getProjectTags } = formStore;
   const isEmpListLoading = ref(false);
   const isViewersSaving = ref(false);
-  
   
   const handleSearch = (query) => {
     if (!query.length) {
@@ -32,6 +34,12 @@ export const useAccessStore = defineStore('accessStore', () => {
       isEmpListLoading.value = false;
     }, 1e3);
   };
+
+  const addProjectTag = (infoIndex) => {
+    viewerManagedInfo.value[infoIndex][3].push({tag:"NewTag"+viewerManagedInfo.value[infoIndex][3].length,group:Array.from(viewerManagedInfo.value[infoIndex][2])[0]});
+  };
+
+
 
   const saveViewers = () => {
     console.log("saveViewers",newViewers.value);
@@ -52,5 +60,5 @@ export const useAccessStore = defineStore('accessStore', () => {
     }
   };
 
-  return { isViewersSaving,isEmpListLoading,handleSearch,saveViewers }
+  return { isViewersSaving,isEmpListLoading,handleSearch,saveViewers,addProjectTag}
 })

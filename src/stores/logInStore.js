@@ -1,6 +1,6 @@
-import { ref,watch } from 'vue'
+import { ref,watch,h } from 'vue'
 import { defineStore, storeToRefs } from 'pinia';
-import { createDiscreteApi } from "naive-ui";
+import { createDiscreteApi,NSelect } from "naive-ui";
 
 import { useApiStore } from "../stores/apiStore.js";
 import axios from "axios";
@@ -120,22 +120,40 @@ export const useLogInStore = defineStore('logInStore', () => {
             
             if(resManagers.data.code === 0){
                 resManagers.data.content.forEach((item) => {
-                    console.log(item);
+                    //console.log(item);
                     projectKeyManagedSet.value.add(item.ProjectKey);
                 });
-                // viewerManagedInfo.value = res.data.content;
                 
                 //console.log("checkManager",Array.from(projectKeyManagedSet.value));
-                Array.from(projectKeyManagedSet.value).forEach((projectKeyManagedSetItem)=>{
+                Array.from(projectKeyManagedSet.value).forEach(async (projectKeyManagedSetItem,index)=>{
                     const viewerTags = resManagers.data.content.map((item)=>{
                         //console.log(item);
                         if ((item.ProjectKey === projectKeyManagedSetItem) && (!item.Managers.includes(item.EmpID)) && (item.Viewers.includes(item.EmpID))) {
                             return item.EmpID+"_"+item.EmpName;
                         }
                     }).filter((el)=>{return el !== undefined});
-                    viewerManagedInfo.value.push([projectKeyManagedSetItem,viewerTags]);
+                    
+                    const resProjectTags = await axios.post(
+                        apiUrl + "/Open/JIRA_Related/Worklogger/GetProjectTags",
+                        {
+                            projectKey : projectKeyManagedSetItem,
+                        }
+                    );
+                    
+                    let tagGroups = new Set();
+                    let tags = [];
+
+                    resProjectTags.data.content.forEach((tagGroup) => {
+                        tagGroups.add(tagGroup.TagGroup);
+                        tags.push({tag:tagGroup.TagName,group:tagGroup.TagGroup});
+                    });
+
+                    viewerManagedInfo.value.push([projectKeyManagedSetItem,viewerTags,tagGroups,tags,[]]);
+                    
                 });
                 //console.log(viewerManagedInfo.value);
+
+                console.log(viewerManagedInfo.value);
             }
         
             const resViewer = await axios.post(
@@ -190,7 +208,7 @@ export const useLogInStore = defineStore('logInStore', () => {
             projectKey: item[0],
             Viewers: item[1].map((i)=>{return i.split("_")[0]}).join(','),
         }));
-        console.log("newViewers",newViewers.value);
+        //console.log("newViewers",newViewers.value);
     },{deep: true,});
 
     return { newViewers, viewersTags, welcomeText, access,formRef, model, rules, viewerManagedInfo, projectKeyManagedSet, handleValidateButtonClick, checkLogInTime, getJiraWorkLoggerAccess, getEmpInfo}
