@@ -151,7 +151,7 @@ export const useSiderStore = defineStore('siderStore', () => {
                 },
               },
             },
-            { default: () => "看板權限管理" }
+            { default: () => "權限及標籤管理" }
           ),
         key: "go-DashboardAccessManagement",
         show:access.value.isViewersManager,

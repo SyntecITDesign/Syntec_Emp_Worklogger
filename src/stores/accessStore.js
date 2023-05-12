@@ -11,13 +11,14 @@ export const useAccessStore = defineStore('accessStore', () => {
   const { dialog } = createDiscreteApi(["dialog"]);
   const logInStore = useLogInStore();
   const { getEmpInfo } = logInStore;
-  const { viewersTags, newViewers, viewerManagedInfo} = storeToRefs(logInStore);
+  const { viewersTags, newViewers, viewerManagedInfo,projectTagManagedInfo} = storeToRefs(logInStore);
   const apiStore = useApiStore();
   const { apiUrl } = apiStore;
   const formStore = useFormStore();
   const { getProjectTags } = formStore;
   const isEmpListLoading = ref(false);
-  const isViewersSaving = ref(false);
+  const isSaving = ref(false);
+  const deleteProjectTags = ref([]);
   
   const handleSearch = (query) => {
     if (!query.length) {
@@ -36,23 +37,54 @@ export const useAccessStore = defineStore('accessStore', () => {
   };
 
   const addProjectTag = (infoIndex) => {
-    viewerManagedInfo.value[infoIndex][3].push({tag:"NewTag"+viewerManagedInfo.value[infoIndex][3].length,group:Array.from(viewerManagedInfo.value[infoIndex][2])[0]});
+    projectTagManagedInfo.value[infoIndex][1].push({No:-1,tag:"NewTag"+projectTagManagedInfo.value[infoIndex][1].length,group:Array.from(projectTagManagedInfo.value[infoIndex][0])[0]});
+  };
+  const deleteProjectTag = (infoIndex,tagIndex) => {
+    deleteProjectTags.value.push({
+      No: projectTagManagedInfo.value[infoIndex][1][tagIndex].No,
+    });
+    projectTagManagedInfo.value[infoIndex][1] = projectTagManagedInfo.value[infoIndex][1].filter((value, index) => index !== tagIndex);
+    console.log("deleteProjectTag",deleteProjectTags.value);
   };
 
 
-
-  const saveViewers = () => {
-    console.log("saveViewers",newViewers.value);
-    isViewersSaving.value = true;
+  const saveSetting = () => {
+    
+    isSaving.value = true;
     try {
-      newViewers.value.forEach(async (item)=>{
+      newViewers.value.forEach(async (item)=>{        
         const resUpdateJiraWorkLoggerAccess = await axios.post(
           apiUrl + "/Open/JIRA_Related/Worklogger/UpdateJiraWorkLoggerAccess",
           item
         );
-        console.log(resUpdateJiraWorkLoggerAccess.data);
+        console.log("saveViewers",resUpdateJiraWorkLoggerAccess.data);        
       });
-      isViewersSaving.value = false;
+
+      deleteProjectTags.value.forEach(async (item)=>{
+        if(item.No >0){
+          const resDeleteProjectTag = await axios.post(
+            apiUrl + "/Open/JIRA_Related/Worklogger/DeleteProjectTag",
+            item
+          );
+          console.log("DeleteProjectTag",resDeleteProjectTag.data);
+        }
+      });
+
+      projectTagManagedInfo.value.forEach((projectTagInfo,projectInfoIndex)=>{
+        projectTagInfo[1].forEach(async (item)=>{
+          const resUpsertProjectTag = await axios.post(
+            apiUrl + "/Open/JIRA_Related/Worklogger/UpsertProjectTag",
+            {
+              No:item.No,
+              projectKey:viewerManagedInfo.value[projectInfoIndex][0],
+              tagName:item.tag,
+              tagGroup:item.group
+            }
+          );
+          console.log("UpsertProjectTag",resUpsertProjectTag.data);
+        });
+      });
+      isSaving.value = false;
       dialog.info({ title: "完成" });
 
     } catch (err) {
@@ -60,5 +92,5 @@ export const useAccessStore = defineStore('accessStore', () => {
     }
   };
 
-  return { isViewersSaving,isEmpListLoading,handleSearch,saveViewers,addProjectTag}
+  return { isSaving,isEmpListLoading,handleSearch,saveSetting,addProjectTag, deleteProjectTag}
 })

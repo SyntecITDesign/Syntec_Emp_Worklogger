@@ -6,43 +6,85 @@ import {
   NGi,
   NDivider,
   NCard,
-  NTag,
+  NInput,
   NSelect,
   NDataTable,
+  NIcon,
 } from "naive-ui";
 import { useLogInStore } from "../stores/logInStore.js";
 import { useAccessStore } from "../stores/accessStore.js";
-import { onUpdated, h } from "vue";
+import { h } from "vue";
 import { storeToRefs } from "pinia";
+import {
+  CloseOutline as DeleteIcon,
+  AddOutline as AddIcon,
+} from "@vicons/ionicons5";
 const logInStore = useLogInStore();
 const accessStore = useAccessStore();
-const { viewerManagedInfo, viewersTags } = storeToRefs(logInStore);
-const { handleSearch, saveViewers, addProjectTag } = accessStore;
-const { isEmpListLoading, isViewersSaving } = storeToRefs(accessStore);
+const { viewerManagedInfo, projectTagManagedInfo, viewersTags } =
+  storeToRefs(logInStore);
+const { handleSearch, saveSetting, addProjectTag, deleteProjectTag } =
+  accessStore;
+const { isEmpListLoading, isSaving } = storeToRefs(accessStore);
 
-viewerManagedInfo.value.forEach((projectKey, index) => {
-  viewerManagedInfo.value[index][4] = [
+projectTagManagedInfo.value.forEach((item, index) => {
+  projectTagManagedInfo.value[index][2] = [
     {
       title: "標籤",
       key: "tag",
+      align: "center",
+      render(row, tagIndex) {
+        return h(NInput, {
+          value: row.tag,
+          onUpdateValue(v) {
+            projectTagManagedInfo.value[index][1][tagIndex].tag = v;
+          },
+        });
+      },
     },
     {
       title: "類別",
       key: "group",
+      align: "center",
       render(row, tagIndex) {
         return h(NSelect, {
           value: row.group,
-          options: Array.from(viewerManagedInfo.value[index][2]).map((v) => ({
-            label: v,
-            value: v,
-          })),
+          options: Array.from(projectTagManagedInfo.value[index][0]).map(
+            (v) => ({
+              label: v,
+              value: v,
+            })
+          ),
           filterable: true,
           tag: true,
           onUpdateValue(v) {
-            viewerManagedInfo.value[index][3][tagIndex].group = v;
-            viewerManagedInfo.value[index][2].add(v);
+            projectTagManagedInfo.value[index][1][tagIndex].group = v;
+            projectTagManagedInfo.value[index][0].add(v);
           },
         });
+      },
+    },
+    {
+      title: "",
+      key: "delete",
+      align: "center",
+      render(row, tagIndex) {
+        return h(
+          NButton,
+          {
+            round: true,
+            strong: true,
+            secondary: true,
+            type: "error",
+            size: "small",
+            onClick: () => deleteProjectTag(index, tagIndex),
+          },
+          {
+            default: () => {
+              return h(NIcon, null, { default: () => h(DeleteIcon) });
+            },
+          }
+        );
       },
     },
   ];
@@ -58,7 +100,7 @@ viewerManagedInfo.value.forEach((projectKey, index) => {
         v-for="(info, infoIndex) in Array.from(viewerManagedInfo)"
         :key="info"
       >
-        <n-card :title="info[0]" size="huge">
+        <n-card :title="info[0]" size="medium" hoverable>
           <n-select
             v-model:value="info[1]"
             multiple
@@ -75,20 +117,34 @@ viewerManagedInfo.value.forEach((projectKey, index) => {
           />
           <n-divider />
 
-          <n-data-table :columns="info[4]" :data="info[3]" />
+          <n-data-table
+            :bordered="false"
+            :bottom-bordered="false"
+            :columns="projectTagManagedInfo[infoIndex][2]"
+            :data="projectTagManagedInfo[infoIndex][1]"
+          />
           <template #footer>
-            <n-button round @click="addProjectTag(infoIndex)"> 新增 </n-button>
+            <div style="display: flex; justify-content: center">
+              <n-button
+                strong
+                secondary
+                round
+                type="success"
+                @click="addProjectTag(infoIndex)"
+              >
+                <template #icon>
+                  <n-icon>
+                    <add-icon />
+                  </n-icon>
+                </template>
+              </n-button>
+            </div>
           </template>
         </n-card>
       </n-gi>
       <n-gi :span="24">
         <div style="display: flex; justify-content: center; margin: 5%">
-          <n-button
-            round
-            type="info"
-            @click="saveViewers"
-            :disabled="isViewersSaving"
-          >
+          <n-button round type="info" @click="saveSetting" :disabled="isSaving">
             儲存
           </n-button>
         </div>

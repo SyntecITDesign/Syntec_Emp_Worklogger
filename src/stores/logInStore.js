@@ -25,6 +25,7 @@ export const useLogInStore = defineStore('logInStore', () => {
         isChecking:false,
     });
     const viewerManagedInfo = ref([]);
+    const projectTagManagedInfo = ref([]);
     const projectKeyManagedSet = ref(new Set());
     const viewersTags = ref([{label:"請輸入工號查詢",value:"empty"}]);
     const newViewers = ref([]);
@@ -140,20 +141,21 @@ export const useLogInStore = defineStore('logInStore', () => {
                         }
                     );
                     
-                    let tagGroups = new Set();
-                    let tags = [];
+                    let projectTagGroups = new Set();
+                    let projectTags = [];
 
-                    resProjectTags.data.content.forEach((tagGroup) => {
-                        tagGroups.add(tagGroup.TagGroup);
-                        tags.push({tag:tagGroup.TagName,group:tagGroup.TagGroup});
+                    resProjectTags.data.content.forEach((projectTagGroup) => {
+                        projectTagGroups.add(projectTagGroup.TagGroup);
+                        projectTags.push({No:projectTagGroup.No,tag:projectTagGroup.TagName,group:projectTagGroup.TagGroup});
                     });
 
-                    viewerManagedInfo.value.push([projectKeyManagedSetItem,viewerTags,tagGroups,tags,[]]);
+                    viewerManagedInfo.value.push([projectKeyManagedSetItem,viewerTags]);
+                    projectTagManagedInfo.value.push([projectTagGroups,projectTags,[]]);
                     
                 });
                 //console.log(viewerManagedInfo.value);
 
-                console.log(viewerManagedInfo.value);
+                //console.log(viewerManagedInfo.value);
             }
         
             const resViewer = await axios.post(
@@ -179,8 +181,6 @@ export const useLogInStore = defineStore('logInStore', () => {
 
                 //console.log(localStorage.getItem("superDeptsView"),localStorage.getItem("projectKeysView"));
             }
-            
-
         } catch (err) {
             console.log(err);
         }
@@ -203,13 +203,18 @@ export const useLogInStore = defineStore('logInStore', () => {
     };
 
     watch(() =>  viewerManagedInfo.value,(newValue) => {
-        console.log("watch",newValue);
+        //console.log("watch",newValue);
         newViewers.value = newValue.map((item)=>({
             projectKey: item[0],
             Viewers: item[1].map((i)=>{return i.split("_")[0]}).join(','),
         }));
-        //console.log("newViewers",newViewers.value);
+        console.log("newViewers",newViewers.value);
     },{deep: true,});
 
-    return { newViewers, viewersTags, welcomeText, access,formRef, model, rules, viewerManagedInfo, projectKeyManagedSet, handleValidateButtonClick, checkLogInTime, getJiraWorkLoggerAccess, getEmpInfo}
+    watch(() =>  projectTagManagedInfo.value,(newValue) => {
+        console.log("projectTagManagedInfo",newValue);
+        
+    },{deep: true,});
+
+    return { newViewers, viewersTags, welcomeText, access,formRef, model, rules, viewerManagedInfo,projectTagManagedInfo, projectKeyManagedSet, handleValidateButtonClick, checkLogInTime, getJiraWorkLoggerAccess, getEmpInfo}
 })
