@@ -154,10 +154,9 @@ export const useLogInStore = defineStore('logInStore', () => {
                     
                 });
                 //console.log(viewerManagedInfo.value);
-
                 //console.log(viewerManagedInfo.value);
             }
-        
+            //判斷是否有權限查看報表，及可察看的Project
             const resViewer = await axios.post(
                 apiUrl + "/Open/JIRA_Related/Worklogger/GetJiraWorkLoggerAccess",
                 {Viewers:data,}
@@ -168,15 +167,11 @@ export const useLogInStore = defineStore('logInStore', () => {
                 access.value.isViewer = (devList.includes(localStorage.getItem("empID")))||(resViewer.data.code === 0);
             }
             console.log("access.value.isViewer",access.value.isViewer);
-            if(resViewer.data.code === 0){
-                let superDeptViewSet = new Set();
+            if(resViewer.data.code === 0){                
                 let projectKeyViewSet = new Set();
                 resViewer.data.content.forEach((item) => {
-                    //console.log("checkViewer",item);
-                    superDeptViewSet.add(item.SuperDeptName);
                     projectKeyViewSet.add(item.ProjectKey);
                 });
-                localStorage.setItem("superDeptsView",Array.from(superDeptViewSet).join('\',\''));
                 localStorage.setItem("projectKeysView",Array.from(projectKeyViewSet).join('\',\''));
 
                 //console.log(localStorage.getItem("superDeptsView"),localStorage.getItem("projectKeysView"));

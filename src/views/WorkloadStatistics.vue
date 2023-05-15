@@ -5,12 +5,14 @@ import axios from "axios";
 import { onMounted, ref, onBeforeMount } from "vue";
 import { useDashboardStroe } from "../stores/dashboardStroe.js";
 const dashboardStroe = useDashboardStroe();
-const { CheckIssueUpdateTime } = dashboardStroe;
-const { isUpdateLatestIssueInfo } = storeToRefs(dashboardStroe);
+const { CheckIssueUpdateTime, GetSuperDeptOfWorkLogs } = dashboardStroe;
+const { isUpdateLatestIssueInfo, isGettingSuperDeptOfWorkLogs } =
+  storeToRefs(dashboardStroe);
 const workloadStatisticsSrc = ref("");
 
 onBeforeMount(() => {
   CheckIssueUpdateTime();
+  GetSuperDeptOfWorkLogs();
 });
 onMounted(() => {
   workloadStatisticsSrc.value =
@@ -25,7 +27,7 @@ onMounted(() => {
 <template>
   <h1>Workload Statistics</h1>
   <n-space vertical class="workloadStatistics">
-    <n-spin :show="isUpdateLatestIssueInfo">
+    <n-spin :show="isUpdateLatestIssueInfo || isGettingSuperDeptOfWorkLogs">
       <iframe :src="workloadStatisticsSrc"></iframe>
       <template #description> 議題資訊更新中 </template>
     </n-spin>
