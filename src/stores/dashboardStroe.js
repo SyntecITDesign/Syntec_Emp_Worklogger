@@ -10,6 +10,8 @@ export const useDashboardStroe = defineStore('dashboardStroe', () => {
     const logInStore = useLogInStore();
     const { access } = storeToRefs(logInStore);
     const isUpdateLatestIssueInfo = ref(false);
+    const isGettingSuperDeptOfWorkLogs = ref(false);
+    
     const CheckIssueUpdateTime = async () => {
         isUpdateLatestIssueInfo.value = true;
         try {
@@ -24,5 +26,28 @@ export const useDashboardStroe = defineStore('dashboardStroe', () => {
             console.log(err);
         }
     };
-    return { CheckIssueUpdateTime, isUpdateLatestIssueInfo}
+
+    const GetSuperDeptOfWorkLogs = async () => {
+        if(localStorage.getItem("superDeptsView") === null) {
+            isGettingSuperDeptOfWorkLogs.value = true;
+            try {
+                const res = await axios.post(
+                apiUrl + "/Open/JIRA_Related/Worklogger/GetSuperDeptOfWorkLogs",
+                { projectKey: localStorage.getItem("projectKeysView") }
+                );
+                console.log("GetSuperDeptOfWorkLogs",res.data);
+                let superDeptViewSet = new Set();
+                res.data.content.forEach((item) => {
+                    superDeptViewSet.add(item.SuperDeptName);
+                });
+                localStorage.setItem("superDeptsView",Array.from(superDeptViewSet).join('\',\''));
+                isGettingSuperDeptOfWorkLogs.value = false;
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    };
+
+    
+    return { CheckIssueUpdateTime, isUpdateLatestIssueInfo, GetSuperDeptOfWorkLogs, isGettingSuperDeptOfWorkLogs}
 })

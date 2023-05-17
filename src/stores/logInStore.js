@@ -1,6 +1,6 @@
-import { ref,watch } from 'vue'
+import { ref,watch,h } from 'vue'
 import { defineStore, storeToRefs } from 'pinia';
-import { createDiscreteApi } from "naive-ui";
+import { createDiscreteApi,NSelect } from "naive-ui";
 
 import { useApiStore } from "../stores/apiStore.js";
 import axios from "axios";
@@ -25,6 +25,7 @@ export const useLogInStore = defineStore('logInStore', () => {
         isChecking:false,
     });
     const viewerManagedInfo = ref([]);
+    const projectTagManagedInfo = ref([]);
     const projectKeyManagedSet = ref(new Set());
     const viewersTags = ref([{label:"請輸入工號查詢",value:"empty"}]);
     const newViewers = ref([]);
@@ -120,24 +121,42 @@ export const useLogInStore = defineStore('logInStore', () => {
             
             if(resManagers.data.code === 0){
                 resManagers.data.content.forEach((item) => {
-                    console.log(item);
+                    //console.log(item);
                     projectKeyManagedSet.value.add(item.ProjectKey);
                 });
-                // viewerManagedInfo.value = res.data.content;
                 
                 //console.log("checkManager",Array.from(projectKeyManagedSet.value));
-                Array.from(projectKeyManagedSet.value).forEach((projectKeyManagedSetItem)=>{
+                Array.from(projectKeyManagedSet.value).forEach(async (projectKeyManagedSetItem,index)=>{
                     const viewerTags = resManagers.data.content.map((item)=>{
                         //console.log(item);
                         if ((item.ProjectKey === projectKeyManagedSetItem) && (!item.Managers.includes(item.EmpID)) && (item.Viewers.includes(item.EmpID))) {
                             return item.EmpID+"_"+item.EmpName;
                         }
                     }).filter((el)=>{return el !== undefined});
+                    
+                    const resProjectTags = await axios.post(
+                        apiUrl + "/Open/JIRA_Related/Worklogger/GetProjectTags",
+                        {
+                            projectKey : projectKeyManagedSetItem,
+                        }
+                    );
+                    
+                    let projectTagGroups = new Set();
+                    let projectTags = [];
+
+                    resProjectTags.data.content.forEach((projectTagGroup) => {
+                        projectTagGroups.add(projectTagGroup.TagGroup);
+                        projectTags.push({No:projectTagGroup.No,tag:projectTagGroup.TagName,group:projectTagGroup.TagGroup});
+                    });
+
                     viewerManagedInfo.value.push([projectKeyManagedSetItem,viewerTags]);
+                    projectTagManagedInfo.value.push([projectTagGroups,projectTags,[]]);
+                    
                 });
                 //console.log(viewerManagedInfo.value);
+                //console.log(viewerManagedInfo.value);
             }
-        
+            //判斷是否有權限查看報表，及可察看的Project
             const resViewer = await axios.post(
                 apiUrl + "/Open/JIRA_Related/Worklogger/GetJiraWorkLoggerAccess",
                 {Viewers:data,}
@@ -148,21 +167,15 @@ export const useLogInStore = defineStore('logInStore', () => {
                 access.value.isViewer = (devList.includes(localStorage.getItem("empID")))||(resViewer.data.code === 0);
             }
             console.log("access.value.isViewer",access.value.isViewer);
-            if(resViewer.data.code === 0){
-                let superDeptViewSet = new Set();
+            if(resViewer.data.code === 0){                
                 let projectKeyViewSet = new Set();
                 resViewer.data.content.forEach((item) => {
-                    //console.log("checkViewer",item);
-                    superDeptViewSet.add(item.SuperDeptName);
                     projectKeyViewSet.add(item.ProjectKey);
                 });
-                localStorage.setItem("superDeptsView",Array.from(superDeptViewSet).join('\',\''));
                 localStorage.setItem("projectKeysView",Array.from(projectKeyViewSet).join('\',\''));
 
                 //console.log(localStorage.getItem("superDeptsView"),localStorage.getItem("projectKeysView"));
             }
-            
-
         } catch (err) {
             console.log(err);
         }
@@ -185,7 +198,7 @@ export const useLogInStore = defineStore('logInStore', () => {
     };
 
     watch(() =>  viewerManagedInfo.value,(newValue) => {
-        console.log("watch",newValue);
+        //console.log("watch",newValue);
         newViewers.value = newValue.map((item)=>({
             projectKey: item[0],
             Viewers: item[1].map((i)=>{return i.split("_")[0]}).join(','),
@@ -193,5 +206,10 @@ export const useLogInStore = defineStore('logInStore', () => {
         console.log("newViewers",newViewers.value);
     },{deep: true,});
 
-    return { newViewers, viewersTags, welcomeText, access,formRef, model, rules, viewerManagedInfo, projectKeyManagedSet, handleValidateButtonClick, checkLogInTime, getJiraWorkLoggerAccess, getEmpInfo}
+    watch(() =>  projectTagManagedInfo.value,(newValue) => {
+        console.log("projectTagManagedInfo",newValue);
+        
+    },{deep: true,});
+
+    return { newViewers, viewersTags, welcomeText, access,formRef, model, rules, viewerManagedInfo,projectTagManagedInfo, projectKeyManagedSet, handleValidateButtonClick, checkLogInTime, getJiraWorkLoggerAccess, getEmpInfo}
 })

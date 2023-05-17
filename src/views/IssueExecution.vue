@@ -5,8 +5,9 @@ import axios from "axios";
 import { onMounted, ref, onBeforeMount, watch } from "vue";
 import { useDashboardStroe } from "../stores/dashboardStroe.js";
 const dashboardStroe = useDashboardStroe();
-const { CheckIssueUpdateTime } = dashboardStroe;
-const { isUpdateLatestIssueInfo } = storeToRefs(dashboardStroe);
+const { CheckIssueUpdateTime, GetSuperDeptOfWorkLogs } = dashboardStroe;
+const { isUpdateLatestIssueInfo, isGettingSuperDeptOfWorkLogs } =
+  storeToRefs(dashboardStroe);
 const issueExecutionSrc = ref(null);
 const selectedSuperDeptName = ref(null);
 const superDeptNameOptions = ref(
@@ -20,6 +21,7 @@ const superDeptNameOptions = ref(
 );
 onBeforeMount(() => {
   CheckIssueUpdateTime();
+  GetSuperDeptOfWorkLogs();
 });
 watch(
   () => selectedSuperDeptName.value,
@@ -45,7 +47,7 @@ watch(
     />
   </h1>
   <n-space vertical class="issueExecution">
-    <n-spin :show="isUpdateLatestIssueInfo">
+    <n-spin :show="isUpdateLatestIssueInfo || isGettingSuperDeptOfWorkLogs">
       <iframe
         :src="issueExecutionSrc"
         v-if="issueExecutionSrc !== null"

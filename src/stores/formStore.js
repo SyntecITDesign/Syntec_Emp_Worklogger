@@ -132,7 +132,7 @@ export const useFormStore = defineStore('formStore', () => {
         }
     };
 
-    const getProjectTags = async () => {
+    const getProjectTags = async (projectKey,usage) => {
         try {
             isTagOptionsChange.value = true;
             tagOptions.value = [].map((v) => ({ label: v, value: v, }));
@@ -140,19 +140,25 @@ export const useFormStore = defineStore('formStore', () => {
             const res = await axios.post(
                 apiUrl + "/Open/JIRA_Related/Worklogger/GetProjectTags",
                 {
-                    projectKey : model.value.selectFilterValue==="nonIssue"?"nonIssue":model.value.selectIssueValue.split("-")[0],
+                    projectKey : projectKey,
                 }
             );
-            console.log(res.data.content);
+            //console.log(res.data.content);
 
             if(res.data.content === null){
                 dialog.info({ title: "無相關標籤" });
             }else{
-                res.data.content.map((v) => ({ label: v.TagName, value: v.TagName, })).forEach(element => {
-                    tagOptions.value.push(element);
-                });
+                if(usage ==="forFillForm"){
+                    res.data.content.map((v) => ({ label: v.TagName, value: v.TagName, })).forEach(element => {
+                        tagOptions.value.push(element);
+                    });
+                }else{
+                    //console.log(res.data.content);
+                    return res.data.content;
+                }
+            //console.log(tagOptions.value);
+
             }
-            console.log(tagOptions.value);
             isTagOptionsChange.value = false;
 
         } catch (err) {
@@ -327,7 +333,7 @@ export const useFormStore = defineStore('formStore', () => {
     },{deep: true,});
 
     watch(() => model.value.selectIssueValue,(newValue) => {
-        if(newValue!== null) getProjectTags();
+        if(newValue!== null) getProjectTags(model.value.selectFilterValue==="nonIssue"?"nonIssue":model.value.selectIssueValue.split("-")[0],"forFillForm");
     },{deep: true,});
 
     watch(() => [model.value.startDateValue,model.value.startTimeValue],([newDateValue,newTimeValue]) => {
@@ -349,5 +355,5 @@ export const useFormStore = defineStore('formStore', () => {
         console.log(model.value.spendValue/(60*60),spendValue.value.sumSpendSecond/(60*60));
     });
 
-    return { formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog}
+    return { formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog, getProjectTags}
 })
