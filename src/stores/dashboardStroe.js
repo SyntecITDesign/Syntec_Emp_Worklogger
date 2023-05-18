@@ -45,6 +45,9 @@ export const useDashboardStroe = defineStore('dashboardStroe', () => {
             } catch (err) {
                 console.log(err);
             }
+        }else{
+            isGettingSuperDeptOfWorkLogs.value = true;
+            isGettingSuperDeptOfWorkLogs.value = false;
         }
     };
 

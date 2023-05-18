@@ -53,7 +53,7 @@ export const useFormStore = defineStore('formStore', () => {
             value: v,
         })
     ));
-    const filterOptions = [["負責的議題", "byAssignee"], ["報告的議題", "byReporter"], ["監看的議題", "byWatcher"], ["非議題", "nonIssue"]].map(
+    const filterOptions = [["負責的議題", "byAssignee"], ["報告的議題", "byReporter"], ["監看的議題", "byWatcher"], ["管理議題", "managedIssue"], ["非議題", "nonIssue"]].map(
         (v) => ({
             label: v[0],
             value: v[1],
@@ -252,7 +252,7 @@ export const useFormStore = defineStore('formStore', () => {
                 const modelForJiraAddWorkLogApi = {
                     issueID: model.value.selectIssueValue.split(" ")[0],
                     started: model.value.startDateValue+"T"+model.value.startTimeValue+".000+0800",
-                    comment: (model.value.selectFilterValue === "nonIssue"? "[分類：非議題":"[分類：一般議題")+"] [標籤："+model.value.tagValue +"] [工作內容："+ model.value.descriptionValue+"]",                    
+                    comment: (model.value.selectFilterValue === "nonIssue"? "[分類：非議題":(model.value.selectFilterValue === "managedIssue"? "[分類：管理議題":"[分類：一般議題"))+"] [標籤："+model.value.tagValue +"] [工作內容："+ model.value.descriptionValue+"]",                    
                     timeSpentSeconds: model.value.spendValue,
                     BasicAuth:access.value.basicAuth,
                 }
@@ -263,7 +263,7 @@ export const useFormStore = defineStore('formStore', () => {
                     timeSpentSeconds: model.value.spendValue,
                     created: "",
                     started: model.value.startDateValue+" "+model.value.startTimeValue,
-                    type:model.value.selectFilterValue === "nonIssue"? "非議題":"一般議題",
+                    type:(model.value.selectFilterValue === "nonIssue"? "非議題":(model.value.selectFilterValue === "managedIssue"? "管理議題":"一般議題")),
                     tags: model.value.tagValue,
                     comment: model.value.descriptionValue,
                     spendHour:spendValue.value.spendHourValue,
@@ -306,6 +306,10 @@ export const useFormStore = defineStore('formStore', () => {
 
     watch(() => model.value.selectFilterValue,(newValue) => {
         switch (newValue) {
+            case "managedIssue":
+                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type = 管理議題 AND status != Closed";
+                getJiraIssues();
+                break;
             case "nonIssue":
                 JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type = 非議題 AND status != Closed";
                 getJiraIssues();
@@ -333,7 +337,7 @@ export const useFormStore = defineStore('formStore', () => {
     },{deep: true,});
 
     watch(() => model.value.selectIssueValue,(newValue) => {
-        if(newValue!== null) getProjectTags(model.value.selectFilterValue==="nonIssue"?"nonIssue":model.value.selectIssueValue.split("-")[0],"forFillForm");
+        if(newValue!== null) getProjectTags((model.value.selectFilterValue==="nonIssue"?"nonIssue":(model.value.selectFilterValue==="managedIssue"?"managedIssue":model.value.selectIssueValue.split("-")[0])),"forFillForm");
     },{deep: true,});
 
     watch(() => [model.value.startDateValue,model.value.startTimeValue],([newDateValue,newTimeValue]) => {

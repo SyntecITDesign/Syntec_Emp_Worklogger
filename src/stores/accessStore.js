@@ -13,7 +13,7 @@ export const useAccessStore = defineStore('accessStore', () => {
   const { getEmpInfo } = logInStore;
   const { viewersTags, newViewers, viewerManagedInfo,projectTagManagedInfo} = storeToRefs(logInStore);
   const apiStore = useApiStore();
-  const { apiUrl } = apiStore;
+  const { apiUrl,InsertActionLog } = apiStore;
   const formStore = useFormStore();
   const { getProjectTags } = formStore;
   const isEmpListLoading = ref(false);
@@ -57,7 +57,13 @@ export const useAccessStore = defineStore('accessStore', () => {
           apiUrl + "/Open/JIRA_Related/Worklogger/UpdateJiraWorkLoggerAccess",
           item
         );
-        console.log("saveViewers",resUpdateJiraWorkLoggerAccess.data);        
+        console.log("saveViewers",resUpdateJiraWorkLoggerAccess.data);
+        InsertActionLog({
+          Action:"UpdateJiraWorkLoggerAccess",
+          ActionContent:JSON.stringify(resUpdateJiraWorkLoggerAccess.data)+JSON.stringify(item),
+          Memo:"Auto",
+          EmpID:localStorage.getItem("empID")
+        });
       });
 
       deleteProjectTags.value.forEach(async (item)=>{
@@ -67,6 +73,12 @@ export const useAccessStore = defineStore('accessStore', () => {
             item
           );
           console.log("DeleteProjectTag",resDeleteProjectTag.data);
+          InsertActionLog({
+            Action:"DeleteProjectTag",
+            ActionContent:JSON.stringify(resDeleteProjectTag.data)+JSON.stringify(item),
+            Memo:"Auto",
+            EmpID:localStorage.getItem("empID")
+          })
         }
       });
 
@@ -82,6 +94,17 @@ export const useAccessStore = defineStore('accessStore', () => {
             }
           );
           console.log("UpsertProjectTag",resUpsertProjectTag.data);
+          InsertActionLog({
+            Action:"UpsertProjectTag",
+            ActionContent:JSON.stringify(resUpsertProjectTag.data)+JSON.stringify({
+              No:item.No,
+              projectKey:viewerManagedInfo.value[projectInfoIndex][0],
+              tagName:item.tag,
+              tagGroup:item.group
+            }),
+            Memo:"Auto",
+            EmpID:localStorage.getItem("empID")
+          });
         });
       });
       isSaving.value = false;

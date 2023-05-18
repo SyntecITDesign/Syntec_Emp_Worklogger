@@ -2,7 +2,7 @@
 import { NSpin, NSpace, NSelect } from "naive-ui";
 import { storeToRefs } from "pinia";
 import axios from "axios";
-import { onMounted, ref, onBeforeMount, watch } from "vue";
+import { ref, onBeforeMount, watch } from "vue";
 import { useDashboardStroe } from "../stores/dashboardStroe.js";
 const dashboardStroe = useDashboardStroe();
 const { CheckIssueUpdateTime, GetSuperDeptOfWorkLogs } = dashboardStroe;
