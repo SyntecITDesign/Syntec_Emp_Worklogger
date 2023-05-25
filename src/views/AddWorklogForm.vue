@@ -88,6 +88,7 @@ const {
           time-zone="Asia/Taipei"
           value-format="H:m:s"
           placeholder="請選擇時間"
+          v-if="false"
         />
       </n-form-item-gi>
       <n-form-item-gi :span="12" label="花費時間" path="spendValue">
@@ -164,10 +165,8 @@ const {
         </template>
         {{ item[0].comment }}
         <template #footer>
-          開始日期：{{ item[0].started }}<br />
-          花費時間：{{ item[0].spendDay }}天{{ item[0].spendHour }}小時{{
-            item[0].spendMinute
-          }}分鐘
+          開始日期：{{ item[0].started.split(" ")[0] }}<br />
+          花費時間：{{ item[0].spendHour }}小時{{ item[0].spendMinute }}分鐘
         </template>
       </n-card>
     </n-gi>
