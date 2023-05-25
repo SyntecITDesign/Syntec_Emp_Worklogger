@@ -26,7 +26,7 @@ export const useFormStore = defineStore('formStore', () => {
         selectIssueValue: null,
         tagValue: null,
         startDateValue: null,
-        startTimeValue: null,
+        startTimeValue: "08:00:00",
         spendValue: computed(() => (spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
     });
     const models = ref([]);
@@ -290,7 +290,7 @@ export const useFormStore = defineStore('formStore', () => {
             model.value.selectIssueValue=null,
             model.value.tagValue=null,
             model.value.startDateValue=null,
-            model.value.startTimeValue=null,
+            model.value.startTimeValue="08:00:00",
             spendValue.value.spendHourValue = 0,
             spendValue.value.spendMinuteValue = 0,
             spendValue.value.sumSpendSecond = 0,
