@@ -329,7 +329,7 @@ export const useFormStore = defineStore('formStore', () => {
             case null:
                 break;
             default:
-                JQL.value.JQL = "key = " + newValue+" AND status != Closed";
+                JQL.value.JQL = "key = " + newValue+" AND type != 非議題 AND type != 管理議題 AND status != Closed";
                 //console.log(JQL.value);
                 getJiraIssues();
                 break;
