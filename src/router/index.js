@@ -7,6 +7,7 @@ import IssueSummaryView from '../views/IssueSummary.vue'
 import HRInvestmentsView from '../views/HRInvestments.vue'
 import IssueExecutionView from '../views/IssueExecution.vue'
 import DashboardAccessManagementView from '../views/DashboardAccessManagement.vue'
+import HistoryView from '../views/History.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -50,6 +51,11 @@ const router = createRouter({
       path: '/dashboardAccessManagement',
       name: 'dashboardAccessManagement',
       component: DashboardAccessManagementView
+    },
+    {
+      path: '/history',
+      name: 'history',
+      component: HistoryView
     }
   ]
 })

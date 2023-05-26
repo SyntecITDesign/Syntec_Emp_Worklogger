@@ -68,6 +68,7 @@ export const useLogInStore = defineStore('logInStore', () => {
                 isChecking:false,
             };
             dialog.info({ title: "逾時請重新登入" });
+            localStorage.clear();
         }
     };
     
