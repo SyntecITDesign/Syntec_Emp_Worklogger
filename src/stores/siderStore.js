@@ -9,6 +9,7 @@ import {
     HomeOutline as homeIcon,
     CaretDownOutline as caretDownOutline,
     Accessibility as lockAccessIcon,
+    RecordingOutline as recordingIcon,
   } from "@vicons/ionicons5";
 
 
@@ -156,6 +157,23 @@ export const useSiderStore = defineStore('siderStore', () => {
         key: "go-DashboardAccessManagement",
         show:access.value.isViewersManager,
         icon: renderIcon(lockAccessIcon),
+      },
+      {
+        label: () =>
+          h(
+            RouterLink,
+            {
+              to: {
+                name: "history",
+                params: {
+                  lang: "zh-CN",
+                },
+              },
+            },
+            { default: () => "歷史報工紀錄" }
+          ),
+        key: "go-history",
+        icon: renderIcon(recordingIcon),
       },
     ]);
 
