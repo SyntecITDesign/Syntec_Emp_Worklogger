@@ -28,8 +28,8 @@ export const useDashboardStroe = defineStore('dashboardStroe', () => {
     };
 
     const GetSuperDeptOfWorkLogs = async () => {
-        if(localStorage.getItem("superDeptsView") === null) {
-            isGettingSuperDeptOfWorkLogs.value = true;
+        isGettingSuperDeptOfWorkLogs.value = true;
+        if(localStorage.getItem("superDeptsView") === null) {            
             try {
                 const res = await axios.post(
                 apiUrl + "/Open/JIRA_Related/Worklogger/GetSuperDeptOfWorkLogs",
@@ -45,10 +45,11 @@ export const useDashboardStroe = defineStore('dashboardStroe', () => {
             } catch (err) {
                 console.log(err);
             }
-        }else{
-            isGettingSuperDeptOfWorkLogs.value = true;
+        }else{            
+            console.log("GetSuperDeptOfWorkLogs",isGettingSuperDeptOfWorkLogs.value);
             isGettingSuperDeptOfWorkLogs.value = false;
         }
+        return isGettingSuperDeptOfWorkLogs.value
     };
 
     

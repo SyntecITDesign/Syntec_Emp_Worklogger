@@ -9,14 +9,13 @@ const { CheckIssueUpdateTime, GetSuperDeptOfWorkLogs } = dashboardStroe;
 const { isUpdateLatestIssueInfo, isGettingSuperDeptOfWorkLogs } =
   storeToRefs(dashboardStroe);
 const issueSummarySrc = ref("");
-
 onBeforeMount(() => {
   CheckIssueUpdateTime();
-  GetSuperDeptOfWorkLogs();
+  GetSuperDeptOfWorkLogs().then((res) => (issueSummarySrc.value = null));
 });
 
 watch(
-  () => isGettingSuperDeptOfWorkLogs.value,
+  () => issueSummarySrc.value,
   (newValue) => {
     console.log("watch", newValue);
     issueSummarySrc.value = null;
@@ -26,6 +25,7 @@ watch(
       localStorage.getItem("superDeptsView") +
       "&p_ProjectKey=" +
       localStorage.getItem("projectKeysView");
+    console.log("issueSummarySrc", issueSummarySrc.value);
   }
 );
 </script>
