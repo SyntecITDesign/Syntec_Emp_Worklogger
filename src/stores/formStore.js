@@ -53,7 +53,7 @@ export const useFormStore = defineStore('formStore', () => {
             value: v,
         })
     ));
-    const filterOptions = [["負責的議題", "byAssignee"], ["報告的議題", "byReporter"], ["監看的議題", "byWatcher"], ["管理議題", "managedIssue"], ["非議題", "nonIssue"]].map(
+    const filterOptions = [["負責的議題", "byAssignee"], ["報告的議題", "byReporter"], ["監看的議題", "byWatcher"], ["管理議題", "managedIssue"], ["非議題", "nonIssue"], ["一周內結案的議題", "closedIssues"]].map(
         (v) => ({
             label: v[0],
             value: v[1],
@@ -315,21 +315,21 @@ export const useFormStore = defineStore('formStore', () => {
                 getJiraIssues();
                 break;
             case "byAssignee":
-                JQL.value.JQL = "assignee = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND status != Closed order by created DESC";
+                JQL.value.JQL = "assignee = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (updated > -7d or status != Closed) AND project != R2DEVICE order by created DESC";
                 getJiraIssues();
                 break;
             case "byReporter":
-                JQL.value.JQL = "reporter = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND status != Closed order by created DESC";
+                JQL.value.JQL = "reporter = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (updated > -7d or status != Closed) order by created DESC";
                 getJiraIssues();
                 break;
             case "byWatcher":
-                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND status != Closed order by created DESC";
+                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (updated > -7d or status != Closed) order by created DESC";
                 getJiraIssues();
                 break;
             case null:
                 break;
             default:
-                JQL.value.JQL = "key = " + newValue+" AND type != 非議題 AND type != 管理議題 AND status != Closed";
+                JQL.value.JQL = "key = " + newValue+" AND type != 非議題 AND type != 管理議題";
                 //console.log(JQL.value);
                 getJiraIssues();
                 break;

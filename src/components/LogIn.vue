@@ -7,20 +7,13 @@ import { useLogInStore } from "../stores/logInStore.js";
 
 const logInStore = useLogInStore();
 const { formRef, model, access } = storeToRefs(logInStore);
-const { rules, handleValidateButtonClick } = logInStore;
+const { rules, handleValidateButtonClick, checkLogInTime } = logInStore;
 
 onBeforeMount(() => {
   if (window.location.href.split("#")[1].length > 1) {
     window.location.assign("/");
   }
-  access.value = {
-    isLogIn: false,
-    isViewer: false,
-    isViewersManager: false,
-    basicAuth: null,
-    isChecking: false,
-  };
-  localStorage.clear();
+  checkLogInTime();
   console.log(import.meta.env.VITE_BACKEND_HOST);
 });
 </script>
