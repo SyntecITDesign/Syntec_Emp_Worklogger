@@ -193,8 +193,9 @@ export const useLogInStore = defineStore('logInStore', () => {
             console.log(err);
         }
 
-
-        access.value.isCheckedAccess = true;
+        if(localStorage.getItem("projectKeysView")!==null){
+            access.value.isCheckedAccess = true;
+        }
     };
 
     const getEmpInfo = async (query) => {
