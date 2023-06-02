@@ -23,7 +23,6 @@ export const useLogInStore = defineStore('logInStore', () => {
         isViewersManager:false,
         basicAuth:null,
         isChecking:false,
-        isCheckedAccess:false,
     });
     const viewerManagedInfo = ref([]);
     const projectTagManagedInfo = ref([]);
@@ -76,7 +75,6 @@ export const useLogInStore = defineStore('logInStore', () => {
                 isViewersManager:false,
                 basicAuth:null,
                 isChecking:false,
-                isCheckedAccess:false,
             };
             dialog.info({ title: "逾時請重新登入" });
             localStorage.clear();
@@ -98,7 +96,6 @@ export const useLogInStore = defineStore('logInStore', () => {
                 dialog.error({ title: "登入失敗" });
             } else {
                 access.value.basicAuth = encode(model.value.Username + ":" + model.value.Password);
-                localStorage.setItem("basicAuth", access.value.basicAuth);
                 localStorage.setItem("loginTime", new Date().getTime());
                 localStorage.setItem("empID", model.value.Username);
                 welcomeText.value = "Hi," + model.value.Username;
@@ -192,10 +189,6 @@ export const useLogInStore = defineStore('logInStore', () => {
             }
         } catch (err) {
             console.log(err);
-        }
-
-        if(localStorage.getItem("projectKeysView")!==null){
-            access.value.isCheckedAccess = true;
         }
     };
 
