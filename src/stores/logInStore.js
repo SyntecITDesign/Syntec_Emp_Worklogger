@@ -59,7 +59,16 @@ export const useLogInStore = defineStore('logInStore', () => {
     };
 
     const checkLogInTime = () => {
-        if((access.value.isLogIn)&&(access.value.basicAuth === null || new Date().getTime() - localStorage.getItem("loginTime") > 3600000 /*一小時候登出*/ )){
+        if(localStorage.getItem("basicAuth")!==null){
+            access.value.basicAuth = localStorage.getItem("basicAuth");
+        }
+        if(localStorage.getItem("empID")!==null){
+            access.value.isLogIn = true;
+            if(!access.value.isCheckedAccess && access.value.isLogIn){
+                getJiraWorkLoggerAccess(model.value.Username);
+            }
+        }
+        if(access.value.isLogIn&&(new Date().getTime() - localStorage.getItem("loginTime") > 3600000 /*一小時候登出*/ )){
             access.value = {
                 isLogIn:false,
                 isViewer:false,
@@ -99,7 +108,7 @@ export const useLogInStore = defineStore('logInStore', () => {
                 // getJiraWorkLoggerAccess("checkViewer",{
                 //     Viewers:model.value.Username,
                 // });
-                getJiraWorkLoggerAccess(model.value.Username);
+                //getJiraWorkLoggerAccess(model.value.Username);
             }
             access.value.isChecking = false;
 
@@ -109,6 +118,7 @@ export const useLogInStore = defineStore('logInStore', () => {
     };
 
     const getJiraWorkLoggerAccess = async (data) => {
+        access.value.isCheckedAccess = true;
         try {
             const resManagers = await axios.post(
                 apiUrl + "/Open/JIRA_Related/Worklogger/GetJiraWorkLoggerAccess",
