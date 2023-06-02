@@ -65,7 +65,7 @@ export const useLogInStore = defineStore('logInStore', () => {
         }
         if(localStorage.getItem("empID")!==null){
             access.value.isLogIn = true;
-            if(!access.value.isCheckedAccess){
+            if(!access.value.isCheckedAccess && access.value.isLogIn){
                 getJiraWorkLoggerAccess(model.value.Username);
             }
         }
@@ -111,7 +111,7 @@ export const useLogInStore = defineStore('logInStore', () => {
                 // getJiraWorkLoggerAccess("checkViewer",{
                 //     Viewers:model.value.Username,
                 // });
-                getJiraWorkLoggerAccess(model.value.Username);
+                //getJiraWorkLoggerAccess(model.value.Username);
             }
             access.value.isChecking = false;
 
@@ -121,6 +121,7 @@ export const useLogInStore = defineStore('logInStore', () => {
     };
 
     const getJiraWorkLoggerAccess = async (data) => {
+        access.value.isCheckedAccess = true;
         try {
             const resManagers = await axios.post(
                 apiUrl + "/Open/JIRA_Related/Worklogger/GetJiraWorkLoggerAccess",
