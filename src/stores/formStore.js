@@ -19,13 +19,14 @@ export const useFormStore = defineStore('formStore', () => {
     const isTagOptionsChange = ref(false);    
     const spendValueStatus = ref({ init: false, status: "error" });
     const size = ref("medium");
-    
+    const today = new Date();
+
     const model = ref({
         descriptionValue: null,
         selectFilterValue: null,
         selectIssueValue: null,
         tagValue: null,
-        startDateValue: null,
+        startDateValue: today.getFullYear()+ "-" + ((today.getMonth()+1)<10?"0"+(today.getMonth()+1):(today.getMonth()+1))+ "-" + (today.getDate()<10?"0"+today.getDate():today.getDate()),
         startTimeValue: "08:00:00",
         spendValue: computed(() => (spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
     });
@@ -224,11 +225,7 @@ export const useFormStore = defineStore('formStore', () => {
                 }
             };
 
-            if(isSuccess){
-                dialog.info({ title: "新增完成" });
-                initData();
-                models.value = [];
-            }else{
+            if(!isSuccess){
                 dialog.error({ title: "新增失敗" });
             }
             isAddingJiraWorklog.value = false;
@@ -307,11 +304,7 @@ export const useFormStore = defineStore('formStore', () => {
 
     const initData = () =>{
             model.value.descriptionValue=null,
-            model.value.selectFilterValue=null,
-            model.value.selectIssueValue=null,
             model.value.tagValue=null,
-            model.value.startDateValue=null,
-            model.value.startTimeValue="08:00:00",
             spendValue.value.spendHourValue = 0,
             spendValue.value.spendMinuteValue = 0,
             spendValue.value.sumSpendSecond = 0,

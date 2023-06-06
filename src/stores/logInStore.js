@@ -59,6 +59,7 @@ export const useLogInStore = defineStore('logInStore', () => {
     };
 
     const checkLogInTime = () => {
+        console.log("checkLogInTime");
         if(localStorage.getItem("basicAuth")!==null){
             access.value.basicAuth = localStorage.getItem("basicAuth");
         }
