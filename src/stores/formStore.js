@@ -261,6 +261,10 @@ export const useFormStore = defineStore('formStore', () => {
         }
     };
 
+    const dateDisabled = (ts) => {
+        const date = new Date(ts);
+        return date >= new Date();
+}
 
     const handleValidateButtonClick = (e) => {        
         e.preventDefault();
