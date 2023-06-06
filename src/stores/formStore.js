@@ -105,6 +105,7 @@ export const useFormStore = defineStore('formStore', () => {
 
 
     const getJiraIssues = async () => {
+        console.log(JQL.value);
         try {
             isIssueOptionsChange.value = true;
             issueOptions.value = [].map((v) => ({ label: v, value: v, }));
@@ -211,7 +212,7 @@ export const useFormStore = defineStore('formStore', () => {
 
                     if(resUpsertJiraWorkLogRelatedIssue.data.code == 0){
                         successCount.value++;
-                        if(isSuccess && (successCount.value==models.value.length)){
+                        if(isSuccess && (successCount.value == models.value.length)){
                             dialog.info({ title: "新增完成" });
                             initData();
                             models.value = [];
@@ -319,6 +320,7 @@ export const useFormStore = defineStore('formStore', () => {
 
 
     watch(() => model.value.selectFilterValue,(newValue) => {
+        console.log(JQL.value);
         switch (newValue) {
             case "managedIssue":
                 JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type = 管理議題 AND status != Closed order by created DESC";
@@ -344,7 +346,7 @@ export const useFormStore = defineStore('formStore', () => {
                 break;
             default:
                 JQL.value.JQL = "key = " + newValue+" AND type != 非議題 AND type != 管理議題 AND status != Closed";
-                //console.log(JQL.value);
+                
                 getJiraIssues();
                 break;
         }

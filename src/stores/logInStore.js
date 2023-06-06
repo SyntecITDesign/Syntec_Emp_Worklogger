@@ -65,6 +65,7 @@ export const useLogInStore = defineStore('logInStore', () => {
         }
         if(localStorage.getItem("empID")!==null){
             access.value.isLogIn = true;
+            welcomeText.value = "Hi," + localStorage.getItem("empID");
             if(!access.value.isCheckedAccess && access.value.isLogIn){
             //console.log("getJiraWorkLoggerAccess",localStorage.getItem("empID"));
                 getJiraWorkLoggerAccess(localStorage.getItem("empID"));
@@ -98,19 +99,13 @@ export const useLogInStore = defineStore('logInStore', () => {
                 dialog.error({ title: "登入失敗" });
             } else {
                 access.value.basicAuth = encode(model.value.Username + ":" + model.value.Password);
+                localStorage.setItem("basicAuth", access.value.basicAuth);
                 localStorage.setItem("loginTime", new Date().getTime());
                 localStorage.setItem("empID", model.value.Username);
                 welcomeText.value = "Hi," + model.value.Username;
                 access.value.isLogIn = true;
                 dialog.info({ title: "登入成功" });
-                // getJiraWorkLoggerAccess("checkManager",{
-                //     Managers:"%"+model.value.Username+"%",                    
-                // });
                 
-                // getJiraWorkLoggerAccess("checkViewer",{
-                //     Viewers:model.value.Username,
-                // });
-                //getJiraWorkLoggerAccess(model.value.Username);
             }
             access.value.isChecking = false;
 
