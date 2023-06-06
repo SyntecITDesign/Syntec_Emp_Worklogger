@@ -326,15 +326,15 @@ export const useFormStore = defineStore('formStore', () => {
                 getJiraIssues();
                 break;
             case "byAssignee":
-                JQL.value.JQL = "assignee = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (updated > -7d or status != Closed) AND project != R2DEVICE order by created DESC";
+                JQL.value.JQL = "assignee = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (status != Closed) AND project != R2DEVICE order by created DESC";
                 getJiraIssues();
                 break;
             case "byReporter":
-                JQL.value.JQL = "reporter = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (updated > -7d or status != Closed) order by created DESC";
+                JQL.value.JQL = "reporter = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (status != Closed) order by created DESC";
                 getJiraIssues();
                 break;
             case "byWatcher":
-                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (updated > -7d or status != Closed) order by created DESC";
+                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (status != Closed) order by created DESC";
                 getJiraIssues();
                 break;
             case null:
