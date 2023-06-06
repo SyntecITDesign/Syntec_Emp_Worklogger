@@ -68,7 +68,7 @@ export const useLogInStore = defineStore('logInStore', () => {
                 getJiraWorkLoggerAccess(model.value.Username);
             }
         }
-        if(access.value.isLogIn&&(new Date().getTime() - localStorage.getItem("loginTime") > 3600000 /*一小時候登出*/ )){
+        if(access.value.isLogIn && (new Date().getTime() - localStorage.getItem("loginTime") > 3600000 /*一小時候登出*/ )){
             access.value = {
                 isLogIn:false,
                 isViewer:false,
