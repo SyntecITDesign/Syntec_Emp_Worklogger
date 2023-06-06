@@ -45,6 +45,42 @@ const {
 </script>
 <template>
   <h1>新增工作日誌</h1>
+  <n-divider v-if="false" />
+  <n-grid :cols="24" :x-gap="24" v-if="false">
+    <n-form-item-gi :span="2"></n-form-item-gi>
+    <n-form-item-gi
+      :span="5"
+      style="
+        display: flex;
+        justify-content: flex-end;
+        font-weight: bold;
+        font-size: larger;
+      "
+      >刪除錯誤報工</n-form-item-gi
+    >
+    <n-form-item-gi :span="5" label="議題編號" path="descriptionValue">
+      <n-input
+        v-model:value="model.descriptionValue"
+        placeholder="議題編號"
+        type="text"
+      />
+    </n-form-item-gi>
+    <n-form-item-gi :span="5" label="WoklogID" path="descriptionValue">
+      <n-input
+        v-model:value="model.descriptionValue"
+        placeholder="WoklogID"
+        type="text"
+      />
+    </n-form-item-gi>
+    <n-form-item-gi
+      :span="5"
+      style="display: flex; justify-content: flex-start"
+    >
+      <n-button round type="error" @click="deleteJiraWorklog"> 刪除 </n-button>
+    </n-form-item-gi>
+    <n-form-item-gi :span="2"></n-form-item-gi>
+  </n-grid>
+  <n-divider v-if="false" />
   <n-form
     ref="formRef"
     :model="model"
