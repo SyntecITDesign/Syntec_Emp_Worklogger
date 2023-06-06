@@ -65,7 +65,8 @@ export const useLogInStore = defineStore('logInStore', () => {
         if(localStorage.getItem("empID")!==null){
             access.value.isLogIn = true;
             if(!access.value.isCheckedAccess && access.value.isLogIn){
-                getJiraWorkLoggerAccess(model.value.Username);
+            //console.log("getJiraWorkLoggerAccess",localStorage.getItem("empID"));
+                getJiraWorkLoggerAccess(localStorage.getItem("empID"));
             }
         }
         if(access.value.isLogIn&&(new Date().getTime() - localStorage.getItem("loginTime") > 3600000 /*一小時候登出*/ )){
@@ -190,6 +191,11 @@ export const useLogInStore = defineStore('logInStore', () => {
         } catch (err) {
             console.log(err);
         }
+
+        if(Array.from(viewerManagedInfo)===[]){
+            access.value.isCheckedAccess = false;
+        }
+
     };
 
     const getEmpInfo = async (query) => {
@@ -214,11 +220,11 @@ export const useLogInStore = defineStore('logInStore', () => {
             projectKey: item[0],
             Viewers: item[1].map((i)=>{return i.split("_")[0]}).join(','),
         }));
-        console.log("newViewers",newViewers.value);
+        //console.log("newViewers",newViewers.value);
     },{deep: true,});
 
     watch(() =>  projectTagManagedInfo.value,(newValue) => {
-        console.log("projectTagManagedInfo",newValue);
+        //console.log("projectTagManagedInfo",newValue);
         
     },{deep: true,});
 

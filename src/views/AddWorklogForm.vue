@@ -15,6 +15,7 @@ import {
   NDivider,
   NCard,
   NTag,
+  NSpin,
 } from "naive-ui";
 import { onBeforeUpdate } from "vue";
 import { storeToRefs } from "pinia";
@@ -32,6 +33,7 @@ const {
   isTagOptionsChange,
   isAddingJiraWorklog,
   spendValueStatus,
+  successCount,
 } = storeToRefs(formStore);
 const {
   filterOptions,
@@ -171,20 +173,25 @@ const {
       </n-card>
     </n-gi>
     <n-gi :span="24">
-      <div
-        v-if="models.length > 0"
-        style="display: flex; justify-content: flex-end; margin: 5%"
-      >
-        <n-button
-          round
-          type="info"
-          @click="addJiraWorklog"
-          :loading="isAddingJiraWorklog"
-          :disabled="isAddingJiraWorklog"
+      <n-spin :show="isAddingJiraWorklog">
+        <template #description>
+          議題資訊更新中 {{ successCount }} / {{ models.length }}</template
         >
-          送出
-        </n-button>
-      </div>
+        <div
+          v-if="models.length > 0"
+          style="display: flex; justify-content: flex-end; margin: 5%"
+        >
+          <n-button
+            round
+            type="info"
+            @click="addJiraWorklog"
+            :loading="isAddingJiraWorklog"
+            :disabled="isAddingJiraWorklog"
+          >
+            送出
+          </n-button>
+        </div>
+      </n-spin>
     </n-gi>
   </n-grid>
 </template>

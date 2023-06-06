@@ -30,6 +30,7 @@ export const useFormStore = defineStore('formStore', () => {
         spendValue: computed(() => (spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
     });
     const models = ref([]);
+    const successCount = ref(0);
     const spendValue = ref({
         spendHourValue: 0,
         spendMinuteValue: 0,
@@ -170,6 +171,9 @@ export const useFormStore = defineStore('formStore', () => {
         try {
             isAddingJiraWorklog.value = true;
             let isSuccess = true;
+
+            successCount.value = 0;
+
             for (var i = 0;i<models.value.length;i++) {
                 const v = models.value[i];
                 //新增Jira Worklog
@@ -203,7 +207,20 @@ export const useFormStore = defineStore('formStore', () => {
                             BasicAuth:access.value.basicAuth,
                         }
                     );
+
+                    if(resUpsertJiraWorkLogRelatedIssue.data.code == 0){
+                        successCount.value++;
+                        if(isSuccess && (successCount.value==models.value.length)){
+                            dialog.info({ title: "新增完成" });
+                            initData();
+                            models.value = [];
+                        }
+                    }else{
+                        isSuccess=false;
+                    }
                     console.log(resUpsertJiraWorkLogRelatedIssue.data);
+                    console.log(successCount.value,models.value.length);
+
                 }
             };
 
@@ -315,15 +332,15 @@ export const useFormStore = defineStore('formStore', () => {
                 getJiraIssues();
                 break;
             case "byAssignee":
-                JQL.value.JQL = "assignee = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND status != Closed order by created DESC";
+                JQL.value.JQL = "assignee = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (status != Closed) AND project != R2DEVICE order by created DESC";
                 getJiraIssues();
                 break;
             case "byReporter":
-                JQL.value.JQL = "reporter = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND status != Closed order by created DESC";
+                JQL.value.JQL = "reporter = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (status != Closed) order by created DESC";
                 getJiraIssues();
                 break;
             case "byWatcher":
-                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND status != Closed order by created DESC";
+                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (status != Closed) order by created DESC";
                 getJiraIssues();
                 break;
             case null:
@@ -359,5 +376,6 @@ export const useFormStore = defineStore('formStore', () => {
         console.log(model.value.spendValue/(60*60),spendValue.value.sumSpendSecond/(60*60));
     });
 
-    return { formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog, getProjectTags}
+    return { successCount,formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog, getProjectTags,dateDisabled}
+
 })
