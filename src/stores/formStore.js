@@ -65,7 +65,7 @@ export const useFormStore = defineStore('formStore', () => {
     const rules = {
         descriptionValue: {
             required: true,
-            trigger: ["blur", "input"],
+            trigger: ["blur", "input"],            
             message: "",
         },
         selectFilterValue: {
@@ -271,7 +271,7 @@ export const useFormStore = defineStore('formStore', () => {
                 const modelForJiraAddWorkLogApi = {
                     issueID: model.value.selectIssueValue.split(" ")[0],
                     started: model.value.startDateValue+"T"+model.value.startTimeValue+".000+0800",
-                    comment: (model.value.selectFilterValue === "nonIssue"? "[分類：非議題":(model.value.selectFilterValue === "managedIssue"? "[分類：管理議題":"[分類：一般議題"))+"] [標籤："+model.value.tagValue +"] [工作內容："+ model.value.descriptionValue+"]",                    
+                    comment: (model.value.selectFilterValue === "nonIssue"? "[分類：非議題":(model.value.selectFilterValue === "managedIssue"? "[分類：管理議題":"[分類：一般議題"))+"] [標籤："+model.value.tagValue +"] [工作內容："+ model.value.descriptionValue.replaceAll("\\","/") +"]",                    
                     timeSpentSeconds: model.value.spendValue,
                     BasicAuth:access.value.basicAuth,
                 }
@@ -284,11 +284,12 @@ export const useFormStore = defineStore('formStore', () => {
                     started: model.value.startDateValue+" "+model.value.startTimeValue,
                     type:(model.value.selectFilterValue === "nonIssue"? "非議題":(model.value.selectFilterValue === "managedIssue"? "管理議題":"一般議題")),
                     tags: model.value.tagValue,
-                    comment: model.value.descriptionValue,
+                    comment: model.value.descriptionValue.replaceAll("\\","/"),                    
                     spendHour:spendValue.value.spendHourValue,
                     spendMinute:spendValue.value.spendMinuteValue,
                     BasicAuth:access.value.basicAuth,
                 };
+                
                 models.value.push([modelForJiraWorkLogRecord,modelForJiraAddWorkLogApi]);
 
                 initData();
