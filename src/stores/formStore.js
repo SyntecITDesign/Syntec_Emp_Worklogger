@@ -324,11 +324,11 @@ export const useFormStore = defineStore('formStore', () => {
         console.log(JQL.value);
         switch (newValue) {
             case "managedIssue":
-                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type = 管理議題 AND status != Closed order by created DESC";
+                JQL.value.JQL = "(reporter = " + localStorage.getItem("empID")+" or assignee = " + localStorage.getItem("empID")+" or creator  = " + localStorage.getItem("empID")+" or watcher = " + localStorage.getItem("empID") + ") AND type = 管理議題 AND status != Closed order by created DESC";
                 getJiraIssues();
                 break;
             case "nonIssue":
-                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type = 非議題 AND type != 管理議題 AND status != Closed order by created DESC";
+                JQL.value.JQL = "(reporter = " + localStorage.getItem("empID")+" or assignee = " + localStorage.getItem("empID")+" or creator  = " + localStorage.getItem("empID")+" or watcher = " + localStorage.getItem("empID") + ") AND type = 非議題 AND status != Closed order by created DESC";
                 getJiraIssues();
                 break;
             case "byAssignee":
@@ -346,7 +346,7 @@ export const useFormStore = defineStore('formStore', () => {
             case null:
                 break;
             default:
-                JQL.value.JQL = "key = " + newValue+" AND type != 非議題 AND type != 管理議題 AND status != Closed";
+                JQL.value.JQL = "key = " + newValue+" AND type != 非議題 AND type != 管理議題";
                 
                 getJiraIssues();
                 break;
