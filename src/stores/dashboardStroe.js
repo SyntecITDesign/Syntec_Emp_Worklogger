@@ -17,12 +17,9 @@ export const useDashboardStroe = defineStore('dashboardStroe', () => {
         try {
             const res = await axios.post(
             apiUrl + "/Open/JIRA_Related/Worklogger/CheckIssueUpdateTime",
-            { 
-                BasicAuth: access.value.basicAuth, 
-                NeedToCheckProjectKeys:localStorage.getItem("projectKeysView")
-            }
+            { BasicAuth: access.value.basicAuth }
             );
-            console.log("CheckIssueUpdateTime",res.data);
+            console.log(res.data);
 
             isUpdateLatestIssueInfo.value = false;
         } catch (err) {

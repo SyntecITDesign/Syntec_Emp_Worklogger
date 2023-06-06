@@ -19,14 +19,13 @@ export const useFormStore = defineStore('formStore', () => {
     const isTagOptionsChange = ref(false);    
     const spendValueStatus = ref({ init: false, status: "error" });
     const size = ref("medium");
-    const today = new Date();
     
     const model = ref({
         descriptionValue: null,
         selectFilterValue: null,
         selectIssueValue: null,
         tagValue: null,
-        startDateValue: today.getFullYear()+"-"+((today.getMonth()+1)<10?"0"+(today.getMonth()+1):(today.getMonth()+1))+"-"+(today.getDate()<10?"0"+today.getDate():today.getDate()),
+        startDateValue: null,
         startTimeValue: "08:00:00",
         spendValue: computed(() => (spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
     });
@@ -171,7 +170,6 @@ export const useFormStore = defineStore('formStore', () => {
         try {
             isAddingJiraWorklog.value = true;
             let isSuccess = true;
-            let SuccessCount = 0;
             for (var i = 0;i<models.value.length;i++) {
                 const v = models.value[i];
                 //新增Jira Worklog
@@ -205,31 +203,23 @@ export const useFormStore = defineStore('formStore', () => {
                             BasicAuth:access.value.basicAuth,
                         }
                     );
-                    if(resUpsertJiraWorkLogRelatedIssue.data.code == 0){
-                        SuccessCount++;
-                        if(isSuccess && (SuccessCount==models.value.length)){
-                            dialog.info({ title: "新增完成" });
-                            initData();
-                            models.value = [];
-                        }
-                    }else{
-                        isSuccess=false;
-                    }
                     console.log(resUpsertJiraWorkLogRelatedIssue.data);
-                    console.log(SuccessCount,models.value.length);
                 }
             };
 
-
-                if(!isSuccess){
-                    dialog.error({ title: "新增失敗" });
-                }
-                isAddingJiraWorklog.value = false;
-                
-            } catch (err) {
-                console.log(err);
+            if(isSuccess){
+                dialog.info({ title: "新增完成" });
+                initData();
+                models.value = [];
+            }else{
+                dialog.error({ title: "新增失敗" });
             }
+            isAddingJiraWorklog.value = false;
+            
+        } catch (err) {
+            console.log(err);
         }
+    };
 
     const getSumSpentSeconds = async () => {
         try {            
@@ -296,11 +286,15 @@ export const useFormStore = defineStore('formStore', () => {
 
     const initData = () =>{
             model.value.descriptionValue=null,
+            model.value.selectFilterValue=null,
+            model.value.selectIssueValue=null,
+            model.value.tagValue=null,
+            model.value.startDateValue=null,
+            model.value.startTimeValue="08:00:00",
             spendValue.value.spendHourValue = 0,
             spendValue.value.spendMinuteValue = 0,
             spendValue.value.sumSpendSecond = 0,
             spendValueStatus.value.init = false;
-            
     }
 
     const handleClose = (index) => {
@@ -309,11 +303,6 @@ export const useFormStore = defineStore('formStore', () => {
         console.log(models.value);
     };
 
-    
-    const dateDisabled = (ts) => {
-        const date = new Date(ts);
-        return date > new Date();
-    };
 
     watch(() => model.value.selectFilterValue,(newValue) => {
         switch (newValue) {
@@ -340,7 +329,7 @@ export const useFormStore = defineStore('formStore', () => {
             case null:
                 break;
             default:
-                JQL.value.JQL = "key = " + newValue+" AND type != 非議題 AND type != 管理議題";
+                JQL.value.JQL = "key = " + newValue+" AND type != 非議題 AND type != 管理議題 AND status != Closed";
                 //console.log(JQL.value);
                 getJiraIssues();
                 break;
@@ -370,5 +359,5 @@ export const useFormStore = defineStore('formStore', () => {
         console.log(model.value.spendValue/(60*60),spendValue.value.sumSpendSecond/(60*60));
     });
 
-    return { formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog, getProjectTags,dateDisabled}
+    return { formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog, getProjectTags}
 })
