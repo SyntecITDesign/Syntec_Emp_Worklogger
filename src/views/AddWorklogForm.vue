@@ -41,7 +41,6 @@ const {
   handleClose,
   handleValidateButtonClick,
   addJiraWorklog,
-  dateDisabled,
 } = formStore;
 </script>
 <template>
@@ -53,28 +52,6 @@ const {
     :size="size"
     label-placement="top"
   >
-    <n-divider v-if="false" />
-    <n-grid :cols="24" :x-gap="24" v-if="false">
-      <n-form-item-gi :span="2"></n-form-item-gi>
-      <n-form-item-gi :span="5">刪除錯誤報工</n-form-item-gi>
-      <n-form-item-gi :span="5" label="議題編號" path="descriptionValue">
-        <n-input
-          v-model:value="model.descriptionValue"
-          placeholder="議題編號"
-          type="text"
-        />
-      </n-form-item-gi>
-      <n-form-item-gi :span="5" label="WoklogID" path="descriptionValue">
-        <n-input
-          v-model:value="model.descriptionValue"
-          placeholder="WoklogID"
-          type="text"
-        />
-      </n-form-item-gi>
-      <n-form-item-gi :span="5"> </n-form-item-gi>
-      <n-form-item-gi :span="2"></n-form-item-gi>
-    </n-grid>
-    <n-divider v-if="false" />
     <n-grid :cols="24" :x-gap="24">
       <n-form-item-gi :span="12" label="議題篩選" path="selectFilterValue">
         <n-select
@@ -105,7 +82,6 @@ const {
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="請選擇日期"
-          :is-date-disabled="dateDisabled"
         />
 
         <n-time-picker
