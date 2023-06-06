@@ -31,6 +31,7 @@ export const useFormStore = defineStore('formStore', () => {
         spendValue: computed(() => (spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
     });
     const models = ref([]);
+    const successCount = ref(0);
     const spendValue = ref({
         spendHourValue: 0,
         spendMinuteValue: 0,
@@ -171,7 +172,7 @@ export const useFormStore = defineStore('formStore', () => {
         try {
             isAddingJiraWorklog.value = true;
             let isSuccess = true;
-            let SuccessCount = 0;
+            successCount.value = 0;
             for (var i = 0;i<models.value.length;i++) {
                 const v = models.value[i];
                 //新增Jira Worklog
@@ -206,8 +207,8 @@ export const useFormStore = defineStore('formStore', () => {
                         }
                     );
                     if(resUpsertJiraWorkLogRelatedIssue.data.code == 0){
-                        SuccessCount++;
-                        if(isSuccess && (SuccessCount==models.value.length)){
+                        successCount.value++;
+                        if(isSuccess && (successCount.value==models.value.length)){
                             dialog.info({ title: "新增完成" });
                             initData();
                             models.value = [];
@@ -216,7 +217,7 @@ export const useFormStore = defineStore('formStore', () => {
                         isSuccess=false;
                     }
                     console.log(resUpsertJiraWorkLogRelatedIssue.data);
-                    console.log(SuccessCount,models.value.length);
+                    console.log(successCount.value,models.value.length);
                 }
             };
 
@@ -370,5 +371,5 @@ export const useFormStore = defineStore('formStore', () => {
         console.log(model.value.spendValue/(60*60),spendValue.value.sumSpendSecond/(60*60));
     });
 
-    return { formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog, getProjectTags,dateDisabled}
+    return { successCount,formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog, getProjectTags,dateDisabled}
 })
