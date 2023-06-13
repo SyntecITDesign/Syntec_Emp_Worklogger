@@ -16,6 +16,7 @@ export const useFormStore = defineStore('formStore', () => {
     const formRef = ref(null);
     const isIssueOptionsChange = ref(false);
     const isAddingJiraWorklog = ref(false);
+    const isDeletingJiraWorklog = ref(false);
     const isTagOptionsChange = ref(false);    
     const spendValueStatus = ref({ init: false, status: "error" });
     const size = ref("medium");
@@ -30,6 +31,13 @@ export const useFormStore = defineStore('formStore', () => {
         startTimeValue: "08:00:00",
         spendValue: computed(() => (spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
     });
+
+    const deleteModel = ref({
+        issueID:null,
+        workLogID:null,
+        BasicAuth:access.value.basicAuth,
+    })
+
     const models = ref([]);
     const successCount = ref(0);
     const spendValue = ref({
@@ -105,7 +113,7 @@ export const useFormStore = defineStore('formStore', () => {
 
 
     const getJiraIssues = async () => {
-        console.log(JQL.value);
+        //console.log(JQL.value);
         try {
             isIssueOptionsChange.value = true;
             issueOptions.value = [].map((v) => ({ label: v, value: v, }));
@@ -127,7 +135,7 @@ export const useFormStore = defineStore('formStore', () => {
                 model.value.selectIssueValue = issueOptions.value[0].value;
             }
 
-            console.log(issueOptions.value);
+            //console.log(issueOptions.value);
             isIssueOptionsChange.value = false;
 
         } catch (err) {
@@ -183,7 +191,7 @@ export const useFormStore = defineStore('formStore', () => {
                     apiUrl + "/Open/JIRA_Related/Worklogger/AddWorklog",
                     v[1]
                 );
-                console.log(resAddWorklog.data);
+                //console.log(resAddWorklog.data);
                 if (Object.prototype.hasOwnProperty.call(resAddWorklog.data.content, 'errorMessages')) {
                     isSuccess = false;
                     break;
@@ -235,6 +243,27 @@ export const useFormStore = defineStore('formStore', () => {
             console.log(err);
         }
     };
+
+    const deleteJiraWorklog = async () => {
+        try {
+            isDeletingJiraWorklog.value = true;
+            const resDeleteWorklog = await axios.post(
+                apiUrl + "/Open/JIRA_Related/Worklogger/DeleteJiraWorkLog",
+                deleteModel.value
+            );
+            console.log(resDeleteWorklog.data);
+            if(resDeleteWorklog.data.code == 0){
+                dialog.info({ title: "刪除成功" });                    
+            }else{
+                dialog.error({ title: "刪除失敗，請再次確認議題編號及WorklogID正確" });
+            }
+            isDeletingJiraWorklog.value = false;
+            
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
 
     const getSumSpentSeconds = async () => {
         try {            
@@ -321,7 +350,7 @@ export const useFormStore = defineStore('formStore', () => {
 
 
     watch(() => model.value.selectFilterValue,(newValue) => {
-        console.log(JQL.value);
+        //console.log(JQL.value);
         switch (newValue) {
             case "managedIssue":
                 JQL.value.JQL = "(reporter = " + localStorage.getItem("empID")+" or assignee = " + localStorage.getItem("empID")+" or creator  = " + localStorage.getItem("empID")+" or watcher = " + localStorage.getItem("empID") + ") AND type = 管理議題 AND status != Closed order by created DESC";
@@ -376,6 +405,6 @@ export const useFormStore = defineStore('formStore', () => {
         console.log(model.value.spendValue/(60*60),spendValue.value.sumSpendSecond/(60*60));
     });
 
-    return { successCount,formRef, size, model, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog, getProjectTags,dateDisabled}
+    return { isDeletingJiraWorklog,successCount,formRef, size, model, deleteModel, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog, getProjectTags,dateDisabled, deleteJiraWorklog}
 
 })
