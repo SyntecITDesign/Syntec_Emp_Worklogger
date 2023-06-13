@@ -177,11 +177,46 @@ export const useFormStore = defineStore('formStore', () => {
         }
     };
 
+    // 變更作法，先新增報工資料至DB，於下班時段執行排程新增至JIRA，再將回傳之訊息(WorklogID)更新至DB
+    // const addJiraWorklog = async () => {
+    //     try {
+    //         let isSuccess = true;
+    //         isAddingJiraWorklog.value = true;
+    //         successCount.value = 0;
+    //         for (var i = 0;i < models.value.length;i++) {
+    //             const v = models.value[i];
+    //             //新增報工紀錄到DB同步看板資料
+    //             const resInsertWorkLogs = await axios.post(
+    //                 apiUrl + "/Open/JIRA_Related/Worklogger/InsertWorkLogs",
+    //                 v[0]
+    //             );
+    //             if(resInsertWorkLogs.data.code == 0){
+    //                 successCount.value++;
+    //                 if(isSuccess && (successCount.value == models.value.length)){
+    //                     dialog.info({ title: "新增完成" });
+    //                     initData();
+    //                     models.value = [];
+    //                 }
+    //             }else{
+    //                 isSuccess=false;
+    //             }
+    //             console.log(resInsertWorkLogs.data);
+    //             console.log(successCount.value,models.value.length);
+    //             if(!isSuccess){
+    //                 dialog.error({ title: "新增失敗" });
+    //             }
+    //             isAddingJiraWorklog.value = false;
+    //         }
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+
+    // };
+    //初版做法，先新增至JIRA在將回傳之訊息(WorklogID)一併新增至DB
     const addJiraWorklog = async () => {
         try {
             isAddingJiraWorklog.value = true;
             let isSuccess = true;
-
             successCount.value = 0;
 
             for (var i = 0;i<models.value.length;i++) {
@@ -201,14 +236,14 @@ export const useFormStore = defineStore('formStore', () => {
                     v[0].created = resAddWorklog.data.content.created.split("+")[0];
                     v[0].started = resAddWorklog.data.content.started.split("+")[0];
                     //console.log(v[0]);
-                    
+
                     //新增報工紀錄到DB同步看板資料
                     const resInsertWorkLogs = await axios.post(
                         apiUrl + "/Open/JIRA_Related/Worklogger/InsertWorkLogs",
                         v[0]
                     );
                     console.log(resInsertWorkLogs.data);
-                    
+
                     //新增或更新報工紀錄的相關議題欄位到DB同步看板資料
                     const resUpsertJiraWorkLogRelatedIssue = await axios.post(
                         apiUrl + "/Open/JIRA_Related/Worklogger/UpsertJiraWorkLogRelatedIssue",
@@ -218,7 +253,7 @@ export const useFormStore = defineStore('formStore', () => {
                         }
                     );
 
-                    if(resUpsertJiraWorkLogRelatedIssue.data.code == 0){
+                    if((resUpsertJiraWorkLogRelatedIssue.data.code == 0)&&(resInsertWorkLogs.data.code == 0)){
                         successCount.value++;
                         if(isSuccess && (successCount.value == models.value.length)){
                             dialog.info({ title: "新增完成" });
@@ -243,6 +278,7 @@ export const useFormStore = defineStore('formStore', () => {
             console.log(err);
         }
     };
+
 
     const deleteJiraWorklog = async () => {
         try {
@@ -307,9 +343,9 @@ export const useFormStore = defineStore('formStore', () => {
                 const modelForJiraWorkLogRecord = {
                     issueID: model.value.selectIssueValue.split(" ")[0],
                     empID: localStorage.getItem("empID"),
-                    workLogID: "",
+                    workLogID: null,
                     timeSpentSeconds: model.value.spendValue,
-                    created: "",
+                    created: null,
                     started: model.value.startDateValue+" "+model.value.startTimeValue,
                     type:(model.value.selectFilterValue === "nonIssue"? "非議題":(model.value.selectFilterValue === "managedIssue"? "管理議題":"一般議題")),
                     tags: model.value.tagValue,

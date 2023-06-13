@@ -91,7 +91,7 @@ export const useLogInStore = defineStore('logInStore', () => {
                 apiUrl + "/Open/JIRA_Related/Worklogger/JiraLogIn",
                 model.value
             );
-            //console.log(res.data.content);
+            console.log(res.data.content);
 
             if (Object.prototype.hasOwnProperty.call(res.data.content, 'errorMessages')) {
                 model.value.Username = '';
@@ -99,6 +99,9 @@ export const useLogInStore = defineStore('logInStore', () => {
                 dialog.error({ title: "登入失敗" });
             } else {
                 access.value.basicAuth = encode(model.value.Username + ":" + model.value.Password);
+                
+                access.value.basicAuth = res.data.content.session.value;
+                
                 localStorage.setItem("basicAuth", access.value.basicAuth);
                 localStorage.setItem("loginTime", new Date().getTime());
                 localStorage.setItem("empID", model.value.Username);
