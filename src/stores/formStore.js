@@ -218,7 +218,7 @@ export const useFormStore = defineStore('formStore', () => {
                         }
                     );
 
-                    if(resUpsertJiraWorkLogRelatedIssue.data.code == 0){
+                    if((resUpsertJiraWorkLogRelatedIssue.data.code == 0)&&(resInsertWorkLogs.data.code == 0)){
                         successCount.value++;
                         if(isSuccess && (successCount.value == models.value.length)){
                             dialog.info({ title: "新增完成" });
