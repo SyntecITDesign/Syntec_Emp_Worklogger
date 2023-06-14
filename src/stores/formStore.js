@@ -300,7 +300,7 @@ export const useFormStore = defineStore('formStore', () => {
                 const modelForJiraAddWorkLogApi = {
                     issueID: model.value.selectIssueValue.split(" ")[0],
                     started: model.value.startDateValue+"T"+model.value.startTimeValue+".000+0800",
-                    comment: (model.value.selectFilterValue === "nonIssue"? "[分類：非議題":(model.value.selectFilterValue === "managedIssue"? "[分類：管理議題":"[分類：一般議題"))+"] [標籤："+model.value.tagValue +"] [工作內容："+ model.value.descriptionValue.replaceAll("\\","/") +"]",                    
+                    comment: (model.value.selectFilterValue === "nonIssue"? "[分類：非議題":(model.value.selectFilterValue === "managedIssue"? "[分類：管理議題":"[分類：一般議題"))+"]\\n[標籤："+model.value.tagValue +"]\\n[工作內容："+ model.value.descriptionValue.replaceAll("\\","/") +"]",                    
                     timeSpentSeconds: model.value.spendValue,
                     BasicAuth:access.value.basicAuth,
                 }
