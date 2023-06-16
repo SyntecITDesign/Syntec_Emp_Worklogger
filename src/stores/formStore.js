@@ -40,6 +40,7 @@ export const useFormStore = defineStore('formStore', () => {
 
     const models = ref([]);
     const successCount = ref(0);
+    const failCount = ref(0);
     const spendValue = ref({
         spendHourValue: 0,
         spendMinuteValue: 0,
@@ -226,6 +227,10 @@ export const useFormStore = defineStore('formStore', () => {
                             models.value = [];
                         }
                     }else{
+                        deleteModel.value.issueID=v[0].issueID;
+                        deleteModel.value.workLogID=v[0].workLogID;
+                        deleteJiraWorklog();
+                        console.log("deleteJiraWorklog",deleteModel.value);                        
                         isSuccess=false;
                     }
                     console.log(resUpsertJiraWorkLogRelatedIssue.data);
@@ -253,9 +258,13 @@ export const useFormStore = defineStore('formStore', () => {
             );
             console.log(resDeleteWorklog.data);
             if(resDeleteWorklog.data.code == 0){
-                dialog.info({ title: "刪除成功" });                    
+                if(!isAddingJiraWorklog.value){
+                    dialog.info({ title: "刪除成功" });
+                }
             }else{
-                dialog.error({ title: "刪除失敗，請再次確認議題編號及WorklogID正確" });
+                if(!isAddingJiraWorklog.value){
+                    dialog.error({ title: "刪除失敗，請再次確認議題編號及WorklogID正確" });
+                }
             }
             isDeletingJiraWorklog.value = false;
             
