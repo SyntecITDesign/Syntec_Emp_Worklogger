@@ -40,7 +40,7 @@ export const useDashboardStroe = defineStore('dashboardStroe', () => {
                 res.data.content.forEach((item) => {
                     superDeptViewSet.add(item.SuperDeptName);
                 });
-                localStorage.setItem("superDeptsView",Array.from(superDeptViewSet).join('\',\''));
+                localStorage.setItem("superDeptsView",Array.from(superDeptViewSet).join('\',N\''));
                 isGettingSuperDeptOfWorkLogs.value = false;
             } catch (err) {
                 console.log(err);

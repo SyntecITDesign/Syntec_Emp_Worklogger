@@ -13,7 +13,7 @@ const selectedSuperDeptName = ref(null);
 const superDeptNameOptions = ref(
   localStorage
     .getItem("superDeptsView")
-    .split("','")
+    .split("',N'")
     .map((v) => ({
       label: v,
       value: v,
