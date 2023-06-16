@@ -312,6 +312,7 @@ export const useFormStore = defineStore('formStore', () => {
                     created: "",
                     started: model.value.startDateValue+" "+model.value.startTimeValue,
                     type:(model.value.selectFilterValue === "nonIssue"? "非議題":(model.value.selectFilterValue === "managedIssue"? "管理議題":"一般議題")),
+                    typeValue:model.value.selectFilterValue,
                     tags: model.value.tagValue,
                     comment: model.value.descriptionValue.replaceAll("\\","/"),                    
                     spendHour:spendValue.value.spendHourValue,
@@ -346,6 +347,36 @@ export const useFormStore = defineStore('formStore', () => {
         //console.log(models.value[index]);
         models.value.splice(index, 1);
         console.log(models.value);
+    };
+
+    const handleEdit = (index) => {
+        console.log(models.value[index]);
+        initData();
+        tagOptions.value([models.value[index][0].tags].map(
+            (v) => ({
+                label: v,
+                value: v,
+            })
+        ));
+        
+        issueOptions.value([models.value[index][0].issueID].map(
+            (v) => ({
+                label: v,
+                value: v,
+            })
+        ));
+        model.value.selectFilterValue = models.value[index][0].typeValue;
+        model.value.selectIssueValue = models.value[index][0].issueID;
+        model.value.startDateValue = models.value[index][0].started.split(' ')[0];
+        model.value.tagValue = models.value[index][0].tags;
+        model.value.descriptionValue = models.value[index][0].comment;
+        spendValue.value.spendHourValue = models.value[index][0].spendHour;
+        spendValue.value.spendMinuteValue = models.value[index][0].spendMinute;
+
+        
+
+        //models.value.splice(index, 1);
+        //console.log(models.value);
     };
 
 
@@ -386,12 +417,12 @@ export const useFormStore = defineStore('formStore', () => {
         if(newValue!== null) getProjectTags((model.value.selectFilterValue==="nonIssue"?"nonIssue":(model.value.selectFilterValue==="managedIssue"?"managedIssue":model.value.selectIssueValue.split("-")[0])),"forFillForm");
     },{deep: true,});
 
-    watch(() => [model.value.startDateValue,model.value.startTimeValue],([newDateValue,newTimeValue]) => {
-        console.log(newDateValue,newTimeValue);        
+    watch(() => [model.value.startDateValue,model.value.spendValue],([newDateValue,newTimeValue]) => {
+        console.log("getSumSpentSeconds",newDateValue,newTimeValue);        
         if((newDateValue!== null) || (newTimeValue!== null)) getSumSpentSeconds();
     },{deep: true,});
 
-    watchEffect(() => {        
+    watchEffect(() => {
         if ((model.value.spendValue <= 0) && (spendValueStatus.value.init)) {
             spendValueStatus.value.status = "error";
             spendValue.value.spendDayValue = 0;
@@ -405,6 +436,6 @@ export const useFormStore = defineStore('formStore', () => {
         console.log(model.value.spendValue/(60*60),spendValue.value.sumSpendSecond/(60*60));
     });
 
-    return { isDeletingJiraWorklog,successCount,formRef, size, model, deleteModel, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog, getProjectTags,dateDisabled, deleteJiraWorklog}
+    return { isDeletingJiraWorklog,successCount,formRef, size, model, deleteModel, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, handleEdit, addJiraWorklog, getProjectTags,dateDisabled, deleteJiraWorklog}
 
 })

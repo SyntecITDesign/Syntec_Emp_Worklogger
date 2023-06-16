@@ -16,10 +16,11 @@ import {
   NCard,
   NTag,
   NSpin,
+  NIcon,
 } from "naive-ui";
-import { onBeforeUpdate } from "vue";
 import { storeToRefs } from "pinia";
 import { useFormStore } from "../stores/formStore.js";
+import { OpenOutline as EditIcon } from "@vicons/ionicons5";
 const formStore = useFormStore();
 const {
   formRef,
@@ -41,6 +42,7 @@ const {
   filterOptions,
   rules,
   handleClose,
+  handleEdit,
   handleValidateButtonClick,
   addJiraWorklog,
   deleteJiraWorklog,
@@ -167,6 +169,14 @@ const {
           <n-tag type="info">
             {{ item[0].tags }}
           </n-tag>
+          <n-divider vertical />
+          <n-button text @click="handleEdit(index)"
+            ><template #icon>
+              <n-icon>
+                <edit-icon />
+              </n-icon>
+            </template>
+          </n-button>
         </template>
         {{ item[0].comment }}
         <template #footer>
