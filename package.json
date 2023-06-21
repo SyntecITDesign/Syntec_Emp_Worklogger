@@ -21,6 +21,10 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
     "@vue/test-utils": "^2.3.0",
+    "eslint": "^8.43.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-vue": "^9.15.0",
     "jsdom": "^21.1.0",
     "naive-ui": "^2.34.3",
     "vite": "^4.1.4",
