@@ -99,7 +99,7 @@ export const useFormStore = defineStore('formStore', () => {
             type: "number",
             required: true,
             validator(value) {
-                return (model.value.spendValue > 0 ) && ((model.value.spendValue + spendValue.value.sumSpendSecond) <= 24*60*60);
+                return (spendValue.spendMinuteValue !== null ) && (spendValue.spendHourValue !== null ) && (model.value.spendValue > 0 ) && ((model.value.spendValue + spendValue.value.sumSpendSecond) <= 24*60*60);
             },
             trigger: ["blur", "change"],
             message: "總工作時間至少大於0 且 當日報工總時數不得超過24小時",
@@ -410,6 +410,12 @@ export const useFormStore = defineStore('formStore', () => {
         } else {
             spendValueStatus.value.status = "success";
             spendValueStatus.value.init = true;
+        }
+        if((spendValue.value.spendHourValue == null)){
+            spendValue.value.spendHourValue = 0;
+        }
+        if((spendValue.value.spendMinuteValue == null)){
+            spendValue.value.spendMinuteValue = 0;
         }
         console.log(model.value.spendValue/(60*60),spendValue.value.sumSpendSecond/(60*60));
     });
