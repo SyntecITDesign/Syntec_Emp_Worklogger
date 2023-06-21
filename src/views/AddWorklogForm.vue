@@ -16,6 +16,7 @@ import {
   NCard,
   NTag,
   NSpin,
+  NSwitch,
 } from "naive-ui";
 import { onBeforeUpdate } from "vue";
 import { storeToRefs } from "pinia";
@@ -33,9 +34,11 @@ const {
   isIssueOptionsChange,
   isTagOptionsChange,
   isAddingJiraWorklog,
+  isUsingJQL,
   spendValueStatus,
   successCount,
   isDeletingJiraWorklog,
+  JQL,
 } = storeToRefs(formStore);
 const {
   filterOptions,
@@ -44,6 +47,7 @@ const {
   handleValidateButtonClick,
   addJiraWorklog,
   deleteJiraWorklog,
+  getJiraIssues,
 } = formStore;
 </script>
 <template>
@@ -56,6 +60,30 @@ const {
     label-placement="top"
   >
     <n-grid :cols="24" :x-gap="24">
+      <n-form-item-gi :span="2">
+        <n-switch v-model:value="isUsingJQL">
+          <template #checked>JQL查詢</template>
+          <template #unchecked>JQL查詢</template>
+        </n-switch>
+      </n-form-item-gi>
+      <n-form-item-gi :span="20" path="selectFilterValue">
+        <n-input
+          v-model:value="JQL.JQL"
+          placeholder="請輸入JQL進行查詢"
+          type="text"
+          :disabled="isIssueOptionsChange || !isUsingJQL"
+        />
+      </n-form-item-gi>
+      <n-form-item-gi :span="2">
+        <n-button
+          round
+          @click="getJiraIssues"
+          :loading="isIssueOptionsChange"
+          :disabled="isIssueOptionsChange || !isUsingJQL"
+        >
+          查詢
+        </n-button>
+      </n-form-item-gi>
       <n-form-item-gi :span="12" label="議題篩選" path="selectFilterValue">
         <n-select
           filterable
@@ -64,7 +92,7 @@ const {
           placeholder="請選擇議題類別或輸入議題編號(ex:ICT-999)"
           :options="filterOptions"
           :loading="isIssueOptionsChange"
-          :disabled="isIssueOptionsChange"
+          :disabled="isIssueOptionsChange || isUsingJQL"
         />
       </n-form-item-gi>
 
