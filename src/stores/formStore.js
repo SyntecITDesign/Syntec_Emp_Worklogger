@@ -115,11 +115,11 @@ export const useFormStore = defineStore('formStore', () => {
 
     const getJiraIssues = async () => {
         //console.log(JQL.value);
-        if(isUsingJQL && (JQL.value.JQL === "" || JQL.value.JQL === null)){
+        if(isUsingJQL.value && (JQL.value.JQL === "" || JQL.value.JQL === null)){
             dialog.info({ title: "請輸入JQL查詢一般議題" });
         }else{
             try {
-                if(isUsingJQL && !JQL.value.JQL.includes("type != 非議題 AND type != 管理議題 AND ")){
+                if(isUsingJQL.value && !JQL.value.JQL.includes("type != 非議題 AND type != 管理議題 AND ")){
                     JQL.value.JQL = "type != 非議題 AND type != 管理議題 AND "+JQL.value.JQL;
                 }
                 isIssueOptionsChange.value = true;
@@ -375,28 +375,34 @@ export const useFormStore = defineStore('formStore', () => {
         switch (newValue) {
             case "managedIssue":
                 JQL.value.JQL = "(reporter = " + localStorage.getItem("empID")+" or assignee = " + localStorage.getItem("empID")+" or creator  = " + localStorage.getItem("empID")+" or watcher = " + localStorage.getItem("empID") + ") AND type = 管理議題 AND status != Closed order by created DESC";
+                isUsingJQL.value=false;
                 getJiraIssues();
                 break;
             case "nonIssue":
                 JQL.value.JQL = "(reporter = " + localStorage.getItem("empID")+" or assignee = " + localStorage.getItem("empID")+" or creator  = " + localStorage.getItem("empID")+" or watcher = " + localStorage.getItem("empID") + ") AND type = 非議題 AND status != Closed order by created DESC";
+                isUsingJQL.value=false;
                 getJiraIssues();
                 break;
             case "byAssignee":
                 JQL.value.JQL = "assignee = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (status != Closed) AND project != R2DEVICE order by created DESC";
+                isUsingJQL.value=false;
                 getJiraIssues();
                 break;
             case "byReporter":
                 JQL.value.JQL = "reporter = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (status != Closed) order by created DESC";
+                isUsingJQL.value=false;
                 getJiraIssues();
                 break;
             case "byWatcher":
                 JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (status != Closed) order by created DESC";
+                isUsingJQL.value=false;
                 getJiraIssues();
                 break;
             case null:
                 break;
             default:
                 JQL.value.JQL = "((key = '" + newValue.replaceAll("'","").replaceAll("\"","") +"') OR ("+newValue+")) AND type != 非議題 AND type != 管理議題";
+                isUsingJQL.value=false;
                 getJiraIssues();
                 break;
         }
