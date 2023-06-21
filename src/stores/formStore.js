@@ -21,7 +21,7 @@ export const useFormStore = defineStore('formStore', () => {
     const spendValueStatus = ref({ init: false, status: "error" });
     const size = ref("medium");
     const today = new Date();
-
+    const isUsingJQL = ref(false);
     const model = ref({
         descriptionValue: null,
         selectFilterValue: null,
@@ -78,7 +78,7 @@ export const useFormStore = defineStore('formStore', () => {
             message: "",
         },
         selectFilterValue: {
-            required: true,
+            required: !isUsingJQL,
             trigger: ["blur", "change"],
             message: "",
         },
@@ -115,32 +115,39 @@ export const useFormStore = defineStore('formStore', () => {
 
     const getJiraIssues = async () => {
         //console.log(JQL.value);
-        try {
-            isIssueOptionsChange.value = true;
-            issueOptions.value = [].map((v) => ({ label: v, value: v, }));
-            model.value.selectIssueValue = null;            
-            const res = await axios.post(
-                apiUrl + "/Open/JIRA_Related/Worklogger/GetJiraIssues",
-                JQL.value
-            );
+        if(isUsingJQL && (JQL.value.JQL === "" || JQL.value.JQL === null)){
+            dialog.info({ title: "請輸入JQL查詢一般議題" });
+        }else{
+            try {
+                if(isUsingJQL && !JQL.value.JQL.includes("type != 非議題 AND type != 管理議題 AND ")){
+                    JQL.value.JQL = "type != 非議題 AND type != 管理議題 AND "+JQL.value.JQL;
+                }
+                isIssueOptionsChange.value = true;
+                issueOptions.value = [].map((v) => ({ label: v, value: v, }));
+                model.value.selectIssueValue = null;            
+                const res = await axios.post(
+                    apiUrl + "/Open/JIRA_Related/Worklogger/GetJiraIssues",
+                    JQL.value
+                );
 
-            if(res.data.content === null){
-                dialog.info({ title: "查無相關議題" });
-            }else{
-                res.data.content.map((v) => ({ label: v, value: v, })).forEach(element => {
-                    issueOptions.value.push(element);
-                });
+                if(res.data.content === null){
+                    dialog.info({ title: "查無相關議題" });
+                }else{
+                    res.data.content.map((v) => ({ label: v, value: v, })).forEach(element => {
+                        issueOptions.value.push(element);
+                    });
+                }
+                
+                if(issueOptions.value.length === 1){
+                    model.value.selectIssueValue = issueOptions.value[0].value;
+                }
+
+                //console.log(issueOptions.value);
+                isIssueOptionsChange.value = false;
+
+            } catch (err) {
+                console.log(err);
             }
-            
-            if(issueOptions.value.length === 1){
-                model.value.selectIssueValue = issueOptions.value[0].value;
-            }
-
-            //console.log(issueOptions.value);
-            isIssueOptionsChange.value = false;
-
-        } catch (err) {
-            console.log(err);
         }
     };
 
@@ -384,8 +391,7 @@ export const useFormStore = defineStore('formStore', () => {
             case null:
                 break;
             default:
-                JQL.value.JQL = "key = " + newValue+" AND type != 非議題 AND type != 管理議題";
-                
+                JQL.value.JQL = "((key = '" + newValue.replaceAll("'","").replaceAll("\"","") +"') OR ("+newValue+")) AND type != 非議題 AND type != 管理議題";
                 getJiraIssues();
                 break;
         }
@@ -420,6 +426,6 @@ export const useFormStore = defineStore('formStore', () => {
         console.log(model.value.spendValue/(60*60),spendValue.value.sumSpendSecond/(60*60));
     });
 
-    return { isDeletingJiraWorklog,successCount,formRef, size, model, deleteModel, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog, getProjectTags,dateDisabled, deleteJiraWorklog}
+    return { JQL, isUsingJQL, isDeletingJiraWorklog,successCount,formRef, size, model, deleteModel, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog, getProjectTags,dateDisabled, deleteJiraWorklog, getJiraIssues}
 
 })
