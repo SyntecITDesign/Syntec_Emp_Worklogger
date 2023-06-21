@@ -69,7 +69,7 @@ const {
       <n-form-item-gi :span="20" path="selectFilterValue">
         <n-input
           v-model:value="JQL.JQL"
-          placeholder="請輸入JQL進行查詢"
+          placeholder="請輸入JQL進行查詢一般議題"
           type="text"
           :disabled="isIssueOptionsChange || !isUsingJQL"
         />

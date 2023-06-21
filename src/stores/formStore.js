@@ -116,7 +116,7 @@ export const useFormStore = defineStore('formStore', () => {
     const getJiraIssues = async () => {
         //console.log(JQL.value);
         if(isUsingJQL && (JQL.value.JQL === "" || JQL.value.JQL === null)){
-            dialog.info({ title: "請輸入JQL查詢" });
+            dialog.info({ title: "請輸入JQL查詢一般議題" });
         }else{
             try {
                 if(isUsingJQL && !JQL.value.JQL.includes("type != 非議題 AND type != 管理議題 AND ")){
