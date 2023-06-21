@@ -62,14 +62,14 @@ const {
     <n-grid :cols="24" :x-gap="24">
       <n-form-item-gi :span="2">
         <n-switch v-model:value="isUsingJQL">
-          <template #checked>JQL查詢</template>
-          <template #unchecked>JQL查詢</template>
+          <template #checked>自訂JQL篩選</template>
+          <template #unchecked>自訂JQL篩選</template>
         </n-switch>
       </n-form-item-gi>
       <n-form-item-gi :span="20" path="selectFilterValue">
         <n-input
           v-model:value="JQL.JQL"
-          placeholder="請輸入JQL進行查詢一般議題"
+          placeholder="請輸入JQL查詢一般議題"
           type="text"
           :disabled="isIssueOptionsChange || !isUsingJQL"
         />
