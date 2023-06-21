@@ -191,6 +191,7 @@ export const useFormStore = defineStore('formStore', () => {
             let isSuccess = true;
 
             successCount.value = 0;
+            const failData = [];
 
             for (var i = 0;i<models.value.length;i++) {
                 const v = models.value[i];
@@ -202,7 +203,7 @@ export const useFormStore = defineStore('formStore', () => {
                 //console.log(resAddWorklog.data);
                 if (Object.prototype.hasOwnProperty.call(resAddWorklog.data.content, 'errorMessages')) {
                     isSuccess = false;
-                    break;
+                    failData.push([v[0],v[1]]);
                 }else{
                     //紀錄Jira回傳的worklog ID
                     v[0].workLogID = resAddWorklog.data.content.id;
@@ -237,7 +238,8 @@ export const useFormStore = defineStore('formStore', () => {
                         deleteModel.value.issueID=v[0].issueID;
                         deleteModel.value.workLogID=v[0].workLogID;
                         deleteJiraWorklog();
-                        console.log("deleteJiraWorklog",deleteModel.value);                        
+                        console.log("deleteJiraWorklog",deleteModel.value);
+                        failData.push([v[0],v[1]]);                   
                         isSuccess=false;
                     }
                     console.log(resUpsertJiraWorkLogRelatedIssue.data);
@@ -247,7 +249,10 @@ export const useFormStore = defineStore('formStore', () => {
             };
 
             if(!isSuccess){
-                dialog.error({ title: "新增失敗" });
+                dialog.error({ title: failData.length+"筆新增失敗" });
+                console.log(failData);
+                initData();
+                models.value = failData;
             }
             isAddingJiraWorklog.value = false;
             
