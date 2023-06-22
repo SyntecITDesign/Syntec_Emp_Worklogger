@@ -401,7 +401,7 @@ export const useFormStore = defineStore('formStore', () => {
             case null:
                 break;
             default:
-                JQL.value.JQL = "((key = '" + newValue.replaceAll("'","").replaceAll("\"","") +"') OR ("+newValue+")) AND type != 非議題 AND type != 管理議題";
+                JQL.value.JQL = "((key = " + newValue+" AND type != 非議題 AND type != 管理議題";
                 isUsingJQL.value=false;
                 getJiraIssues();
                 break;
