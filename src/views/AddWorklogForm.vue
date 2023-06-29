@@ -60,13 +60,13 @@ const {
     label-placement="top"
   >
     <n-grid :cols="24" :x-gap="24">
-      <n-form-item-gi :span="2">
+      <n-form-item-gi :span="3">
         <n-switch v-model:value="isUsingJQL">
           <template #checked>自訂JQL篩選</template>
           <template #unchecked>自訂JQL篩選</template>
         </n-switch>
       </n-form-item-gi>
-      <n-form-item-gi :span="20" path="selectFilterValue">
+      <n-form-item-gi :span="19" path="selectFilterValue">
         <n-input
           v-model:value="JQL.JQL"
           placeholder="請輸入JQL查詢一般議題"

@@ -64,7 +64,7 @@ export const useFormStore = defineStore('formStore', () => {
             value: v,
         })
     ));
-    const filterOptions = [["負責的議題", "byAssignee"], ["報告的議題", "byReporter"], ["監看的議題", "byWatcher"], ["管理議題", "managedIssue"], ["非議題", "nonIssue"]].map(
+    const filterOptions = [["負責的議題", "byAssignee"], ["審核的議題", "byReviewer"], ["報告的議題", "byReporter"], ["監看的議題", "byWatcher"], ["管理議題", "managedIssue"], ["非議題", "nonIssue"]].map(
         (v) => ({
             label: v[0],
             value: v[1],
@@ -395,6 +395,11 @@ export const useFormStore = defineStore('formStore', () => {
                 break;
             case "byWatcher":
                 JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (status != Closed) order by created DESC";
+                isUsingJQL.value=false;
+                getJiraIssues();
+                break;
+            case "byReviewer":
+                JQL.value.JQL = "(cf[10010] = " + localStorage.getItem("empID") +" or cf[13942] = " + localStorage.getItem("empID")+" or 規格審查人員 = " + localStorage.getItem("empID") + ") AND type != 非議題 AND type != 管理議題 AND (status != Closed) order by created DESC";
                 isUsingJQL.value=false;
                 getJiraIssues();
                 break;
