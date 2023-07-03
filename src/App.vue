@@ -1,9 +1,6 @@
 <template>
-  <n-config-provider
-    :theme-overrides="themeOverrides"
-    @mousemove="checkLogInTime"
-  >
-    <HeaderVue />
+  <n-config-provider :theme="darkTheme" @mousemove="checkLogInTime">
+    <!-- <HeaderVue /> -->
     <SiderVue />
   </n-config-provider>
 </template>
@@ -12,7 +9,7 @@
 import SiderVue from "./components/Sider.vue";
 import HeaderVue from "./components/Header.vue";
 import { onBeforeMount } from "vue";
-import { NConfigProvider } from "naive-ui";
+import { NConfigProvider, darkTheme } from "naive-ui";
 import { useLogInStore } from "./stores/logInStore.js";
 
 const logInStore = useLogInStore();
