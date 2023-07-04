@@ -18,6 +18,7 @@ export const useSiderStore = defineStore('siderStore', () => {
     const logInStore = useLogInStore();
     const { access, welcomeText } = storeToRefs(logInStore);
     const collapsed = ref(true);
+    const wholeTheme = ref(true);
     const menuOptions = computed(() => [
       {
         label: () =>
@@ -221,5 +222,5 @@ export const useSiderStore = defineStore('siderStore', () => {
     const expandIcon = () => {
       return h(NIcon, null, { default: () => h(caretDownOutline) });
     };
-    return { collapsed, menuOptions, renderIcon, expandIcon}
+    return { wholeTheme, collapsed, menuOptions, renderIcon, expandIcon}
 })

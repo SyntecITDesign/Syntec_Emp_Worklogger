@@ -11,12 +11,13 @@ import {
   NDivider,
   NAvatar,
   NH4,
+  NSwitch,
 } from "naive-ui";
 import { onBeforeMount } from "vue";
 import { useSiderStore } from "../stores/siderStore.js";
 import { useLogInStore } from "../stores/logInStore.js";
 const siderStore = useSiderStore();
-const { collapsed, menuOptions } = storeToRefs(siderStore);
+const { collapsed, menuOptions, wholeTheme } = storeToRefs(siderStore);
 const { renderIcon, expandIcon } = siderStore;
 const logInStore = useLogInStore();
 const { access, welcomeText } = storeToRefs(logInStore);
@@ -44,6 +45,16 @@ const { access, welcomeText } = storeToRefs(logInStore);
           :options="menuOptions"
           :expand-icon="expandIcon"
         />
+        <div style="display: flex; justify-content: center">
+          <n-switch
+            v-model:value="wholeTheme"
+            style="position: absolute; bottom: 2rem"
+            v-if="!collapsed"
+          >
+            <template #checked>淺色主題</template>
+            <template #unchecked>深色主題</template>
+          </n-switch>
+        </div>
       </n-layout-sider>
       <n-layout class="NLayout">
         <LogInVue v-if="!access.isLogIn" />
