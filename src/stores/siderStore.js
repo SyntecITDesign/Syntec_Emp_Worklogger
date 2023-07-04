@@ -2,7 +2,7 @@ import { h, ref, computed } from 'vue'
 import { RouterLink} from "vue-router";
 import { defineStore,storeToRefs } from 'pinia'
 import { useLogInStore } from "../stores/logInStore.js";
-import { NIcon } from "naive-ui";
+import { NIcon,NButton } from "naive-ui";
 import {
     Add as addIcon,
     Analytics as analyticsIcon,
@@ -10,12 +10,13 @@ import {
     CaretDownOutline as caretDownOutline,
     Accessibility as lockAccessIcon,
     RecordingOutline as recordingIcon,
+    ExitOutline as exitIcon,
   } from "@vicons/ionicons5";
 
 
 export const useSiderStore = defineStore('siderStore', () => {
     const logInStore = useLogInStore();
-    const { access } = storeToRefs(logInStore);
+    const { access, welcomeText } = storeToRefs(logInStore);
     const collapsed = ref(true);
     const menuOptions = computed(() => [
       {
@@ -30,10 +31,19 @@ export const useSiderStore = defineStore('siderStore', () => {
                 },
               },
             },
-            { default: () => "首頁" }
+            { default: () => welcomeText.value }
           ),
         key: "go-back-home",
         icon: renderIcon(homeIcon),
+      }
+      ,{
+        key: "divider-1",
+        type: "divider",
+        props: {
+          style: {
+            marginLeft: "32px"
+          }
+        }
       },
       {
         label: () =>
@@ -175,10 +185,35 @@ export const useSiderStore = defineStore('siderStore', () => {
         key: "go-history",
         icon: renderIcon(recordingIcon),
       },
+      {
+        key: "divider-1",
+        type: "divider",
+        props: {
+          style: {
+            marginLeft: "32px"
+          }
+        }
+      },
+      {
+        label: () =>
+          h(
+            "a",
+            {
+              onClick: () => logOut(),
+            },
+            "登出"
+          ),
+          icon: renderIcon(exitIcon),
+      }
     ]);
 
-
     
+    const logOut = () => {
+      access.value.basicAuth = null;
+      access.value.isLogIn = false;
+      localStorage.clear();
+    };
+
     const renderIcon = (icon) => {
       return () => h(NIcon, null, { default: () => h(icon) });
     };

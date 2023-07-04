@@ -102,7 +102,7 @@ export const useLogInStore = defineStore('logInStore', () => {
                 localStorage.setItem("basicAuth", access.value.basicAuth);
                 localStorage.setItem("loginTime", new Date().getTime());
                 localStorage.setItem("empID", model.value.Username);
-                welcomeText.value = "Hi," + model.value.Username;
+                welcomeText.value = "嗨，" + model.value.Username;
                 access.value.isLogIn = true;
                 dialog.info({ title: "登入成功" });
                 

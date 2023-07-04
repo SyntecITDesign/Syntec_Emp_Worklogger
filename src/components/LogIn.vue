@@ -24,6 +24,7 @@ onBeforeMount(() => {
     class="NSpace"
     @keyup.enter="handleValidateButtonClick"
     @blur="handleValidateButtonClick"
+    style="height: calc(100vh - 0rem)"
   >
     登入頁面
     <n-form ref="formRef" :model="model" :rules="rules">

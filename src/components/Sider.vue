@@ -10,6 +10,7 @@ import {
   NButton,
   NDivider,
   NAvatar,
+  NH4,
 } from "naive-ui";
 import { onBeforeMount } from "vue";
 import { useSiderStore } from "../stores/siderStore.js";
@@ -19,12 +20,6 @@ const { collapsed, menuOptions } = storeToRefs(siderStore);
 const { renderIcon, expandIcon } = siderStore;
 const logInStore = useLogInStore();
 const { access, welcomeText } = storeToRefs(logInStore);
-
-const logOut = () => {
-  access.value.basicAuth = null;
-  access.value.isLogIn = false;
-  localStorage.clear();
-};
 </script>
 
 <template>
@@ -42,10 +37,6 @@ const logOut = () => {
         style="height: calc(100vh - 0rem)"
         v-if="access.isLogIn"
       >
-        <div v-if="access.isLogIn" class="Header">
-          <div>{{ welcomeText }}</div>
-          <n-button class="NButton" @click="logOut">登出</n-button>
-        </div>
         <n-menu
           :collapsed="collapsed"
           :collapsed-width="64"
@@ -65,12 +56,5 @@ const logOut = () => {
 <style scoped>
 .NLayout {
   padding: 0% 5% 5% 5%;
-}
-.Header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-top: 1rem;
 }
 </style>
