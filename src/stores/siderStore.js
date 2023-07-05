@@ -2,7 +2,7 @@ import { h, ref, computed } from 'vue'
 import { RouterLink} from "vue-router";
 import { defineStore,storeToRefs } from 'pinia'
 import { useLogInStore } from "../stores/logInStore.js";
-import { NIcon } from "naive-ui";
+import { NIcon,NButton } from "naive-ui";
 import {
     Add as addIcon,
     Analytics as analyticsIcon,
@@ -15,10 +15,20 @@ import {
 
 export const useSiderStore = defineStore('siderStore', () => {
     const logInStore = useLogInStore();
-    const { access } = storeToRefs(logInStore);
+    const { access, welcomeText } = storeToRefs(logInStore);
     const collapsed = ref(true);
+    const wholeTheme = ref(true);
     const menuOptions = computed(() => [
       {
+        key: "divider-1",
+        type: "divider",
+        props: {
+          style: {
+            marginLeft: "32px"
+          }
+        }
+      }
+      ,{
         label: () =>
           h(
             RouterLink,
@@ -30,10 +40,19 @@ export const useSiderStore = defineStore('siderStore', () => {
                 },
               },
             },
-            { default: () => "首頁" }
+            { default: () => "歡迎使用報工系統" }
           ),
         key: "go-back-home",
         icon: renderIcon(homeIcon),
+      }
+      ,{
+        key: "divider-1",
+        type: "divider",
+        props: {
+          style: {
+            marginLeft: "32px"
+          }
+        }
       },
       {
         label: () =>
@@ -174,11 +193,12 @@ export const useSiderStore = defineStore('siderStore', () => {
           ),
         key: "go-history",
         icon: renderIcon(recordingIcon),
-      },
+      }
     ]);
 
-
     
+    
+
     const renderIcon = (icon) => {
       return () => h(NIcon, null, { default: () => h(icon) });
     };
@@ -186,5 +206,5 @@ export const useSiderStore = defineStore('siderStore', () => {
     const expandIcon = () => {
       return h(NIcon, null, { default: () => h(caretDownOutline) });
     };
-    return { collapsed, menuOptions, renderIcon, expandIcon}
+    return { wholeTheme, collapsed, menuOptions, renderIcon, expandIcon}
 })

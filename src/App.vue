@@ -1,9 +1,9 @@
 <template>
   <n-config-provider
-    :theme-overrides="themeOverrides"
+    :theme="wholeTheme ? null : darkTheme"
     @mousemove="checkLogInTime"
   >
-    <HeaderVue />
+    <!-- <HeaderVue /> -->
     <SiderVue />
   </n-config-provider>
 </template>
@@ -12,11 +12,15 @@
 import SiderVue from "./components/Sider.vue";
 import HeaderVue from "./components/Header.vue";
 import { onBeforeMount } from "vue";
-import { NConfigProvider } from "naive-ui";
+import { NConfigProvider, darkTheme } from "naive-ui";
+import { storeToRefs } from "pinia";
 import { useLogInStore } from "./stores/logInStore.js";
+import { useSiderStore } from "./stores/siderStore.js";
 
 const logInStore = useLogInStore();
+const siderStore = useSiderStore();
 const { checkLogInTime } = logInStore;
+const { wholeTheme } = storeToRefs(siderStore);
 const themeOverrides = {
   Menu: {
     itemColorActive: "#01006b26",

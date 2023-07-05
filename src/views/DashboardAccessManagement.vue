@@ -13,6 +13,7 @@ import {
   NCollapseItem,
   NCollapse,
   NText,
+  NScrollbar,
 } from "naive-ui";
 import { useLogInStore } from "../stores/logInStore.js";
 import { useAccessStore } from "../stores/accessStore.js";
@@ -98,88 +99,94 @@ projectTagManagedInfo.value.forEach((item, index) => {
   <h1>權限及標籤管理</h1>
 
   <n-space vertical>
-    <n-grid x-gap="12" y-gap="12" :cols="2">
-      <n-gi
-        v-for="(info, infoIndex) in Array.from(viewerManagedInfo)"
-        :key="info"
-      >
-        <!-- <h2 style="display: flex; justify-content: center">{{ info[0] }}</h2> -->
-        <n-card
-          :title="info[0]"
-          size="medium"
-          hoverable
-          header-style="font-size: 1.5rem;"
+    <n-scrollbar style="max-height: 40rem">
+      <n-grid x-gap="12" y-gap="12" :cols="2">
+        <n-gi
+          v-for="(info, infoIndex) in Array.from(viewerManagedInfo)"
+          :key="info"
         >
-          <n-collapse
-            arrow-placement="right"
-            default-expanded-names="1"
-            accordion
+          <!-- <h2 style="display: flex; justify-content: center">{{ info[0] }}</h2> -->
+          <n-card
+            :title="info[0]"
+            size="medium"
+            hoverable
+            header-style="font-size: 1.5rem;"
           >
-            <n-collapse-item name="1">
-              <template #header>
-                <n-text type="info"> 報表查看權限管理 </n-text>
-              </template>
-              <n-select
-                v-model:value="info[1]"
-                multiple
-                :options="viewersTags"
-                filterable
-                placeholder="查詢工號"
-                :loading="isEmpListLoading"
-                clearable
-                remote
-                :clear-filter-after-select="false"
-                @search="handleSearch"
-                size="large"
-                max-tag-count="responsive"
-              />
-            </n-collapse-item>
-            <n-collapse-item name="2">
-              <template #header>
-                <n-text type="success"> 標籤管理</n-text>
-              </template>
-              <n-data-table
-                :bordered="false"
-                :bottom-bordered="false"
-                :columns="projectTagManagedInfo[infoIndex][2]"
-                :data="projectTagManagedInfo[infoIndex][1]"
-              />
+            <n-collapse
+              arrow-placement="right"
+              default-expanded-names="1"
+              accordion
+            >
+              <n-collapse-item name="1">
+                <template #header>
+                  <n-text type="info"> 報表查看權限管理 </n-text>
+                </template>
+                <n-select
+                  v-model:value="info[1]"
+                  multiple
+                  :options="viewersTags"
+                  filterable
+                  placeholder="查詢工號"
+                  :loading="isEmpListLoading"
+                  clearable
+                  remote
+                  :clear-filter-after-select="false"
+                  @search="handleSearch"
+                  size="large"
+                  max-tag-count="responsive"
+                />
+              </n-collapse-item>
+              <n-collapse-item name="2">
+                <template #header>
+                  <n-text type="success"> 標籤管理</n-text>
+                </template>
+                <n-data-table
+                  :bordered="false"
+                  :bottom-bordered="false"
+                  :columns="projectTagManagedInfo[infoIndex][2]"
+                  :data="projectTagManagedInfo[infoIndex][1]"
+                />
 
-              <div
-                style="display: flex; justify-content: center; margin-top: 1rem"
-              >
-                <n-button
-                  strong
-                  secondary
-                  round
-                  type="success"
-                  @click="addProjectTag(infoIndex)"
+                <div
+                  style="
+                    display: flex;
+                    justify-content: center;
+                    margin-top: 1rem;
+                  "
                 >
-                  <template #icon>
-                    <n-icon>
-                      <add-icon />
-                    </n-icon>
-                  </template>
-                </n-button>
-              </div>
-            </n-collapse-item>
-          </n-collapse>
-        </n-card>
-      </n-gi>
-      <n-gi :span="24">
-        <div style="display: flex; justify-content: center; margin: 5%">
-          <n-button
-            round
-            type="info"
-            @click="saveSetting"
-            :disabled="isSaving"
-            size="large"
-          >
-            儲存
-          </n-button>
-        </div>
-      </n-gi>
-    </n-grid>
+                  <n-button
+                    strong
+                    secondary
+                    round
+                    type="success"
+                    @click="addProjectTag(infoIndex)"
+                  >
+                    <template #icon>
+                      <n-icon>
+                        <add-icon />
+                      </n-icon>
+                    </template>
+                  </n-button>
+                </div>
+              </n-collapse-item>
+            </n-collapse>
+          </n-card>
+        </n-gi>
+        <n-gi :span="24">
+          <div style="display: flex; justify-content: center; margin: 5%">
+            <n-button
+              round
+              type="info"
+              @click="saveSetting"
+              :disabled="isSaving"
+              size="large"
+            >
+              儲存
+            </n-button>
+          </div>
+        </n-gi>
+      </n-grid>
+    </n-scrollbar>
   </n-space>
 </template>
 <style scoped>
