@@ -45,20 +45,18 @@ const { access, welcomeText } = storeToRefs(logInStore);
           :options="menuOptions"
           :expand-icon="expandIcon"
         />
-        <div style="display: flex; justify-content: center">
-          <n-switch
-            v-model:value="wholeTheme"
-            style="position: absolute; bottom: 2rem"
-            v-if="!collapsed"
-          >
-            <template #checked>淺色主題</template>
-            <template #unchecked>深色主題</template>
-          </n-switch>
-        </div>
       </n-layout-sider>
+
       <n-layout class="NLayout">
         <LogInVue v-if="!access.isLogIn" />
         <RouterView v-else />
+        <n-switch
+          v-model:value="wholeTheme"
+          style="position: absolute; bottom: 2rem; right: 2rem"
+        >
+          <template #checked>淺色主題</template>
+          <template #unchecked>深色主題</template>
+        </n-switch>
       </n-layout>
     </n-layout>
   </n-space>
@@ -66,6 +64,7 @@ const { access, welcomeText } = storeToRefs(logInStore);
 
 <style scoped>
 .NLayout {
-  padding: 0% 5% 5% 5%;
+  padding: 3% 3% 3% 3%;
+  height: calc(100vh - 0rem);
 }
 </style>
