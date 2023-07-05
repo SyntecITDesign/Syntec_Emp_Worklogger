@@ -65,7 +65,7 @@ export const useLogInStore = defineStore('logInStore', () => {
         }
         if(localStorage.getItem("empID")!==null){
             access.value.isLogIn = true;
-            welcomeText.value = "Hi," + localStorage.getItem("empID");
+            welcomeText.value = "嗨，" + localStorage.getItem("empID");
             if(!access.value.isCheckedAccess && access.value.isLogIn){
             //console.log("getJiraWorkLoggerAccess",localStorage.getItem("empID"));
                 getJiraWorkLoggerAccess(localStorage.getItem("empID"));

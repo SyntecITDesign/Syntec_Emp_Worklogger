@@ -12,7 +12,10 @@ import {
   NAvatar,
   NH4,
   NSwitch,
+  NIcon,
+  NImage,
 } from "naive-ui";
+import { ExitOutline as ExitIcon } from "@vicons/ionicons5";
 import { onBeforeMount } from "vue";
 import { useSiderStore } from "../stores/siderStore.js";
 import { useLogInStore } from "../stores/logInStore.js";
@@ -21,6 +24,11 @@ const { collapsed, menuOptions, wholeTheme } = storeToRefs(siderStore);
 const { renderIcon, expandIcon } = siderStore;
 const logInStore = useLogInStore();
 const { access, welcomeText } = storeToRefs(logInStore);
+const logOut = () => {
+  access.value.basicAuth = null;
+  access.value.isLogIn = false;
+  localStorage.clear();
+};
 </script>
 
 <template>
@@ -38,6 +46,16 @@ const { access, welcomeText } = storeToRefs(logInStore);
         style="height: calc(100vh - 0rem)"
         v-if="access.isLogIn"
       >
+        <img
+          v-if="wholeTheme && !collapsed"
+          src="../assets/SyntecLogo.png"
+          class="logo"
+        /><img
+          v-if="!wholeTheme && !collapsed"
+          src="../assets/SyntecLogoDark.png"
+          class="logo"
+        />
+        <img v-if="collapsed" src="../assets/SyntecIcon.png" class="icon" />
         <n-menu
           :collapsed="collapsed"
           :collapsed-width="64"
@@ -57,6 +75,24 @@ const { access, welcomeText } = storeToRefs(logInStore);
           <template #checked>淺色主題</template>
           <template #unchecked>深色主題</template>
         </n-switch>
+        <n-space
+          v-if="access.isLogIn"
+          style="
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          "
+          >{{ welcomeText }}
+          <n-button class="NButton" @click="logOut"
+            ><template #icon>
+              <n-icon><exit-icon /></n-icon>
+            </template>
+            登出</n-button
+          >
+        </n-space>
       </n-layout>
     </n-layout>
   </n-space>
@@ -66,5 +102,15 @@ const { access, welcomeText } = storeToRefs(logInStore);
 .NLayout {
   padding: 3% 3% 3% 3%;
   height: calc(100vh - 0rem);
+}
+.logo {
+  width: 95%;
+  margin-top: 5%;
+  margin-left: 5%;
+}
+.icon {
+  width: 60%;
+  margin-top: 5%;
+  margin-left: 20%;
 }
 </style>

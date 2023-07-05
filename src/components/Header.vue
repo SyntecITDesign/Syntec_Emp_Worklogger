@@ -44,6 +44,12 @@ const logOut = () => {
           >
         </div>
       </template>
+      <template #extra>
+        <n-space v-if="access.isLogIn">
+          <div>{{ welcomeText }}</div>
+          <n-button class="NButton" @click="logOut">登出</n-button>
+        </n-space>
+      </template>
     </n-page-header>
   </n-config-provider>
 </template>

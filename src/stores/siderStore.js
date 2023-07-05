@@ -10,7 +10,6 @@ import {
     CaretDownOutline as caretDownOutline,
     Accessibility as lockAccessIcon,
     RecordingOutline as recordingIcon,
-    ExitOutline as exitIcon,
   } from "@vicons/ionicons5";
 
 
@@ -21,6 +20,15 @@ export const useSiderStore = defineStore('siderStore', () => {
     const wholeTheme = ref(true);
     const menuOptions = computed(() => [
       {
+        key: "divider-1",
+        type: "divider",
+        props: {
+          style: {
+            marginLeft: "32px"
+          }
+        }
+      }
+      ,{
         label: () =>
           h(
             RouterLink,
@@ -32,7 +40,7 @@ export const useSiderStore = defineStore('siderStore', () => {
                 },
               },
             },
-            { default: () => welcomeText.value }
+            { default: () => "歡迎使用報工系統" }
           ),
         key: "go-back-home",
         icon: renderIcon(homeIcon),
@@ -185,35 +193,11 @@ export const useSiderStore = defineStore('siderStore', () => {
           ),
         key: "go-history",
         icon: renderIcon(recordingIcon),
-      },
-      {
-        key: "divider-1",
-        type: "divider",
-        props: {
-          style: {
-            marginLeft: "32px"
-          }
-        }
-      },
-      {
-        label: () =>
-          h(
-            "a",
-            {
-              onClick: () => logOut(),
-            },
-            "登出"
-          ),
-          icon: renderIcon(exitIcon),
       }
     ]);
 
     
-    const logOut = () => {
-      access.value.basicAuth = null;
-      access.value.isLogIn = false;
-      localStorage.clear();
-    };
+    
 
     const renderIcon = (icon) => {
       return () => h(NIcon, null, { default: () => h(icon) });
