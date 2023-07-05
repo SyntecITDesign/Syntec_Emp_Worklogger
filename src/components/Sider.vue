@@ -52,7 +52,7 @@ const { access, welcomeText } = storeToRefs(logInStore);
         <RouterView v-else />
         <n-switch
           v-model:value="wholeTheme"
-          style="position: absolute; bottom: 2rem; right: 2rem"
+          style="position: absolute; bottom: 1rem; right: 1rem"
         >
           <template #checked>淺色主題</template>
           <template #unchecked>深色主題</template>
