@@ -11,8 +11,6 @@ export const useFormStore = defineStore('formStore', () => {
     const { apiUrl } = apiStore;
     const logInStore = useLogInStore();
     const { access } = storeToRefs(logInStore);
-
-    
     const formRef = ref(null);
     const isIssueOptionsChange = ref(false);
     const isAddingJiraWorklog = ref(false);
@@ -46,6 +44,8 @@ export const useFormStore = defineStore('formStore', () => {
         spendMinuteValue: 0,
         sumSpendSecond: 0,
     });
+
+    let customJQL = "";
 
     const JQL = ref({
         JQL: "",
@@ -114,7 +114,6 @@ export const useFormStore = defineStore('formStore', () => {
 
 
     const getJiraIssues = async () => {
-        //console.log(JQL.value);
         if(isUsingJQL.value && (JQL.value.JQL === "" || JQL.value.JQL === null)){
             dialog.info({ title: "請輸入JQL查詢一般議題" });
         }else{
@@ -370,6 +369,17 @@ export const useFormStore = defineStore('formStore', () => {
     };
 
 
+    const customJQLSwitch = () => {
+        console.log(customJQL, JQL.value.JQL);
+        if (isUsingJQL.value) {
+            JQL.value.JQL = customJQL;
+        } else {
+            customJQL = JQL.value.JQL;
+        }
+        console.log(customJQL, JQL.value.JQL);
+
+    };
+
     watch(() => model.value.selectFilterValue,(newValue) => {
         //console.log(JQL.value);
         switch (newValue) {
@@ -442,6 +452,6 @@ export const useFormStore = defineStore('formStore', () => {
         console.log(model.value.spendValue/(60*60),spendValue.value.sumSpendSecond/(60*60));
     });
 
-    return { JQL, isUsingJQL, isDeletingJiraWorklog,successCount,formRef, size, model, deleteModel, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog, getProjectTags,dateDisabled, deleteJiraWorklog, getJiraIssues}
+    return {JQL, isUsingJQL, isDeletingJiraWorklog,successCount,formRef, size, model, deleteModel, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog, getProjectTags,dateDisabled, deleteJiraWorklog, getJiraIssues,customJQLSwitch}
 
 })

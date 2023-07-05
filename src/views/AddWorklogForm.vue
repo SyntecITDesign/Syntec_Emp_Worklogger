@@ -48,6 +48,7 @@ const {
   addJiraWorklog,
   deleteJiraWorklog,
   getJiraIssues,
+  customJQLSwitch,
 } = formStore;
 </script>
 <template>
@@ -61,7 +62,11 @@ const {
   >
     <n-grid :cols="24" :x-gap="24">
       <n-form-item-gi :span="3">
-        <n-switch v-model:value="isUsingJQL">
+        <n-switch
+          v-model:value="isUsingJQL"
+          @update:value="customJQLSwitch()"
+          :disabled="isIssueOptionsChange"
+        >
           <template #checked>自訂JQL篩選</template>
           <template #unchecked>自訂JQL篩選</template>
         </n-switch>
