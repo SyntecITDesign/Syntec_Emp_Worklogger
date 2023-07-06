@@ -1,5 +1,5 @@
 <script setup>
-import { NSpin, NSpace, NSelect } from "naive-ui";
+import { NSpin, NSpace, NSelect, NScrollbar } from "naive-ui";
 import { storeToRefs } from "pinia";
 import axios from "axios";
 import { ref, onBeforeMount, watch } from "vue";
@@ -39,22 +39,24 @@ watch(
 </script>
 
 <template>
-  <h1>
-    Issue Execution<n-select
-      v-model:value="selectedSuperDeptName"
-      :options="superDeptNameOptions"
-      size="large"
-    />
-  </h1>
-  <n-space vertical class="issueExecution">
-    <n-spin :show="isUpdateLatestIssueInfo || isGettingSuperDeptOfWorkLogs">
-      <iframe
-        :src="issueExecutionSrc"
-        v-if="issueExecutionSrc !== null"
-      ></iframe>
-      <template #description> 議題資訊更新中 </template>
-    </n-spin>
-  </n-space>
+  <n-scrollbar style="max-height: 40rem">
+    <h1>
+      Issue Execution<n-select
+        v-model:value="selectedSuperDeptName"
+        :options="superDeptNameOptions"
+        size="large"
+      />
+    </h1>
+    <n-space vertical class="issueExecution">
+      <n-spin :show="isUpdateLatestIssueInfo || isGettingSuperDeptOfWorkLogs">
+        <iframe
+          :src="issueExecutionSrc"
+          v-if="issueExecutionSrc !== null"
+        ></iframe>
+        <template #description> 議題資訊更新中 </template>
+      </n-spin>
+    </n-space>
+  </n-scrollbar>
 </template>
 <style scoped>
 .issueExecution {

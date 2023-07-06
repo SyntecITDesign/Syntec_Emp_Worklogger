@@ -101,7 +101,7 @@ const logOut = () => {
 <style scoped>
 .NLayout {
   padding: 3% 3% 3% 3%;
-  height: calc(100vh - 0rem);
+  height: calc(100vmin);
 }
 .logo {
   width: 95%;
