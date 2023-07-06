@@ -11,7 +11,9 @@ import {
 import { GlassesOutline } from "@vicons/ionicons5";
 import { onBeforeMount } from "vue";
 import { useLogInStore } from "../stores/logInStore.js";
-
+import { useSiderStore } from "../stores/siderStore.js";
+const siderStore = useSiderStore();
+const { wholeTheme } = storeToRefs(siderStore);
 const logInStore = useLogInStore();
 const { formRef, model, access } = storeToRefs(logInStore);
 const { rules, handleValidateButtonClick, checkLogInTime } = logInStore;
@@ -32,8 +34,12 @@ onBeforeMount(() => {
       class="NSpace"
       @keyup.enter="handleValidateButtonClick"
       @blur="handleValidateButtonClick"
-    >
-      登入頁面
+      ><img class="logo" v-if="wholeTheme" src="../assets/SyntecLogo.png" /><img
+        class="logo"
+        v-else
+        src="../assets/SyntecLogoDark.png"
+      />
+      報工系統登入頁面
       <n-form ref="formRef" :model="model" :rules="rules">
         <n-form-item path="Username" label="JIRA登入帳號">
           <n-input
@@ -77,7 +83,11 @@ onBeforeMount(() => {
   align-items: center;
   font-size: 50px;
 }
-
+.logo {
+  width: 95%;
+  margin-top: 5%;
+  margin-left: 5%;
+}
 .NInput {
   width: 600px;
   font-size: 30px;
