@@ -96,7 +96,7 @@ projectTagManagedInfo.value.forEach((item, index) => {
 </script>
 
 <template>
-  <n-scrollbar style="max-height: 40rem">
+  <n-scrollbar style="max-height: 100vmin" x-scrollable>
     <h1>權限及標籤管理</h1>
 
     <n-space vertical>
@@ -172,22 +172,20 @@ projectTagManagedInfo.value.forEach((item, index) => {
             </n-collapse>
           </n-card>
         </n-gi>
-        <n-gi :span="24">
-          <div style="display: flex; justify-content: center; margin: 5%">
-            <n-button
-              round
-              type="info"
-              @click="saveSetting"
-              :disabled="isSaving"
-              size="large"
-            >
-              儲存
-            </n-button>
-          </div>
-        </n-gi>
       </n-grid>
     </n-space>
   </n-scrollbar>
+  <div style="position: fixed; bottom: 5%; left: calc(50vmax)">
+    <n-button
+      round
+      type="info"
+      @click="saveSetting"
+      :disabled="isSaving"
+      size="large"
+    >
+      儲存
+    </n-button>
+  </div>
 </template>
 <style scoped>
 .n-text {

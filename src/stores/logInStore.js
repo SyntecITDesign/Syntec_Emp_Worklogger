@@ -72,15 +72,28 @@ export const useLogInStore = defineStore('logInStore', () => {
             }
         }
         if(access.value.isLogIn&&(new Date().getTime() - localStorage.getItem("loginTime") > 3600000 /*一小時候登出*/ )){
-            access.value = {
-                isLogIn:false,
-                isViewer:false,
-                isViewersManager:false,
-                basicAuth:null,
-                isChecking:false,
-            };
-            dialog.info({ title: "逾時請重新登入" });
-            localStorage.clear();
+            dialog.info({
+                title: "逾時登入",
+                content: "已登入逾一小時，是否保持登入？",
+                positiveText: "是",
+                negativeText: "否",
+                maskClosable: false,
+                closeOnEsc: false,
+                onPositiveClick: () => {
+                    localStorage.setItem("loginTime", new Date().getTime());
+                },
+                onNegativeClick: () => {
+                    access.value = {
+                        isLogIn:false,
+                        isViewer:false,
+                        isViewersManager:false,
+                        basicAuth:null,
+                        isChecking:false,
+                    };
+                    dialog.info({ title: "逾時請重新登入" });
+                    localStorage.clear();
+                }
+            });
         }
     };
     

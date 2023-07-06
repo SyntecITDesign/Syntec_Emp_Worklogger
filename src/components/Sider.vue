@@ -14,6 +14,7 @@ import {
   NSwitch,
   NIcon,
   NImage,
+  NScrollbar,
 } from "naive-ui";
 import { ExitOutline as ExitIcon } from "@vicons/ionicons5";
 import { onBeforeMount } from "vue";
@@ -36,6 +37,7 @@ const logOut = () => {
     <n-layout has-sider>
       <n-layout-sider
         bordered
+        :native-scrollbar="false"
         collapse-mode="width"
         :collapsed-width="64"
         :width="240"
@@ -64,7 +66,6 @@ const logOut = () => {
           :expand-icon="expandIcon"
         />
       </n-layout-sider>
-
       <n-layout class="NLayout">
         <LogInVue v-if="!access.isLogIn" />
         <RouterView v-else />

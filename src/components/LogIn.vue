@@ -26,7 +26,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <n-scrollbar style="max-height: 40rem">
+  <n-scrollbar style="max-height: 100vmin">
     <n-space
       vertical
       class="NSpace"
