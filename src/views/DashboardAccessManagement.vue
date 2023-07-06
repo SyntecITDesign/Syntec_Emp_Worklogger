@@ -96,10 +96,10 @@ projectTagManagedInfo.value.forEach((item, index) => {
 </script>
 
 <template>
-  <h1>權限及標籤管理</h1>
+  <n-scrollbar style="max-height: 40rem">
+    <h1>權限及標籤管理</h1>
 
-  <n-space vertical>
-    <n-scrollbar style="max-height: 40rem">
+    <n-space vertical>
       <n-grid x-gap="12" y-gap="12" :cols="2">
         <n-gi
           v-for="(info, infoIndex) in Array.from(viewerManagedInfo)"
@@ -186,8 +186,8 @@ projectTagManagedInfo.value.forEach((item, index) => {
           </div>
         </n-gi>
       </n-grid>
-    </n-scrollbar>
-  </n-space>
+    </n-space>
+  </n-scrollbar>
 </template>
 <style scoped>
 .n-text {

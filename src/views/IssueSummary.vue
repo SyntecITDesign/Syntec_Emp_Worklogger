@@ -1,5 +1,5 @@
 <script setup>
-import { NSpin, NSpace } from "naive-ui";
+import { NSpin, NSpace, NScrollbar } from "naive-ui";
 import { storeToRefs } from "pinia";
 import axios from "axios";
 import { watch, ref, onBeforeMount } from "vue";
@@ -31,13 +31,15 @@ watch(
 </script>
 
 <template>
-  <h1>Issue Summary</h1>
-  <n-space vertical class="issueSummary">
-    <n-spin :show="isUpdateLatestIssueInfo || isGettingSuperDeptOfWorkLogs">
-      <iframe :src="issueSummarySrc"></iframe>
-      <template #description> 議題資訊更新中 </template>
-    </n-spin>
-  </n-space>
+  <n-scrollbar style="max-height: 40rem">
+    <h1>Issue Summary</h1>
+    <n-space vertical class="issueSummary">
+      <n-spin :show="isUpdateLatestIssueInfo || isGettingSuperDeptOfWorkLogs">
+        <iframe :src="issueSummarySrc"></iframe>
+        <template #description> 議題資訊更新中 </template>
+      </n-spin>
+    </n-space></n-scrollbar
+  >
 </template>
 <style scoped>
 .issueSummary {

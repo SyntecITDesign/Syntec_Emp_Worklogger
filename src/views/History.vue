@@ -1,5 +1,5 @@
 <script setup>
-import { NSpin, NSpace } from "naive-ui";
+import { NSpin, NSpace, NScrollbar } from "naive-ui";
 import { storeToRefs } from "pinia";
 import axios from "axios";
 import { watch, ref, onBeforeMount } from "vue";
@@ -14,10 +14,12 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <h1>歷史報工紀錄</h1>
-  <n-space vertical class="history">
-    <iframe :src="historySrc"></iframe>
-  </n-space>
+  <n-scrollbar style="max-height: 40rem">
+    <h1>歷史報工紀錄</h1>
+    <n-space vertical class="history">
+      <iframe :src="historySrc"></iframe>
+    </n-space>
+  </n-scrollbar>
 </template>
 <style scoped>
 .history {
