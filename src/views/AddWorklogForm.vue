@@ -53,7 +53,7 @@ const {
 } = formStore;
 </script>
 <template>
-  <n-scrollbar style="max-height: 40rem">
+  <n-scrollbar style="max-height: 100vmin" x-scrollable>
     <h1>新增工作日誌</h1>
     <n-form
       ref="formRef"

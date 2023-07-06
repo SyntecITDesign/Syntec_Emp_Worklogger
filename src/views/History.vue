@@ -14,7 +14,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <n-scrollbar style="max-height: 40rem">
+  <n-scrollbar style="max-height: 100vmin">
     <h1>歷史報工紀錄</h1>
     <n-space vertical class="history">
       <iframe :src="historySrc"></iframe>
@@ -23,6 +23,7 @@ onBeforeMount(() => {
 </template>
 <style scoped>
 .history {
+  background: #ffffffaa;
   display: flex;
   justify-content: center;
 }

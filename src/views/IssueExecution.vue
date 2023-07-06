@@ -39,7 +39,7 @@ watch(
 </script>
 
 <template>
-  <n-scrollbar style="max-height: 40rem">
+  <n-scrollbar style="max-height: 100vmin">
     <h1>
       Issue Execution<n-select
         v-model:value="selectedSuperDeptName"
@@ -60,6 +60,7 @@ watch(
 </template>
 <style scoped>
 .issueExecution {
+  background: #ffffffaa;
   display: flex;
   justify-content: center;
 }

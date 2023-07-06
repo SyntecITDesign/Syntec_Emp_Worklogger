@@ -31,7 +31,7 @@ watch(
 </script>
 
 <template>
-  <n-scrollbar style="max-height: 40rem">
+  <n-scrollbar style="max-height: 100vmin">
     <h1>Issue Summary</h1>
     <n-space vertical class="issueSummary">
       <n-spin :show="isUpdateLatestIssueInfo || isGettingSuperDeptOfWorkLogs">
@@ -43,6 +43,7 @@ watch(
 </template>
 <style scoped>
 .issueSummary {
+  background: #ffffffaa;
   display: flex;
   justify-content: center;
 }

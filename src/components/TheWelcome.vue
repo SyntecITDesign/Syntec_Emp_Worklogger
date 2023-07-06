@@ -14,7 +14,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <n-scrollbar style="max-height: 40rem">
+  <n-scrollbar style="max-height: 100vmin">
     <div class="welcome">
       <h1>
         歡迎使用報工系統<br /><img
