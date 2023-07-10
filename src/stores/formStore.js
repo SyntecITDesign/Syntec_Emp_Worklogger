@@ -324,6 +324,7 @@ export const useFormStore = defineStore('formStore', () => {
                     timeSpentSeconds: model.value.spendValue,
                     BasicAuth:access.value.basicAuth,
                 }
+                let sumMinute = spendValue.value.spendHourValue * 60 + Math.round(spendValue.value.spendMinuteValue);
                 const modelForJiraWorkLogRecord = {
                     issueID: model.value.selectIssueValue.split(" ")[0],
                     empID: localStorage.getItem("empID"),
@@ -334,8 +335,8 @@ export const useFormStore = defineStore('formStore', () => {
                     type:(model.value.selectFilterValue === "nonIssue"? "非議題":(model.value.selectFilterValue === "managedIssue"? "管理議題":"一般議題")),
                     tags: model.value.tagValue,
                     comment: model.value.descriptionValue.replaceAll("\\","/"),                    
-                    spendHour:Math.floor(spendValue.value.spendHourValue) + Math.floor(spendValue.value.spendMinuteValue/60),
-                    spendMinute:((spendValue.value.spendHourValue - Math.floor(spendValue.value.spendHourValue)) * 60) + (spendValue.value.spendMinuteValue % 60),
+                    spendHour:Math.floor(sumMinute/60),
+                    spendMinute: sumMinute % 60,
                     BasicAuth:access.value.basicAuth,
                 };
                 
