@@ -334,8 +334,8 @@ export const useFormStore = defineStore('formStore', () => {
                     type:(model.value.selectFilterValue === "nonIssue"? "非議題":(model.value.selectFilterValue === "managedIssue"? "管理議題":"一般議題")),
                     tags: model.value.tagValue,
                     comment: model.value.descriptionValue.replaceAll("\\","/"),                    
-                    spendHour:spendValue.value.spendHourValue,
-                    spendMinute:spendValue.value.spendMinuteValue,
+                    spendHour:Math.floor(spendValue.value.spendHourValue) + Math.floor(spendValue.value.spendMinuteValue/60),
+                    spendMinute:((spendValue.value.spendHourValue - Math.floor(spendValue.value.spendHourValue)) * 60) + (spendValue.value.spendMinuteValue % 60),
                     BasicAuth:access.value.basicAuth,
                 };
                 
@@ -432,7 +432,15 @@ export const useFormStore = defineStore('formStore', () => {
         if((newDateValue!== null) || (newTimeValue!== null)) getSumSpentSeconds();
     },{deep: true,});
 
-    watchEffect(() => {        
+    watchEffect(() => {       
+        // if(spendValueStatus.value.init){
+        //     let spendValue = {hours: 0, minutes: 0};
+        //     spendValue.hours = Math.floor(spendValue.value.spendHourValue) + Math.floor(spendValue.minutes/60);
+        //     spendValue.minutes = (spendValue.value.spendHourValue - Math.floor(spendValue.value.spendHourValue)) + (spendValue.minutes % 60);
+        //     spendValue.value.spendHourValue = spendValue.hours;
+        //     spendValue.value.spendMinuteValue = spendValue.minutes;
+        //     console.log(spendValue);
+        // }
         if ((model.value.spendValue <= 0) && (spendValueStatus.value.init)) {
             spendValueStatus.value.status = "error";
             spendValue.value.spendDayValue = 0;

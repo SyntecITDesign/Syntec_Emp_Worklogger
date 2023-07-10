@@ -33,7 +33,7 @@ export const useDashboardStroe = defineStore('dashboardStroe', () => {
             try {
                 const res = await axios.post(
                 apiUrl + "/Open/JIRA_Related/Worklogger/GetSuperDeptOfWorkLogs",
-                { projectKey: localStorage.getItem("projectKeysView") }
+                { projectKey: localStorage.getItem("projectKeysIsViewer") }
                 );
                 console.log("GetSuperDeptOfWorkLogs",res.data);
                 let superDeptViewSet = new Set();
