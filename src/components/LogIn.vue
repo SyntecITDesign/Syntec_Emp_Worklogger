@@ -7,6 +7,7 @@ import {
   NForm,
   NFormItem,
   NScrollbar,
+  NIcon,
 } from "naive-ui";
 import { GlassesOutline } from "@vicons/ionicons5";
 import { onBeforeMount } from "vue";

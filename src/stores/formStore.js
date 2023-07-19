@@ -128,6 +128,8 @@ export const useFormStore = defineStore('formStore', () => {
                     apiUrl + "/Open/JIRA_Related/Worklogger/GetJiraIssues",
                     JQL.value
                 );
+                
+                console.log(res.data.content );
 
                 if(res.data.content === null){
                     dialog.info({ title: "查無相關議題" });
@@ -374,7 +376,22 @@ export const useFormStore = defineStore('formStore', () => {
         console.log(customJQL, JQL.value.JQL);
         if (isUsingJQL.value) {
             JQL.value.JQL = customJQL;
-        } else {
+        model.value.selectFilterValue = null
+        model.value.selectIssueValue = null
+        model.value.tagValue = null
+        tagOptions.value = [].map(
+            (v) => ({
+                label: v,
+                value: v,
+            })
+        );
+        issueOptions.value = [].map(
+            (v) => ({
+                label: v,
+                value: v,
+            })
+        );
+    } else {
             customJQL = JQL.value.JQL;
         }
         console.log(customJQL, JQL.value.JQL);
