@@ -190,6 +190,7 @@ export const useLogInStore = defineStore('logInStore', () => {
             if(!access.value.isViewer){
                 access.value.isViewer = (devList.includes(localStorage.getItem("empID")))||(resViewer.data.code === 0);
             }
+            console.log("checkViewer",resViewer.data.content.every(function(resViewerItem, resViewerIndex){return resViewerItem.IsViewer === 0}));
             console.log("access.value.isViewer",access.value.isViewer);
             if(resViewer.data.code === 0){                
                 let projectKeyViewSet = new Set();
