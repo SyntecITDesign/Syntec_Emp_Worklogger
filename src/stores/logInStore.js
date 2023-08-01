@@ -189,7 +189,7 @@ export const useLogInStore = defineStore('logInStore', () => {
             console.log("checkViewer",resViewer.data.content.map((IsViewer)=>{return IsViewer.IsViewer}).includes(1));
         
             if(!access.value.isViewer){
-                access.value.isViewer = (devList.includes(localStorage.getItem("empID")))||(resViewer.data.content.map((IsViewer)=>{return IsViewer}).includes(1));
+                access.value.isViewer = (devList.includes(localStorage.getItem("empID")))||(resViewer.data.content.map((IsViewer)=>{return IsViewer.IsViewer}).includes(1));
             }
             console.log("access.value.isViewer",access.value.isViewer);
             if(resViewer.data.code === 0){                
