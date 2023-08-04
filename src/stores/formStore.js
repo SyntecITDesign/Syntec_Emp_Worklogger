@@ -210,6 +210,7 @@ export const useFormStore = defineStore('formStore', () => {
                     v[0].workLogID = resAddWorklog.data.content.id;
                     v[0].created = resAddWorklog.data.content.created.split("+")[0];
                     v[0].started = resAddWorklog.data.content.started.split("+")[0];
+                    v[0].issueID = v[0].issueID.split(" ")[0]
                     //console.log(v[0]);
                     
                     //新增報工紀錄到DB同步看板資料
@@ -328,7 +329,7 @@ export const useFormStore = defineStore('formStore', () => {
                 }
                 let sumMinute = spendValue.value.spendHourValue * 60 + Math.round(spendValue.value.spendMinuteValue);
                 const modelForJiraWorkLogRecord = {
-                    issueID: model.value.selectIssueValue.split(" ")[0],
+                    issueID: model.value.selectIssueValue,
                     empID: localStorage.getItem("empID"),
                     workLogID: "",
                     timeSpentSeconds: model.value.spendValue,
@@ -345,9 +346,9 @@ export const useFormStore = defineStore('formStore', () => {
                 models.value.push([modelForJiraWorkLogRecord,modelForJiraAddWorkLogApi]);
 
                 initData();
-                console.log(models.value);                
+                // console.log(models.value);                
                 console.log(spendValue.value);                
-                console.log(model.value);
+                // console.log(model.value);
                 console.log("ok");
             } else {
                 console.log(errors);
