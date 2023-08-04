@@ -214,27 +214,6 @@ const {
           </template>
         </n-card>
       </n-gi>
-      <n-gi :span="24">
-        <n-spin :show="isAddingJiraWorklog">
-          <template #description>
-            議題資訊更新中 {{ successCount }} / {{ models.length }}</template
-          >
-          <div
-            v-if="models.length > 0"
-            style="display: flex; justify-content: flex-end; margin: 5%"
-          >
-            <n-button
-              round
-              type="info"
-              @click="addJiraWorklog"
-              :loading="isAddingJiraWorklog"
-              :disabled="isAddingJiraWorklog"
-            >
-              送出
-            </n-button>
-          </div>
-        </n-spin>
-      </n-gi>
     </n-grid>
     <n-divider />
     <n-card :bordered="false">
@@ -281,6 +260,30 @@ const {
         <n-form-item-gi :span="2"></n-form-item-gi> </n-grid
     ></n-card>
   </n-scrollbar>
+  <div
+    style="position: fixed; width: -webkit-fill-available; padding-right: 3%"
+  >
+    <n-spin :show="isAddingJiraWorklog">
+      <template #description>
+        議題資訊更新中 {{ successCount }} / {{ models.length }}</template
+      >
+      <div
+        v-if="models.length > 0"
+        style="display: flex; justify-content: center"
+      >
+        <n-button
+          round
+          dashed
+          type="info"
+          @click="addJiraWorklog"
+          :loading="isAddingJiraWorklog"
+          :disabled="isAddingJiraWorklog"
+        >
+          送出
+        </n-button>
+      </div>
+    </n-spin>
+  </div>
 </template>
 
 <style scoped>
