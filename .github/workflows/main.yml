@@ -10,4 +10,4 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Run bulid
-        run: npm run bulid
+        run: npm run build
