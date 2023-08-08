@@ -29,7 +29,7 @@ export const useFormStore = defineStore('formStore', () => {
         startTimeValue: "08:00:00",
         spendValue: computed(() => (spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
     });
-
+    const isModify = ref(false);
     const deleteModel = ref({
         issueID:null,
         workLogID:null,
@@ -169,6 +169,12 @@ export const useFormStore = defineStore('formStore', () => {
                 dialog.info({ title: "無相關標籤" });
             }else{
                 if(usage ==="forFillForm"){
+                    tagOptions.value = [].map(
+                        (v) => ({
+                            label: v,
+                            value: v,
+                        })
+                    );
                     res.data.content.map((v) => ({ label: v.TagName, value: v.TagName, })).forEach(element => {
                         tagOptions.value.push(element);
                     });
@@ -190,7 +196,7 @@ export const useFormStore = defineStore('formStore', () => {
         try {
             isAddingJiraWorklog.value = true;
             let isSuccess = true;
-
+            
             successCount.value = 0;
             const failData = [];
 
@@ -342,8 +348,17 @@ export const useFormStore = defineStore('formStore', () => {
                     spendMinute: sumMinute % 60,
                     BasicAuth:access.value.basicAuth,
                 };
+
+                const modelTempRecord = {
+                    selectIssueValue:model.value.selectIssueValue,
+                    selectFilterValue:((model.value.selectFilterValue != "nonIssue")&&(model.value.selectFilterValue != "managedIssue")) ? null : model.value.selectFilterValue,
+                    startDateValue:model.value.startDateValue,
+                    spendHourValue:spendValue.value.spendHourValue,
+                    spendMinuteValue:spendValue.value.spendMinuteValue,
+                    descriptionValue:model.value.descriptionValue,
+                };
                 
-                models.value.push([modelForJiraWorkLogRecord,modelForJiraAddWorkLogApi]);
+                models.value.push([modelForJiraWorkLogRecord,modelForJiraAddWorkLogApi,modelTempRecord]);
 
                 initData();
                 // console.log(models.value);                
@@ -371,7 +386,17 @@ export const useFormStore = defineStore('formStore', () => {
         models.value.splice(index, 1);
         console.log(models.value);
     };
-
+    const handleEdit = (index) => {
+        console.log(models.value[index][2]);        
+        isModify.value = true;
+        model.value.selectFilterValue = models.value[index][2].selectFilterValue;
+        model.value.selectIssueValue = models.value[index][2].selectIssueValue;
+        model.value.startDateValue = models.value[index][2].startDateValue;
+        spendValue.value.spendHourValue = models.value[index][2].spendHourValue;
+        spendValue.value.spendMinuteValue = models.value[index][2].spendMinuteValue;
+        model.value.descriptionValue = models.value[index][2].descriptionValue;
+        handleClose(index);
+    };
 
     const customJQLSwitch = () => {
         console.log(customJQL, JQL.value.JQL);
@@ -400,45 +425,49 @@ export const useFormStore = defineStore('formStore', () => {
     };
 
     watch(() => model.value.selectFilterValue,(newValue) => {
+        if(!isModify.value){
         //console.log(JQL.value);
-        switch (newValue) {
-            case "managedIssue":
-                JQL.value.JQL = "(reporter = " + localStorage.getItem("empID")+" or assignee = " + localStorage.getItem("empID")+" or creator  = " + localStorage.getItem("empID")+" or watcher = " + localStorage.getItem("empID") + ") AND type = 管理議題 AND status != Closed order by created DESC";
-                isUsingJQL.value=false;
-                getJiraIssues();
-                break;
-            case "nonIssue":
-                JQL.value.JQL = "(reporter = " + localStorage.getItem("empID")+" or assignee = " + localStorage.getItem("empID")+" or creator  = " + localStorage.getItem("empID")+" or watcher = " + localStorage.getItem("empID") + ") AND type = 非議題 AND status != Closed order by created DESC";
-                isUsingJQL.value=false;
-                getJiraIssues();
-                break;
-            case "byAssignee":
-                JQL.value.JQL = "assignee = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (status != Closed) AND project != R2DEVICE order by created DESC";
-                isUsingJQL.value=false;
-                getJiraIssues();
-                break;
-            case "byReporter":
-                JQL.value.JQL = "reporter = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (status != Closed) order by created DESC";
-                isUsingJQL.value=false;
-                getJiraIssues();
-                break;
-            case "byWatcher":
-                JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (status != Closed) order by created DESC";
-                isUsingJQL.value=false;
-                getJiraIssues();
-                break;
-            case "byReviewer":
-                JQL.value.JQL = "(cf[10010] = " + localStorage.getItem("empID") +" or cf[13942] = " + localStorage.getItem("empID")+" or 規格審查人員 = " + localStorage.getItem("empID") + ") AND type != 非議題 AND type != 管理議題 AND (status != Closed) order by created DESC";
-                isUsingJQL.value=false;
-                getJiraIssues();
-                break;
-            case null:
-                break;
-            default:
-                JQL.value.JQL = "key = " + newValue+" AND type != 非議題 AND type != 管理議題";
-                isUsingJQL.value=false;
-                getJiraIssues();
-                break;
+            switch (newValue) {
+                case "managedIssue":
+                    JQL.value.JQL = "(reporter = " + localStorage.getItem("empID")+" or assignee = " + localStorage.getItem("empID")+" or creator  = " + localStorage.getItem("empID")+" or watcher = " + localStorage.getItem("empID") + ") AND type = 管理議題 AND status != Closed order by created DESC";
+                    isUsingJQL.value=false;
+                    getJiraIssues();
+                    break;
+                case "nonIssue":
+                    JQL.value.JQL = "(reporter = " + localStorage.getItem("empID")+" or assignee = " + localStorage.getItem("empID")+" or creator  = " + localStorage.getItem("empID")+" or watcher = " + localStorage.getItem("empID") + ") AND type = 非議題 AND status != Closed order by created DESC";
+                    isUsingJQL.value=false;
+                    getJiraIssues();
+                    break;
+                case "byAssignee":
+                    JQL.value.JQL = "assignee = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (status != Closed) AND project != R2DEVICE order by created DESC";
+                    isUsingJQL.value=false;
+                    getJiraIssues();
+                    break;
+                case "byReporter":
+                    JQL.value.JQL = "reporter = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (status != Closed) order by created DESC";
+                    isUsingJQL.value=false;
+                    getJiraIssues();
+                    break;
+                case "byWatcher":
+                    JQL.value.JQL = "watcher = " + localStorage.getItem("empID") + " AND type != 非議題 AND type != 管理議題 AND (status != Closed) order by created DESC";
+                    isUsingJQL.value=false;
+                    getJiraIssues();
+                    break;
+                case "byReviewer":
+                    JQL.value.JQL = "(cf[10010] = " + localStorage.getItem("empID") +" or cf[13942] = " + localStorage.getItem("empID")+" or 規格審查人員 = " + localStorage.getItem("empID") + ") AND type != 非議題 AND type != 管理議題 AND (status != Closed) order by created DESC";
+                    isUsingJQL.value=false;
+                    getJiraIssues();
+                    break;
+                case null:
+                    break;
+                default:
+                    JQL.value.JQL = "key = " + newValue+" AND type != 非議題 AND type != 管理議題";
+                    isUsingJQL.value=false;
+                    getJiraIssues();
+                    break;  
+            }
+        }else{
+            isModify.value = false;
         }
     },{deep: true,});
 
@@ -451,15 +480,7 @@ export const useFormStore = defineStore('formStore', () => {
         if((newDateValue!== null) || (newTimeValue!== null)) getSumSpentSeconds();
     },{deep: true,});
 
-    watchEffect(() => {       
-        // if(spendValueStatus.value.init){
-        //     let spendValue = {hours: 0, minutes: 0};
-        //     spendValue.hours = Math.floor(spendValue.value.spendHourValue) + Math.floor(spendValue.minutes/60);
-        //     spendValue.minutes = (spendValue.value.spendHourValue - Math.floor(spendValue.value.spendHourValue)) + (spendValue.minutes % 60);
-        //     spendValue.value.spendHourValue = spendValue.hours;
-        //     spendValue.value.spendMinuteValue = spendValue.minutes;
-        //     console.log(spendValue);
-        // }
+    watchEffect(() => {
         if ((model.value.spendValue <= 0) && (spendValueStatus.value.init)) {
             spendValueStatus.value.status = "error";
             spendValue.value.spendDayValue = 0;
@@ -479,6 +500,6 @@ export const useFormStore = defineStore('formStore', () => {
         console.log(model.value.spendValue/(60*60),spendValue.value.sumSpendSecond/(60*60));
     });
 
-    return {JQL, isUsingJQL, isDeletingJiraWorklog,successCount,formRef, size, model, deleteModel, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, addJiraWorklog, getProjectTags,dateDisabled, deleteJiraWorklog, getJiraIssues,customJQLSwitch}
+    return {JQL, isUsingJQL, isDeletingJiraWorklog,successCount,formRef, size, model, deleteModel, models, spendValueStatus, spendValue, filterOptions, issueOptions, tagOptions, rules, isIssueOptionsChange, isAddingJiraWorklog, isTagOptionsChange, handleValidateButtonClick, handleClose, handleEdit, addJiraWorklog, getProjectTags,dateDisabled, deleteJiraWorklog, getJiraIssues,customJQLSwitch}
 
 })

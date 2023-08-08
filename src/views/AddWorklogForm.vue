@@ -45,6 +45,7 @@ const {
   filterOptions,
   rules,
   handleClose,
+  handleEdit,
   handleValidateButtonClick,
   addJiraWorklog,
   deleteJiraWorklog,
@@ -188,7 +189,7 @@ const {
       </n-grid>
     </n-form>
     <n-divider />
-    <n-grid x-gap="12" :cols="3">
+    <n-grid x-gap="12" :cols="2">
       <n-gi v-for="(item, index) in models" :key="index">
         <n-card
           :title="item[0].issueID"
@@ -211,6 +212,19 @@ const {
           <template #footer>
             開始日期：{{ item[0].started.split(" ")[0] }}<br />
             花費時間：{{ item[0].spendHour }}小時{{ item[0].spendMinute }}分鐘
+            <div style="display: flex; justify-content: flex-end">
+              <n-button
+                round
+                dashed
+                tiny
+                @click="handleEdit(index)"
+                type="warning"
+                :loading="isAddingJiraWorklog"
+                :disabled="isAddingJiraWorklog"
+              >
+                修改
+              </n-button>
+            </div>
           </template>
         </n-card>
       </n-gi>
