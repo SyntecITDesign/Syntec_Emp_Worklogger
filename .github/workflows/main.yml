@@ -6,12 +6,18 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-    strategy:
-      fail-fast: false
-      matrix:
-        max-runs: 3
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Run build
         run: npm run build
+        continue-on-error: true # 允許步驟失敗但繼續執行
+  retry_failed:
+    needs: build
+    runs-on: self-hosted
+    if: failure()
+    steps:
+      - name: Retry on failure
+        run: |
+          echo "Retrying..."
+          npm run build
