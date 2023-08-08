@@ -7,9 +7,9 @@ jobs:
   build:
     runs-on: self-hosted
     strategy:
-      fail-fast: false # 允許重新執行失敗的 job
+      fail-fast: false
       matrix:
-        max-runs: 10   # 最多重新執行次數，你可以根據需要調整
+        max-runs: 3
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
