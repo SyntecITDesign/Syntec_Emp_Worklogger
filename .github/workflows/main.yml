@@ -6,15 +6,12 @@ on:
 jobs:
   build:
     runs-on: self-hosted
+    strategy:
+      fail-fast: false # 允許重新執行失敗的 job
+      matrix:
+        max-runs: 10   # 最多重新執行次數，你可以根據需要調整
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Run bulid
+      - name: Run build
         run: npm run build
-# 設定整個工作流程失敗時自動重跑
-on:
-  workflow_run:
-    workflows: ["Workflow"]
-    types:
-      - completed
-    result: failure
