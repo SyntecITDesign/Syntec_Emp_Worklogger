@@ -287,7 +287,7 @@ const {
       >
         <n-button
           round
-          dashed
+          secondary
           type="info"
           @click="addJiraWorklog"
           :loading="isAddingJiraWorklog"
