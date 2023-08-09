@@ -29,7 +29,7 @@ const themeOverrides = {
     itemTextColorActive: "#01006bFF",
     itemTextColorActiveHover: "#01006bFF",
     itemTextColorChildActive: "#01006bFF",
-    itemTextColorChildActiveHover: "#01006bFF",
+    itemTextColorChildActiveHover: "#01006bFE",
     itemTextColorHoverHorizontal: "#01006bFF",
     itemTextColorActiveHorizontal: "#01006bFF",
     itemTextColorActiveHoverHorizontal: "#01006bFF",
