@@ -23,7 +23,7 @@ onBeforeMount(() => {
 </template>
 <style scoped>
 .history {
-  background: #ffffffaa;
+  background: #ffffffab;
   display: flex;
   justify-content: center;
 }
