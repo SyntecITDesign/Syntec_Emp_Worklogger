@@ -251,10 +251,10 @@ const {
             type="text"
           />
         </n-form-item-gi>
-        <n-form-item-gi :span="5" label="WoklogID" path="descriptionValue">
+        <n-form-item-gi :span="5" label="WorklogID" path="descriptionValue">
           <n-input
             v-model:value="deleteModel.workLogID"
-            placeholder="WoklogID"
+            placeholder="WorklogID"
             type="text"
           />
         </n-form-item-gi>
