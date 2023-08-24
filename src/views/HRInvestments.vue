@@ -66,7 +66,7 @@ watch(
   justify-content: center;
 }
 iframe {
-  width: 100%;
+  width: 90%;
   height: 50rem;
 }
 </style>
