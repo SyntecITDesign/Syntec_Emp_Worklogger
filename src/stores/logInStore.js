@@ -128,27 +128,31 @@ export const useLogInStore = defineStore('logInStore', () => {
     };
 
     const getJiraWorkLoggerAccess = async (data) => {
+        // 將 access.value.isCheckedAccess 設為 true，表示正在進行存取權限檢查
         access.value.isCheckedAccess = true;
         try {
+            // 透過 axios 發送 POST 請求，以獲取管理者的資訊
             const resManagers = await axios.post(
                 apiUrl + "/Open/JIRA_Related/Worklogger/GetJiraWorkLoggerAccess",
-                {Managers:"%"+data+"%",}
+                { Managers: "%" + data + "%", }
             );
-            console.log("checkManagers",resManagers.data);
+            console.log("checkManagers", resManagers.data);
             
-            access.value.isViewersManager = (devList.includes(localStorage.getItem("empID")))||(resManagers.data.code === 0);
+            // 判斷是否為查看者的管理者，或者是否有特定的管理者名單，設定對應的存取狀態
+            access.value.isViewersManager = (devList.includes(localStorage.getItem("empID"))) || (resManagers.data.code === 0);
+            // 預設查看者的管理者必有查看權限
             access.value.isViewer = access.value.isViewersManager;
             
-            if(resManagers.data.code === 0){
+            // 如果成功獲取管理者資訊（code 為 0），處理管理的專案相關資訊
+            if (resManagers.data.code === 0) {
                 resManagers.data.content.forEach((item) => {
-                    //console.log(item);
+                    // 將目前有被管理的 ProjectKey (ICT、CMTEST...) 添加至 projectKeyManagedSet後續會用到
                     projectKeyManagedSet.value.add(item.ProjectKey);
                 });
                 
-                //console.log("checkManager",Array.from(projectKeyManagedSet.value));
-                Array.from(projectKeyManagedSet.value).forEach(async (projectKeyManagedSetItem,index)=>{
-                    
-                    
+                // 對每個目前有被管理的專案進行處理
+                Array.from(projectKeyManagedSet.value).forEach(async (projectKeyManagedSetItem) => {
+                    // 透過 POST 請求獲取每個有被管理專案的標籤資訊
                     const resProjectTags = await axios.post(
                         apiUrl + "/Open/JIRA_Related/Worklogger/GetProjectTags",
                         {
@@ -158,61 +162,66 @@ export const useLogInStore = defineStore('logInStore', () => {
                     
                     let projectTagGroups = new Set();
                     let projectTags = [];
-
+    
+                    // 將每個專案標籤分組添加至 projectTagGroups，並將各個標籤詳細資訊添加至 projectTags
                     resProjectTags.data.content.forEach((projectTagGroup) => {
                         projectTagGroups.add(projectTagGroup.TagGroup);
-                        projectTags.push({No:projectTagGroup.No,tag:projectTagGroup.TagName,group:projectTagGroup.TagGroup});
+                        projectTags.push({ No: projectTagGroup.No, tag: projectTagGroup.TagName, group: projectTagGroup.TagGroup });
                     });
-
-
-                    const viewerTags = resManagers.data.content.map((item)=>{
-                        //console.log(item);
+    
+                    // 根據管理者資訊，建立各專案的查看者清單
+                    const viewerTags = resManagers.data.content.map((item) => {
+                        // 如果是查看者，將查看者的資訊添加至 viewerTags(查看者清單)
                         if ((item.ProjectKey === projectKeyManagedSetItem) && (!item.Managers.includes(item.EmpID)) && (item.Viewers.includes(item.EmpID))) {
-                            return item.EmpID+"_"+item.EmpName;
+                            return item.EmpID + "_" + item.EmpName;
                         }
-                    }).filter((el)=>{return el !== undefined});
-
-
-                    viewerManagedInfo.value.push([projectKeyManagedSetItem,viewerTags]);
-                    projectTagManagedInfo.value.push([projectTagGroups,projectTags,[]]);
-                    
+                    }).filter((el) => { return el !== undefined; });
+    
+                    // 將 ProjectKey 和 查看者清單 添加至 viewerManagedInfo (被管理的查看者資訊)
+                    viewerManagedInfo.value.push([projectKeyManagedSetItem, viewerTags]);
+                    // 將專案標籤分組、標籤詳細資訊以及空陣列添加至 projectTagManagedInfo
+                    projectTagManagedInfo.value.push([projectTagGroups, projectTags, []]);
                 });
-                //console.log(viewerManagedInfo.value);
-                //console.log(viewerManagedInfo.value);
             }
-            //判斷是否有權限查看報表，及可察看的Project
+            
+            // 透過另一個 POST 請求，以獲取查看者的資訊
             const resViewer = await axios.post(
                 apiUrl + "/Open/JIRA_Related/Worklogger/GetJiraWorkLoggerAccess",
-                {Viewers:"%"+data+"%",}
+                { Viewers: "%" + data + "%", }
             );
-            console.log("checkViewer",resViewer.data);
-            console.log("checkViewer",resViewer.data.content.map((IsViewer)=>{return IsViewer.IsViewer}).includes(1));
-        
-            if(!access.value.isViewer){
-                access.value.isViewer = (devList.includes(localStorage.getItem("empID")))||(resViewer.data.content.map((IsViewer)=>{return IsViewer.IsViewer}).includes(1));
+            console.log("checkViewer", resViewer.data);
+            console.log("checkViewer", resViewer.data.content.map((IsViewer) => { return IsViewer.IsViewer }).includes(1));
+    
+            // 如果不是查看者，判斷是否有查看權限
+            if (!access.value.isViewer) {
+                access.value.isViewer = (devList.includes(localStorage.getItem("empID"))) || (resViewer.data.content.map((IsViewer) => { return IsViewer.IsViewer }).includes(1));
             }
-            console.log("access.value.isViewer",access.value.isViewer);
-            if(resViewer.data.code === 0){                
+            console.log("access.value.isViewer", access.value.isViewer);
+    
+            // 如果成功獲取查看者資訊（code 為 0），處理查看者相關專案存取資訊
+            if (resViewer.data.code === 0) {
                 let projectKeyViewSet = new Set();
                 let projectKeyIsViewerSet = new Set();
                 resViewer.data.content.forEach((item) => {
+                    // 將專案關鍵字添加至 projectKeyViewSet
                     projectKeyViewSet.add(item.ProjectKey);
-                    if(item.IsViewer == 1) projectKeyIsViewerSet.add(item.ProjectKey);
+                    // 如果 IsViewer 為 1，將專案關鍵字添加至 projectKeyIsViewerSet
+                    if (item.IsViewer == 1) projectKeyIsViewerSet.add(item.ProjectKey);
                 });
-                localStorage.setItem("projectKeysView",Array.from(projectKeyViewSet).join('\',\''));
-                localStorage.setItem("projectKeysIsViewer",Array.from(projectKeyIsViewerSet).join('\',\''));
-
-                //console.log(localStorage.getItem("superDeptsView"),localStorage.getItem("projectKeysView"));
+                // 將 projectKeyViewSet 和 projectKeyIsViewerSet 中的專案關鍵字存儲至本地存儲
+                localStorage.setItem("projectKeysView", Array.from(projectKeyViewSet).join('\',\''));
+                localStorage.setItem("projectKeysIsViewer", Array.from(projectKeyIsViewerSet).join('\',\''));
             }
         } catch (err) {
             console.log(err);
         }
-
-        if(Array.from(viewerManagedInfo)===[]){
+    
+        // 如果 viewerManagedInfo 是空陣列，將 access.value.isCheckedAccess 設為 false
+        if (Array.from(viewerManagedInfo) === []) {
             access.value.isCheckedAccess = false;
         }
-
     };
+    
 
     const getEmpInfo = async (query) => {
         try {
@@ -237,11 +246,6 @@ export const useLogInStore = defineStore('logInStore', () => {
             Viewers: item[1].map((i)=>{return i.split("_")[0]}).join(','),
         }));
         //console.log("newViewers",newViewers.value);
-    },{deep: true,});
-
-    watch(() =>  projectTagManagedInfo.value,(newValue) => {
-        //console.log("projectTagManagedInfo",newValue);
-        
     },{deep: true,});
 
     return { newViewers, viewersTags, welcomeText, access,formRef, model, rules, viewerManagedInfo,projectTagManagedInfo, projectKeyManagedSet, handleValidateButtonClick, checkLogInTime, getJiraWorkLoggerAccess, getEmpInfo}
