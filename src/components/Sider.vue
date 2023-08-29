@@ -1,35 +1,19 @@
 <script setup>
 import { storeToRefs } from "pinia";
-import { RouterView } from "vue-router";
-import LogInVue from "../components/LogIn.vue";
 import {
   NSpace,
   NLayout,
   NLayoutSider,
   NMenu,
-  NButton,
-  NDivider,
-  NAvatar,
-  NH4,
-  NSwitch,
-  NIcon,
-  NImage,
-  NScrollbar,
 } from "naive-ui";
-import { ExitOutline as ExitIcon } from "@vicons/ionicons5";
-import { onBeforeMount } from "vue";
 import { useSiderStore } from "../stores/siderStore.js";
 import { useLogInStore } from "../stores/logInStore.js";
 const siderStore = useSiderStore();
 const { collapsed, menuOptions, wholeTheme } = storeToRefs(siderStore);
 const { renderIcon, expandIcon } = siderStore;
 const logInStore = useLogInStore();
-const { access, welcomeText } = storeToRefs(logInStore);
-const logOut = () => {
-  access.value.basicAuth = null;
-  access.value.isLogIn = false;
-  localStorage.clear();
-};
+const { access } = storeToRefs(logInStore);
+
 </script>
 
 <template>
@@ -61,11 +45,6 @@ const logOut = () => {
 </template>
 
 <style scoped>
-.NLayout {
-  padding: 3% 3% 3% 3%;
-  height: calc(100vmin);
-}
-
 .logo {
   width: 95%;
   margin-top: 5%;
