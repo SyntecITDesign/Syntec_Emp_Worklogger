@@ -20,7 +20,7 @@ watch(
   (newValue) => {
     console.log("watch", newValue);
     worklogDetailsSrc.value =
-      "https://finereport2.syntecclub.com/WebReport/decision/view/report?viewlet=TWST%252FTWST_IT_Dept%252FSYSTEM%252FWorklogger%252FWorklog%2BDetails_0829.cpt&op=view" +
+      "https://finereport2.syntecclub.com/WebReport/decision/view/report?viewlet=TWST%252FTWST_IT_Dept%252FSYSTEM%252FWorklogger%252FWorklog%2BDetails.cpt&op=view" +
       "&p_SuperDeptName=" +
       localStorage.getItem("superDeptsView") +
       "&p_ProjectKey=" +
