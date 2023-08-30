@@ -8,7 +8,7 @@ const historySrc = ref("");
 onBeforeMount(() => {
   historySrc.value =
     "https://finereport2.syntecclub.com/WebReport/decision/view/report?viewlet=TWST%252FTWST_IT_Dept%252FSYSTEM%252FWorklogger%252FWorklog%2BHistory.cpt&op=view" +
-    "p_EmpID=" +
+    "&p_EmpID=" +
     localStorage.getItem("empID");
 });
 </script>
