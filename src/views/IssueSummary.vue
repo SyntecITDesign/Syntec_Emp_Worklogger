@@ -20,7 +20,7 @@ watch(
     console.log("watch", newValue);
     issueSummarySrc.value = null;
     issueSummarySrc.value =
-      "https://finereport2.syntecclub.com/WebReport/decision/view/report?viewlet=TWST%252FTWST_IT_Dept%252FSYSTEM%252FWorklogger%252FIssue%2BSummary.cpt&op=view" +
+      "https://finereport2.syntecclub.com/WebReport/decision/view/report?viewlet=TWST%252FTWST_IT_Dept%252FSYSTEM%252FWorklogger%252FIssue%2BSummary_0829.cpt&op=view" +
       "&p_SuperDeptName=" +
       localStorage.getItem("superDeptsView") +
       "&p_ProjectKey=" +
