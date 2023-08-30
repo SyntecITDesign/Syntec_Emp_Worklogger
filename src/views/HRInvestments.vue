@@ -29,7 +29,7 @@ watch(
     console.log("watch", newValue);
     HRInvestmentsSrc.value = null;
     HRInvestmentsSrc.value =
-      "https://finereport2.syntecclub.com/WebReport/decision/view/report?viewlet=TWST%252FTWST_IT_Dept%252FSYSTEM%252FWorklogger%252FWorklog%2BHistory.cpt&op=view" +
+      "https://finereport2.syntecclub.com/WebReport/decision/view/report?viewlet=TWST%252FTWST_IT_Dept%252FSYSTEM%252FWorklogger%252FHR%2BInvestments.cpt&op=view" +
       "&p_SuperDeptName=" +
       selectedSuperDeptName.value +
       "&p_ProjectKey=" +
