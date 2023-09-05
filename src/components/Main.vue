@@ -11,7 +11,9 @@ import {
 } from "naive-ui";
 import { ExitOutline as ExitIcon } from "@vicons/ionicons5";
 import { useLogInStore } from "../stores/logInStore.js";
-
+import { useSiderStore } from "../stores/siderStore.js";
+const siderStore = useSiderStore();
+const { wholeTheme } = storeToRefs(siderStore);
 const logInStore = useLogInStore();
 const { access, welcomeText } = storeToRefs(logInStore);
 const logOut = () => {
