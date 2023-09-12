@@ -30,6 +30,7 @@ export const useFormStore = defineStore('formStore', () => {
         spendValue: computed(() => (spendValue.value.spendHourValue * 60 * 60 + spendValue.value.spendMinuteValue * 60)),
     });
     const isModify = ref(false);
+    let modifyTag = null;
     const deleteModel = ref({
         issueID:null,
         workLogID:null,
@@ -178,6 +179,14 @@ export const useFormStore = defineStore('formStore', () => {
                     res.data.content.map((v) => ({ label: v.TagName, value: v.TagName, })).forEach(element => {
                         tagOptions.value.push(element);
                     });
+
+                    if(modifyTag !== null){
+                        model.value.tagValue = modifyTag;
+                        modifyTag = null;
+                    }
+
+                    console.log("modifyTag",modifyTag);
+
                 }else{
                     //console.log(res.data.content);
                     return res.data.content;
@@ -356,6 +365,7 @@ export const useFormStore = defineStore('formStore', () => {
                     spendHourValue:spendValue.value.spendHourValue,
                     spendMinuteValue:spendValue.value.spendMinuteValue,
                     descriptionValue:model.value.descriptionValue,
+                    tagValue:model.value.tagValue
                 };
                 
                 models.value.push([modelForJiraWorkLogRecord,modelForJiraAddWorkLogApi,modelTempRecord]);
@@ -389,12 +399,18 @@ export const useFormStore = defineStore('formStore', () => {
     const handleEdit = (index) => {
         console.log(models.value[index][2]);        
         isModify.value = true;
+        if(model.value.selectIssueValue == models.value[index][2].selectIssueValue){
+            model.value.tagValue = models.value[index][2].tagValue;
+        }else{
+            modifyTag = models.value[index][2].tagValue;
+        }
         model.value.selectFilterValue = models.value[index][2].selectFilterValue;
         model.value.selectIssueValue = models.value[index][2].selectIssueValue;
         model.value.startDateValue = models.value[index][2].startDateValue;
         spendValue.value.spendHourValue = models.value[index][2].spendHourValue;
         spendValue.value.spendMinuteValue = models.value[index][2].spendMinuteValue;
         model.value.descriptionValue = models.value[index][2].descriptionValue;
+        
         handleClose(index);
     };
 
