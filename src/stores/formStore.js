@@ -119,7 +119,7 @@ export const useFormStore = defineStore('formStore', () => {
         }else{
             try {
                 if(isUsingJQL.value && !JQL.value.JQL.includes("type != 非議題 AND type != 管理議題 AND ")){
-                    JQL.value.JQL = "type != 非議題 AND type != 管理議題 AND "+JQL.value.JQL;
+                    JQL.value.JQL = "(type != 非議題 AND type != 管理議題) AND ("+JQL.value.JQL+")";
                 }
                 isIssueOptionsChange.value = true;
                 issueOptions.value = [].map((v) => ({ label: v, value: v, }));
