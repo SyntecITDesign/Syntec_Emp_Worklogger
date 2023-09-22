@@ -119,8 +119,8 @@ export const useFormStore = defineStore('formStore', () => {
             dialog.info({ title: "請輸入JQL查詢一般議題" });
         }else{
             try {
-                if(isUsingJQL.value && !JQL.value.JQL.includes("type != 非議題 AND type != 管理議題 AND ")){
-                    JQL.value.JQL = "type != 非議題 AND type != 管理議題 AND "+JQL.value.JQL;
+                if(isUsingJQL.value && !JQL.value.JQL.includes("(type != 非議題 AND type != 管理議題)")){
+                    JQL.value.JQL = "(type != 非議題 AND type != 管理議題) AND ("+JQL.value.JQL.toLowerCase().replace("order by",") order by");
                 }
                 isIssueOptionsChange.value = true;
                 issueOptions.value = [].map((v) => ({ label: v, value: v, }));
